@@ -1,11 +1,22 @@
-import Slide from "src/pages/Presentation";
+import EditPresentation from "src/pages/EditPresentation";
+import Presentation from "src/pages/Presentation";
 
-const routers = [
+const LayoutRouters = [
   {
-    name: "presentation/",
+    name: "presentation",
     path: "/presentation/:id",
-    element: Slide,
+    element: Presentation,
+    layout: true,
   },
 ];
 
-export default routers;
+const NoLayoutRouters = [
+  {
+    name: "editPresentation",
+    path: "/presentation/:id/edit",
+    element: EditPresentation,
+    layout: false,
+  },
+];
+
+export { LayoutRouters, NoLayoutRouters };

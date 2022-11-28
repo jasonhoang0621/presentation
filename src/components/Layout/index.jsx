@@ -17,7 +17,7 @@ import CreateSlideModal from "../CreateSlideModal";
 import ProfileModal from "../ProfileModal";
 const { Header, Sider, Content } = LayoutAntd;
 
-const Layout = () => {
+const Layout = ({ sider = false }) => {
   const auth = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,34 +55,41 @@ const Layout = () => {
   return (
     <Spin spinning={isFetching + isMutating > 0}>
       <LayoutAntd>
-        <Sider trigger={null} collapsible collapsed={collapsed}>
-          <div className="logo h-[64px] flex items-center justify-center">
-            <p className="text-white font-semibold">MIDTERM</p>
-          </div>
-          <Menu
-            theme="dark"
-            mode="inline"
-            activeKey={[activeKey]}
-            items={
-              groupData &&
-              groupData?.data.map((item) => ({
-                label: item.name.toUpperCase(),
-                icon: <BookOutlined />,
-                key: item.id,
-                onClick: () => navigate(`/group/${item.id}`),
-              }))
-            }
-          />
-        </Sider>
-        <LayoutAntd className="site-LayoutAntd">
-          <Header className="site-layout-background flex items-center justify-between p-0">
-            {React.createElement(
-              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-              {
-                className: "trigger",
-                onClick: () => setCollapsed(!collapsed),
+        {sider && (
+          <Sider trigger={null} collapsible collapsed={collapsed}>
+            <div className="logo h-[64px] flex items-center justify-center">
+              <p className="text-white font-semibold">MIDTERM</p>
+            </div>
+            <Menu
+              theme="dark"
+              mode="inline"
+              activeKey={[activeKey]}
+              items={
+                groupData &&
+                groupData?.data.map((item) => ({
+                  label: item.name.toUpperCase(),
+                  icon: <BookOutlined />,
+                  key: item.id,
+                  onClick: () => navigate(`/group/${item.id}`),
+                }))
               }
-            )}
+            />
+          </Sider>
+        )}
+        <LayoutAntd className="site-LayoutAntd">
+          <Header
+            className={`site-layout-background w-full flex items-center p-0 ${
+              sider ? "justify-between" : "justify-end"
+            }`}
+          >
+            {sider &&
+              React.createElement(
+                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                {
+                  className: "trigger",
+                  onClick: () => setCollapsed(!collapsed),
+                }
+              )}
             <div className="flex items-center">
               <UsergroupAddOutlined
                 className="text-white text-[22px] cursor-pointer hover:opacity-60 mr-5"
@@ -117,7 +124,11 @@ const Layout = () => {
               </div>
             </div>
           </Header>
-          <Content className="site-layout-background mx-[16px] my-[24px] p-[24px] min-h-[280px]">
+          <Content
+            className={`site-layout-background min-h-[280px] ${
+              sider ? " mx-[16px] my-[24px] p-[24px]" : ""
+            }`}
+          >
             <Outlet />
             <CreateSlideModal
               visible={createSlideModal}

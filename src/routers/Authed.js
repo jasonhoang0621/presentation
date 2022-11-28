@@ -1,19 +1,21 @@
-import { Route, Routes, Navigate } from "react-router-dom";
-import router from "./index";
-import useRouting from "src/hooks/UseRouting";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "src/components/Layout";
+import { LayoutRouters, NoLayoutRouters } from "./index";
 
 const Authenticated = () => {
-  const { generate } = useRouting();
-
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
-        {router.map((item, idx) => (
+      <Route path="/" element={<Layout sider />}>
+        {LayoutRouters.map((item, idx) => (
           <Route key={idx} path={item.path} element={<item.element />} />
         ))}
-        <Route path="*" element={<Navigate to={generate("not-found")} />} />
       </Route>
+      <Route path="/" element={<Layout />}>
+        {NoLayoutRouters.map((item, idx) => (
+          <Route key={idx} path={item.path} element={<item.element />} />
+        ))}
+      </Route>
+      <Route path="*" element={<Navigate to={"not-found"} />} />
     </Routes>
   );
 };
