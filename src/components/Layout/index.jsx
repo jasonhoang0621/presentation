@@ -3,7 +3,7 @@ import { Layout as LayoutAntd, Menu, Spin } from "antd";
 import "./layout.css";
 
 import {
-  CoffeeOutlined,
+  BookOutlined,
   UsergroupAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useGetListGroup } from "src/api/group";
 import ChangePasswordModal from "../ChangePasswordModal";
-import CreateGroupModal from "../CreateGroupModal";
+import CreateSlideModal from "../CreateSlideModal";
 import ProfileModal from "../ProfileModal";
 const { Header, Sider, Content } = LayoutAntd;
 
@@ -23,7 +23,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState(0);
-  const [createGroupModal, setCreateGroupModal] = useState(false);
+  const [createSlideModal, setCreateSlideModal] = useState(false);
   const [profileModal, setProfileModal] = useState(false);
   const [changePasswordModal, setChangePasswordModal] = useState(false);
 
@@ -67,7 +67,7 @@ const Layout = () => {
               groupData &&
               groupData?.data.map((item) => ({
                 label: item.name.toUpperCase(),
-                icon: <CoffeeOutlined />,
+                icon: <BookOutlined />,
                 key: item.id,
                 onClick: () => navigate(`/group/${item.id}`),
               }))
@@ -86,7 +86,7 @@ const Layout = () => {
             <div className="flex items-center">
               <UsergroupAddOutlined
                 className="text-white text-[22px] cursor-pointer hover:opacity-60 mr-5"
-                onClick={() => setCreateGroupModal(true)}
+                onClick={() => setCreateSlideModal(true)}
               />
               <div className="mr-10 mb-2 relative">
                 <div className="user-icon-header">
@@ -119,9 +119,9 @@ const Layout = () => {
           </Header>
           <Content className="site-layout-background mx-[16px] my-[24px] p-[24px] min-h-[280px]">
             <Outlet />
-            <CreateGroupModal
-              visible={createGroupModal}
-              setVisible={setCreateGroupModal}
+            <CreateSlideModal
+              visible={createSlideModal}
+              setVisible={setCreateSlideModal}
             />
             <ChangePasswordModal
               visible={changePasswordModal}

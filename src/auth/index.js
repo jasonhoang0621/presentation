@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useProfile } from "src/api/user";
 import { login } from "src/redux/auth";

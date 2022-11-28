@@ -6,6 +6,7 @@ import { store } from "./redux/store";
 import Root from "./routers/Root";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <Provider store={store}>
     <Root />

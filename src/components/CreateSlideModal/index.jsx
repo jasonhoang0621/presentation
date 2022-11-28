@@ -4,7 +4,7 @@ import React from "react";
 import { useQueryClient } from "react-query";
 import { useCreateGroup } from "src/api/group";
 
-const CreateGroupModal = ({ visible, setVisible }) => {
+const CreateSlideModal = ({ visible, setVisible }) => {
   const [form] = useForm();
   const { mutateAsync } = useCreateGroup();
   const queryClient = useQueryClient();
@@ -34,13 +34,11 @@ const CreateGroupModal = ({ visible, setVisible }) => {
     >
       <Form form={form} layout="vertical">
         <Form.Item
-          label="Name"
           name="name"
-          rules={[{ required: true, message: "Please input group name!" }]}
+          rules={[{ required: true, message: "Please input slide name!" }]}
         >
-          <Input className="app-input" placeholder="Group name" />
+          <Input className="app-input" placeholder="Slide name" />
         </Form.Item>
-
         <div className="flex justify-center">
           <button
             type="primary"
@@ -56,4 +54,4 @@ const CreateGroupModal = ({ visible, setVisible }) => {
   );
 };
 
-export default CreateGroupModal;
+export default CreateSlideModal;

@@ -36,7 +36,7 @@ const ProfileModal = ({ visible, setVisible }) => {
       email: auth.user?.email,
       name: auth.user?.name,
     });
-  }, [auth]);
+  }, [auth, form]);
 
   return (
     <Modal

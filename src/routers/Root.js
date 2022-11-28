@@ -2,12 +2,18 @@ import { useState } from "react";
 import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Authenticate from "src/auth";
-import GoogleRedirect from "src/components/GoogleRedirect";
-import JoinGroupRedirect from "src/components/JoinGroupRedirect";
 import Login from "src/pages/Login";
 import Register from "src/pages/Register";
-import Verify from "src/pages/Verify";
 import Authenticated from "./Authed";
+
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
 
 const createQueryClient = () => {
   const queryCache = new QueryCache();
@@ -24,6 +30,8 @@ const createQueryClient = () => {
   });
 };
 
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
+
 const Root = () => {
   const [queryClient] = useState(createQueryClient);
   return (
@@ -31,10 +39,7 @@ const Root = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/login/google" element={<GoogleRedirect />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/verify" element={<Verify />} />
-          <Route path="/invite/:id" element={<JoinGroupRedirect />} />
           <Route
             path="*"
             element={

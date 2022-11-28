@@ -1,12 +1,10 @@
-import { UserOutlined } from "@ant-design/icons";
-import Group from "src/pages/Group";
+import Slide from "src/pages/Presentation";
 
 const routers = [
   {
-    name: "group/",
-    path: "/group/:id",
-    element: Group,
-    icon: <UserOutlined />,
+    name: "presentation/",
+    path: "/presentation/:id",
+    element: Slide,
   },
 ];
 
