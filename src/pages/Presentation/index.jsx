@@ -1,32 +1,49 @@
 import { Modal } from "antd";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Slide from "src/components/Slide";
 
 const Presentation = () => {
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const navigate = useNavigate();
   const [deleteModal, setDeleteModal] = React.useState(false);
+  const [detailModal, setDetailModal] = React.useState(false);
+  const data = {
+    id: 1,
+    name: "hello",
+  };
 
   return (
     <div>
-      <div className="flex items-center justify-end mb-3    ">
+      <div className="flex items-center justify-end">
         <button
           className="button button-danger !py-2 !min-w-[120px]"
           onClick={() => setDeleteModal(true)}
         >
           <span className="!text-[12px]">Delete</span>
         </button>
-        <button className="button !py-2 !min-w-[120px]">
+        <button
+          className="button !py-2 !min-w-[120px]"
+          onClick={() => navigate("edit")}
+        >
           <span className="!text-[12px]">Edit</span>
         </button>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-        {data.map((item, index) => (
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-3">
+        {[1, 2, 3].map((item, index) => (
           <div key={index}>
-            <Slide />
+            <Slide data={null} onClick={() => setDetailModal(true)} />
           </div>
         ))}
       </div>
-
+      <Modal
+        visible={detailModal}
+        onCancel={() => setDetailModal(false)}
+        footer={null}
+        destroyOnClose
+        width={"70%"}
+      >
+        <Slide noBorder />
+      </Modal>
       <Modal
         title="Confirm Delete"
         visible={deleteModal}
@@ -34,7 +51,7 @@ const Presentation = () => {
         footer={null}
       >
         <p className="text-[18px] mt-0">
-          Are you sure you want to delete this Presentation?
+          Are you sure you want to delete this Group?
         </p>
         <div className="flex justify-end mt-7">
           <button

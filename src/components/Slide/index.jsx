@@ -1,7 +1,8 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
+import { useNavigate } from "react-router-dom";
 
-const Slide = ({ data }) => {
+const Slide = ({ data, onClick, noBorder = false }) => {
   const options = {
     responsive: true,
     plugins: {
@@ -42,7 +43,14 @@ const Slide = ({ data }) => {
   };
 
   return (
-    <div className="h-full min-h-[30vh] w-full bg-white shadow-lg mb-5 p-2 transition-all duration-300 rounded-[8px] flex flex-col items-center justify-between hover:shadow-[#13241d] hover:shadow-lg">
+    <div
+      className={`h-full min-h-[30vh] w-full mb-5 p-2 transition-all duration-300 flex flex-col items-center justify-between ${
+        noBorder
+          ? ""
+          : "bg-white shadow-lg rounded-[8px] hover:shadow-[#13241d] hover:shadow-lg"
+      }`}
+      onClick={onClick}
+    >
       <p>hello</p>
       <Bar options={options} data={chartData} />
     </div>
