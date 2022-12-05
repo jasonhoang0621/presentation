@@ -1,4 +1,3 @@
-import { Modal } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import EditGroupModal from "src/components/EditGroupModal";

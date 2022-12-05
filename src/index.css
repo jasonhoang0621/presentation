@@ -113,8 +113,26 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+.ant-row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.ant-row.edit-presentation .ant-col.ant-col-4 {
+  padding-left: 0 !important;
+}
+.ant-row.edit-presentation .ant-col.ant-col-8 {
+  padding-right: 0 !important;
+}
+
+.multiple-question .ant-col.ant-form-item-label {
+  padding-bottom: 0;
+  font-weight: 600;
+}
+.multiple-question .ant-col.ant-form-item-label label {
+  font-size: 16px;
 }

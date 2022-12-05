@@ -1,6 +1,4 @@
-import React from "react";
 import { Bar } from "react-chartjs-2";
-import { useNavigate } from "react-router-dom";
 
 const Slide = ({ data, onClick, noBorder = false }) => {
   const options = {

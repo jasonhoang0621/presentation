@@ -31,7 +31,7 @@ const Presentation = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-3">
         {[1, 2, 3].map((item, index) => (
           <div key={index}>
-            <Slide data={null} onClick={() => setDetailModal(true)} />
+            <Slide data={data} onClick={() => setDetailModal(true)} />
           </div>
         ))}
       </div>

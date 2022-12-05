@@ -1,8 +1,9 @@
-import { Col, Popover, Row, Select } from "antd";
-import React from "react";
-import SmallSlide from "./SmallSlide";
 import { FileAddOutlined } from "@ant-design/icons";
+import { Col, Popover, Row } from "antd";
+import React from "react";
 import { SlideType } from "src/helpers/slide";
+import MultipleChoice from "./MultipleChoice";
+import SmallSlide from "./SmallSlide";
 
 const EditPresentation = () => {
   const [showAddPopover, setShowAddPopover] = React.useState(false);
@@ -10,18 +11,19 @@ const EditPresentation = () => {
     {
       id: 1,
       type: SlideType.MULTIPLE_CHOICE,
-      content: "hello",
+      question: "hello",
     },
     {
       id: 2,
       type: SlideType.MULTIPLE_CHOICE,
-      content: "hello",
+      question: "okokoko",
     },
   ]);
 
+  const [activeSlide, setActiveSlide] = React.useState(data ? data[0] : null);
+
   const handleAddNewSlide = (type) => {
     setShowAddPopover(false);
-
     switch (type) {
       case SlideType.MULTIPLE_CHOICE:
         setData([
@@ -29,7 +31,7 @@ const EditPresentation = () => {
           {
             id: data.length + 1,
             type: SlideType.MULTIPLE_CHOICE,
-            content: "",
+            question: "",
           },
         ]);
         break;
@@ -39,7 +41,7 @@ const EditPresentation = () => {
           {
             id: data.length + 1,
             type: SlideType.HEADING,
-            content: "",
+            question: "",
           },
         ]);
         break;
@@ -49,7 +51,7 @@ const EditPresentation = () => {
           {
             id: data.length + 1,
             type: SlideType.PARAGRAPH,
-            content: "",
+            question: "",
           },
         ]);
         break;
@@ -58,14 +60,24 @@ const EditPresentation = () => {
     }
   };
 
+  const handleDeleteSlide = (deleteSlide) => {
+    setData(data.filter((item) => item.id !== deleteSlide));
+  };
+
   return (
     <div>
-      <Row gutter={[20, 20]}>
+      <Row gutter={[20, 20]} className="edit-presentation">
         <Col span={4}>
-          <div className="bg-[#495e54] h-screen w-full p-2 pt-2 overflow-auto hide-scrollbar">
+          <div className="bg-white h-screen w-full pt-1.5 overflow-auto hide-scrollbar">
             {data.map((item, index) => (
               <div key={index}>
-                <SmallSlide />
+                <SmallSlide
+                  index={index}
+                  data={item}
+                  handleDeleteSlide={handleDeleteSlide}
+                  activeSlide={activeSlide}
+                  setActiveSlide={setActiveSlide}
+                />
               </div>
             ))}
             <div className="flex justify-center mt-3">
@@ -101,9 +113,9 @@ const EditPresentation = () => {
               >
                 <div
                   onClick={() => setShowAddPopover(true)}
-                  className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:opacity-60 cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-[#495e54] flex items-center justify-center hover:opacity-60 cursor-pointer"
                 >
-                  <FileAddOutlined color="#FFF" />
+                  <FileAddOutlined className="text-white" />
                 </div>
               </Popover>
             </div>
@@ -111,11 +123,15 @@ const EditPresentation = () => {
         </Col>
         <Col span={12}>
           <div className="bg-white shadow-lg w-full h-[450px] rounded-[8px] p-5 my-5">
-            hello
+            <div>
+              <p>{activeSlide?.question}</p>
+            </div>
           </div>
         </Col>
         <Col span={8}>
-          <div className="bg-white h-full p-1">hello</div>
+          <div className="bg-white h-full px-5 py-1">
+            <MultipleChoice data={activeSlide} />
+          </div>
         </Col>
       </Row>
     </div>
