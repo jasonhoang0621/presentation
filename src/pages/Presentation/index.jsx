@@ -51,7 +51,7 @@ const Presentation = () => {
         footer={null}
       >
         <p className="text-[18px] mt-0">
-          Are you sure you want to delete this Group?
+          Are you sure you want to delete this Presentation?
         </p>
         <div className="flex justify-end mt-7">
           <button

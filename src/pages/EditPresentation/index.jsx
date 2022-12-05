@@ -9,7 +9,7 @@ const EditPresentation = () => {
     <div>
       <Row gutter={[20, 20]}>
         <Col span={4}>
-          <div className="bg-[#495e54] h-screen w-full p-2 pt-0 overflow-auto">
+          <div className="bg-[#495e54] h-screen w-full p-2 pt-0 overflow-auto hide-scrollbar">
             {data.map((item, index) => (
               <div key={index}>
                 <SmallSlide />
