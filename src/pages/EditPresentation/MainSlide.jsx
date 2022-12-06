@@ -46,7 +46,7 @@ const MainSlide = ({ data }) => {
     <div
       className={`h-full min-h-[30vh] w-full mb-5 p-2 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer`}
     >
-      <p>hello</p>
+      <p>{data?.question}</p>
       <Bar options={options} data={chartData} />
     </div>
   );

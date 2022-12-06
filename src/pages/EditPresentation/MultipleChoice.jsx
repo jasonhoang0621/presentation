@@ -16,6 +16,8 @@ const MultipleChoice = ({ data, setData }) => {
         className="app-input"
         placeholder="Enter question here"
       />
+      <p className="font-semibold text-[16px] mt-3">Answers:</p>
+
       <EditMultipleChoiceAnswer
         value={data?.answers}
         onChange={(value) => {
