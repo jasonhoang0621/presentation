@@ -42,7 +42,7 @@ const Presentation = () => {
         destroyOnClose
         width={"70%"}
       >
-        <Slide noBorder />
+        <Slide noBorder isLabel />
       </Modal>
       <Modal
         title="Confirm Delete"

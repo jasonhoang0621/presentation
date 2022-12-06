@@ -4,6 +4,7 @@ import EditMultipleChoiceAnswer from "src/components/EditMultipleChoiceAnswer";
 const MultipleChoice = ({ data, setData }) => {
   return (
     <div>
+      <p className="font-semibold text-[16px] mb-1">Your Question:</p>
       <Input
         value={data?.question}
         onChange={(e) => {

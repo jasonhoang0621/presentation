@@ -2,6 +2,7 @@ import { FileAddOutlined } from "@ant-design/icons";
 import { Col, Popover, Row } from "antd";
 import React from "react";
 import { SlideType } from "src/helpers/slide";
+import MainSlide from "./MainSlide";
 import MultipleChoice from "./MultipleChoice";
 import SmallSlide from "./SmallSlide";
 
@@ -34,6 +35,7 @@ const EditPresentation = () => {
             id: data.length + 1,
             type: SlideType.MULTIPLE_CHOICE,
             question: "",
+            answers: [],
           },
         ]);
         break;
@@ -139,9 +141,7 @@ const EditPresentation = () => {
         </Col>
         <Col span={12}>
           <div className="bg-white shadow-lg w-full h-[450px] rounded-[8px] p-5 my-5">
-            <div>
-              <p>{activeSlide?.question}</p>
-            </div>
+            <MainSlide data={activeSlide} />
           </div>
         </Col>
         <Col span={8}>

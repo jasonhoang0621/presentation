@@ -40,7 +40,7 @@ const EditMultipleChoiceAnswer = ({ value, onChange }) => {
             </div>
           );
         })}
-      <div className="flex justify-center mt-2 hover:opacity-80 transition-all duration-200">
+      <div className="flex justify-center mt-5 hover:opacity-80 transition-all duration-200">
         <div
           className="cursor-pointer bg-[#495e54] w-8 h-8 flex items-center justify-center rounded-full"
           onClick={handleAdd}
