@@ -12,11 +12,13 @@ const EditPresentation = () => {
       id: 1,
       type: SlideType.MULTIPLE_CHOICE,
       question: "hello",
+      answers: [],
     },
     {
       id: 2,
       type: SlideType.MULTIPLE_CHOICE,
       question: "okokoko",
+      answers: [],
     },
   ]);
 
@@ -64,6 +66,43 @@ const EditPresentation = () => {
     setData(data.filter((item) => item.id !== deleteSlide));
   };
 
+  const handleEditQuestion = (value) => {
+    const newData = data.map((item) => {
+      if (item.id === activeSlide.id) {
+        return {
+          ...item,
+          ...value,
+        };
+      }
+      return item;
+    });
+    setData(newData);
+    setActiveSlide(newData.find((item) => item.id === activeSlide.id));
+  };
+
+  const addSlideMenu = (
+    <div>
+      <p
+        onClick={() => handleAddNewSlide(SlideType.MULTIPLE_CHOICE)}
+        className="py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
+      >
+        Multiple Choice
+      </p>
+      <p
+        onClick={() => handleAddNewSlide(SlideType.HEADING)}
+        className="py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
+      >
+        Heading
+      </p>
+      <p
+        onClick={() => handleAddNewSlide(SlideType.PARAGRAPH)}
+        className="py-2 px-5 border-b border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
+      >
+        Paragraph
+      </p>
+    </div>
+  );
+
   return (
     <div>
       <Row gutter={[20, 20]} className="edit-presentation">
@@ -84,30 +123,7 @@ const EditPresentation = () => {
               <Popover
                 visible={showAddPopover}
                 overlayClassName="add-popover"
-                content={
-                  <>
-                    <p
-                      onClick={() =>
-                        handleAddNewSlide(SlideType.MULTIPLE_CHOICE)
-                      }
-                      className="py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
-                    >
-                      Multiple Choice
-                    </p>
-                    <p
-                      onClick={() => handleAddNewSlide(SlideType.HEADING)}
-                      className="py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
-                    >
-                      Heading
-                    </p>
-                    <p
-                      onClick={() => handleAddNewSlide(SlideType.PARAGRAPH)}
-                      className="py-2 px-5 border-b border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
-                    >
-                      Paragraph
-                    </p>
-                  </>
-                }
+                content={addSlideMenu}
                 trigger="click"
                 placement="bottomLeft"
               >
@@ -130,7 +146,7 @@ const EditPresentation = () => {
         </Col>
         <Col span={8}>
           <div className="bg-white h-full px-5 py-1">
-            <MultipleChoice data={activeSlide} />
+            <MultipleChoice data={activeSlide} setData={handleEditQuestion} />
           </div>
         </Col>
       </Row>
