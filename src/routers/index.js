@@ -26,8 +26,14 @@ const NoLayoutRouters = [
     layout: false,
   },
   {
-    name: "present",
-    path: "/group/:groupId/presentation/:presentationId/present",
+    name: "presentPublic",
+    path: "/group/:groupId/presentation/:presentationId/present/public",
+    element: Present,
+    layout: false,
+  },
+  {
+    name: "presentPrivate",
+    path: "/group/:groupId/presentation/:presentationId/present/private",
     element: Present,
     layout: false,
   },

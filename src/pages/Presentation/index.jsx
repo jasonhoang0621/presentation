@@ -14,19 +14,35 @@ const Presentation = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-end">
-        <button
-          className="button button-danger !py-2 !min-w-[120px]"
-          onClick={() => setDeleteModal(true)}
-        >
-          <span className="!text-[12px]">Delete</span>
-        </button>
-        <button
-          className="button !py-2 !min-w-[120px]"
-          onClick={() => navigate("edit")}
-        >
-          <span className="!text-[12px]">Edit</span>
-        </button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <button
+            className="button button-danger !py-2 !min-w-[120px]"
+            onClick={() => setDeleteModal(true)}
+          >
+            <span className="!text-[12px]">Delete</span>
+          </button>
+          <button
+            className="button !py-2 !min-w-[120px]"
+            onClick={() => navigate("edit")}
+          >
+            <span className="!text-[12px]">Edit</span>
+          </button>
+        </div>
+        <div className="flex items-center">
+          <button
+            className="button button-danger !py-2 !min-w-[120px]"
+            onClick={() => navigate("present/private")}
+          >
+            <span className="!text-[12px]">Private</span>
+          </button>
+          <button
+            className="button !py-2 !min-w-[120px]"
+            onClick={() => navigate("present/public")}
+          >
+            <span className="!text-[12px]">Public</span>
+          </button>
+        </div>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-3">
         {[1, 2, 3].map((item, index) => (
