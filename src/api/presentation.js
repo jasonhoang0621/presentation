@@ -1,14 +1,18 @@
 import { useMutation, useQuery } from "react-query";
 import { axiosClient } from ".";
 
-export const useGetListPresentation = () => {
-  return useQuery("group", () => axiosClient.get("/presentation"), {
-    staleTime: Infinity,
-  });
+export const useGetListPresentation = (id) => {
+  return useQuery(
+    ["presentation", id],
+    () => axiosClient.get(`/presentation?filters[groupId]=${id}`),
+    {
+      staleTime: Infinity,
+    }
+  );
 };
 
-export const useCreateGroup = () => {
-  return useMutation((payload) => axiosClient.post("/group", payload));
+export const useCreatePresentation = () => {
+  return useMutation((payload) => axiosClient.post("/presentation", payload));
 };
 
 export const useDetailGroup = (id) => {

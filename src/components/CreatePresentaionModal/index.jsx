@@ -1,16 +1,20 @@
 import { Form, Input, Modal, notification } from "antd";
 import { useForm } from "antd/lib/form/Form";
-import React from "react";
 import { useQueryClient } from "react-query";
-import { useCreateGroup } from "src/api/group";
+import { useParams } from "react-router-dom";
+import { useCreatePresentation } from "src/api/presentation";
 
-const CreateSlideModal = ({ visible, setVisible }) => {
+const CreatePresentationModal = ({ visible, setVisible }) => {
+  const { id } = useParams();
   const [form] = useForm();
-  const { mutateAsync } = useCreateGroup();
+  const { mutateAsync } = useCreatePresentation();
   const queryClient = useQueryClient();
 
-  const handleCreateGroup = async () => {
+  const handleCreatePresentaion = async () => {
+    if (!id) return notification.error({ message: "Group id is required" });
     const formData = form.getFieldsValue();
+    formData.groupdId = id;
+    console.log(formData);
     const result = await mutateAsync(formData);
     if (result.errorCode) {
       notification.error({
@@ -20,14 +24,14 @@ const CreateSlideModal = ({ visible, setVisible }) => {
       notification.success({
         message: "Create group successfully",
       });
-      queryClient.invalidateQueries("group");
+      queryClient.invalidateQueries(["presentation", id]);
       setVisible(false);
     }
   };
 
   return (
     <Modal
-      title="Create group"
+      title="Create Presentation"
       visible={visible}
       onCancel={() => setVisible(false)}
       footer={null}
@@ -35,16 +39,18 @@ const CreateSlideModal = ({ visible, setVisible }) => {
       <Form form={form} layout="vertical">
         <Form.Item
           name="name"
-          rules={[{ required: true, message: "Please input slide name!" }]}
+          rules={[
+            { required: true, message: "Please input presetation name!" },
+          ]}
         >
-          <Input className="app-input" placeholder="Slide name" />
+          <Input className="app-input" placeholder="Presentation name" />
         </Form.Item>
         <div className="flex justify-center">
           <button
             type="primary"
             htmltype="submit"
             className="button"
-            onClick={handleCreateGroup}
+            onClick={handleCreatePresentaion}
           >
             <span>Create</span>
           </button>
@@ -54,4 +60,4 @@ const CreateSlideModal = ({ visible, setVisible }) => {
   );
 };
 
-export default CreateSlideModal;
+export default CreatePresentationModal;
