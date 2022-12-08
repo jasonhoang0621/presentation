@@ -21,15 +21,9 @@ export const useDetailPresentation = (id) => {
   );
 };
 
-export const useAssignRole = (groupId) => {
+export const useRemovePresentation = (presentationId) => {
   return useMutation((payload) =>
-    axiosClient.patch(`/group/assign/${groupId}`, payload)
-  );
-};
-
-export const useRemoveUser = (groupId) => {
-  return useMutation((payload) =>
-    axiosClient.patch(`/group/${groupId}`, payload)
+    axiosClient.patch(`/destroy/presentation/${presentationId}`, payload)
   );
 };
 

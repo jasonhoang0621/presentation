@@ -1,20 +1,40 @@
-import { Modal, Popover } from "antd";
+import { Modal, notification, Popover } from "antd";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDetailPresentation } from "src/api/presentation";
+import {
+  useDetailPresentation,
+  useRemovePresentation,
+} from "src/api/presentation";
 import Slide from "src/components/Slide";
 
 const Presentation = () => {
   const navigate = useNavigate();
   const { groupId, presentationId } = useParams();
   const [showPopover, setShowPopover] = React.useState(false);
-
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [detailModal, setDetailModal] = React.useState(false);
   const [detailData, setDetailData] = React.useState({});
 
   const { data } = useDetailPresentation(presentationId);
-  console.log(data);
+  const { mutateAsync: deletePresentation } =
+    useRemovePresentation(presentationId);
+
+  const handleDeletePresentation = async () => {
+    const res = await deletePresentation({
+      groupId: groupId,
+    });
+    if (res?.errorCode) {
+      notification.error({
+        message: res?.data,
+      });
+      return;
+    }
+    notification.success({
+      message: "Delete presentation successfully",
+    });
+    setDeleteModal(false);
+    navigate(`/group/${groupId}`);
+  };
 
   const actionContent = (
     <div className="p-0">
@@ -41,7 +61,6 @@ const Presentation = () => {
           setDeleteModal(true);
           setShowPopover(false);
         }}
-        s
         className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
       >
         <p className="text-[16px]">Delete</p>
@@ -108,7 +127,7 @@ const Presentation = () => {
           </button>
           <button
             className="button !py-2 !min-w-[120px]"
-            onClick={() => setDeleteModal(false)}
+            onClick={handleDeletePresentation}
           >
             <span className="!text-[12px]">Delete</span>
           </button>

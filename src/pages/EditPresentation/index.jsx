@@ -1,12 +1,16 @@
 import { FileAddOutlined } from "@ant-design/icons";
 import { Col, Popover, Row } from "antd";
 import React from "react";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useDetailPresentation } from "src/api/presentation";
 import { SlideType } from "src/helpers/slide";
 import MainSlide from "./MainSlide";
 import MultipleChoice from "./MultipleChoice";
 import SmallSlide from "./SmallSlide";
 
 const EditPresentation = () => {
+  const { presentationId } = useParams();
   const [showAddPopover, setShowAddPopover] = React.useState(false);
   const [data, setData] = React.useState([
     {
@@ -22,8 +26,11 @@ const EditPresentation = () => {
       answers: [],
     },
   ]);
-
   const [activeSlide, setActiveSlide] = React.useState(data ? data[0] : null);
+  console.log(data);
+
+  const { data: rawData } = useDetailPresentation(presentationId);
+  console.log(rawData);
 
   const handleAddNewSlide = (type) => {
     setShowAddPopover(false);
@@ -82,6 +89,11 @@ const EditPresentation = () => {
     setActiveSlide(newData.find((item) => item.id === activeSlide.id));
   };
 
+  // useEffect(() => {
+  //   if (!rawData) return;
+  //   setData(rawData?.data);
+  // }, [rawData]);
+
   const addSlideMenu = (
     <div>
       <p
@@ -110,17 +122,18 @@ const EditPresentation = () => {
       <Row gutter={[20, 20]} className="edit-presentation">
         <Col span={4}>
           <div className="bg-white h-screen w-full pt-1.5 overflow-auto hide-scrollbar">
-            {data.map((item, index) => (
-              <div key={index}>
-                <SmallSlide
-                  index={index}
-                  data={item}
-                  handleDeleteSlide={handleDeleteSlide}
-                  activeSlide={activeSlide}
-                  setActiveSlide={setActiveSlide}
-                />
-              </div>
-            ))}
+            {data &&
+              data?.slide.map((item, index) => (
+                <div key={index}>
+                  <SmallSlide
+                    index={index}
+                    data={item}
+                    handleDeleteSlide={handleDeleteSlide}
+                    activeSlide={activeSlide}
+                    setActiveSlide={setActiveSlide}
+                  />
+                </div>
+              ))}
             <div className="flex justify-center mt-3">
               <Popover
                 visible={showAddPopover}

@@ -36,7 +36,7 @@ const Group = () => {
   return (
     <div>
       <div className="flex items-center justify-end mb-3">
-        {user?.role == "owner" && (
+        {user?.role === "owner" && (
           <>
             <button
               className="button button-danger !py-2 !min-w-[120px]"
