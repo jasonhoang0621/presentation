@@ -12,25 +12,10 @@ import SmallSlide from "./SmallSlide";
 const EditPresentation = () => {
   const { presentationId } = useParams();
   const [showAddPopover, setShowAddPopover] = React.useState(false);
-  const [data, setData] = React.useState([
-    {
-      id: 1,
-      type: SlideType.MULTIPLE_CHOICE,
-      question: "hello",
-      answers: [],
-    },
-    {
-      id: 2,
-      type: SlideType.MULTIPLE_CHOICE,
-      question: "okokoko",
-      answers: [],
-    },
-  ]);
-  const [activeSlide, setActiveSlide] = React.useState(data ? data[0] : null);
-  console.log(data);
-
+  const [data, setData] = React.useState(null);
   const { data: rawData } = useDetailPresentation(presentationId);
-  console.log(rawData);
+
+  const [activeSlide, setActiveSlide] = React.useState(data ? data[0] : null);
 
   const handleAddNewSlide = (type) => {
     setShowAddPopover(false);
@@ -89,10 +74,12 @@ const EditPresentation = () => {
     setActiveSlide(newData.find((item) => item.id === activeSlide.id));
   };
 
-  // useEffect(() => {
-  //   if (!rawData) return;
-  //   setData(rawData?.data);
-  // }, [rawData]);
+  useEffect(() => {
+    if (!rawData) return;
+    setData(rawData?.data);
+  }, [rawData]);
+
+  console.log(data);
 
   const addSlideMenu = (
     <div>
@@ -116,6 +103,8 @@ const EditPresentation = () => {
       </p>
     </div>
   );
+
+  console.log(activeSlide);
 
   return (
     <div>

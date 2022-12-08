@@ -31,11 +31,11 @@ const MainSlide = ({ data }) => {
   };
 
   const chartData = {
-    labels: data?.answers,
+    labels: data?.answer,
     datasets: [
       {
         label: "Dataset 1",
-        data: data?.answers.map(() => Math.round(Math.random() * 100)),
+        data: data?.answer.map(() => Math.round(Math.random() * 100)),
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
