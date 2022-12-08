@@ -1,55 +1,85 @@
-import { Modal } from "antd";
+import { Modal, Popover } from "antd";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDetailPresentation } from "src/api/presentation";
 import Slide from "src/components/Slide";
 
 const Presentation = () => {
   const navigate = useNavigate();
+  const { groupId, presentationId } = useParams();
+  const [showPopover, setShowPopover] = React.useState(false);
+
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [detailModal, setDetailModal] = React.useState(false);
-  const data = {
-    id: 1,
-    name: "hello",
-  };
+  const [detailData, setDetailData] = React.useState({});
+
+  const { data } = useDetailPresentation(presentationId);
+  console.log(data);
+
+  const actionContent = (
+    <div className="p-0">
+      <div
+        onClick={() => navigate("present/public")}
+        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+      >
+        <p className="text-[16px]">Public Present</p>
+      </div>
+      <div
+        onClick={() => navigate("present/private")}
+        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+      >
+        <p className="text-[16px]">Private Present</p>
+      </div>
+      <div
+        onClick={() => navigate("edit")}
+        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+      >
+        <p className="text-[16px]">Edit</p>
+      </div>
+      <div
+        onClick={() => {
+          setDeleteModal(true);
+          setShowPopover(false);
+        }}
+        s
+        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+      >
+        <p className="text-[16px]">Delete</p>
+      </div>
+    </div>
+  );
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <button
-            className="button button-danger !py-2 !min-w-[120px]"
-            onClick={() => setDeleteModal(true)}
-          >
-            <span className="!text-[12px]">Delete</span>
+        <p className="text-3xl font-bold mb-5">{data?.data?.name}</p>
+        <Popover
+          content={actionContent}
+          placement="bottomRight"
+          trigger="click"
+          overlayClassName="add-popover"
+          visible={showPopover}
+          onVisibleChange={(visible) => setShowPopover(visible)}
+        >
+          <button className="button !py-2 !min-w-[120px]">
+            <span className="!text-[14px]">Action</span>
           </button>
-          <button
-            className="button !py-2 !min-w-[120px]"
-            onClick={() => navigate("edit")}
-          >
-            <span className="!text-[12px]">Edit</span>
-          </button>
-        </div>
-        <div className="flex items-center">
-          <button
-            className="button button-danger !py-2 !min-w-[120px]"
-            onClick={() => navigate("present/private")}
-          >
-            <span className="!text-[12px]">Private</span>
-          </button>
-          <button
-            className="button !py-2 !min-w-[120px]"
-            onClick={() => navigate("present/public")}
-          >
-            <span className="!text-[12px]">Public</span>
-          </button>
-        </div>
+        </Popover>
       </div>
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-3">
-        {[1, 2, 3].map((item, index) => (
-          <div key={index}>
-            <Slide data={data} onClick={() => setDetailModal(true)} />
-          </div>
-        ))}
+        {data &&
+          data?.data?.slide.map((item, index) => (
+            <div key={index}>
+              <Slide
+                data={item}
+                onClick={() => {
+                  setDetailData(item);
+                  setDetailModal(true);
+                }}
+              />
+            </div>
+          ))}
       </div>
       <Modal
         visible={detailModal}
@@ -58,7 +88,7 @@ const Presentation = () => {
         destroyOnClose
         width={"70%"}
       >
-        <Slide noBorder isLabel />
+        <Slide noBorder isLabel data={detailData} />
       </Modal>
       <Modal
         title="Confirm Delete"

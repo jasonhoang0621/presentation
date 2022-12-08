@@ -13,7 +13,7 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
   const handleCreatePresentaion = async () => {
     if (!id) return notification.error({ message: "Group id is required" });
     const formData = form.getFieldsValue();
-    formData.groupdId = id;
+    formData.groupId = id;
     console.log(formData);
     const result = await mutateAsync(formData);
     if (result.errorCode) {
@@ -26,6 +26,7 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
       });
       queryClient.invalidateQueries(["presentation", id]);
       setVisible(false);
+      form.resetFields();
     }
   };
 
@@ -35,6 +36,7 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
       visible={visible}
       onCancel={() => setVisible(false)}
       footer={null}
+      destroyOnClose
     >
       <Form form={form} layout="vertical">
         <Form.Item

@@ -22,6 +22,7 @@ const CreateGroupModal = ({ visible, setVisible }) => {
       });
       queryClient.invalidateQueries("group");
       setVisible(false);
+      form.resetFields();
     }
   };
 
@@ -31,6 +32,7 @@ const CreateGroupModal = ({ visible, setVisible }) => {
       visible={visible}
       onCancel={() => setVisible(false)}
       footer={null}
+      destroyOnClose
     >
       <Form form={form} layout="vertical">
         <Form.Item

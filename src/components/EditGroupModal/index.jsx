@@ -4,21 +4,20 @@ import React, { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import {
-  useAssignRole,
-  useDetailGroup,
-  useInviteUser,
-  useRemoveUser,
-} from "src/api/group";
+import { useAssignRole, useInviteUser, useRemoveUser } from "src/api/group";
 import { useGetListUser } from "src/api/user";
 
-const EditGroupModal = ({ visible, setVisible }) => {
+const EditGroupModal = ({
+  visible,
+  setVisible,
+  groupDetailData,
+  loadingGroup,
+  user,
+}) => {
   const pararms = useParams();
   const auth = useSelector((state) => state.auth);
   const queryClient = useQueryClient();
-  const [user, setUser] = useState({
-    role: "member",
-  });
+
   const [removeUserModal, setRemoveUserModal] = React.useState(false);
   const [assignUserModal, setAssignUserModal] = React.useState(false);
   const [shareLinkModal, setShareLinkModal] = React.useState(false);
@@ -29,25 +28,12 @@ const EditGroupModal = ({ visible, setVisible }) => {
   const [listInviteByEmail, setListInviteByEmail] = React.useState([]);
   const [role, setRole] = useState("member");
 
-  const { data: groupDetailData = null, isLoading: loadingGroup } =
-    useDetailGroup(pararms.id);
   const { data: listUser = null } = useGetListUser();
 
   const { mutateAsync: inviteUser } = useInviteUser(pararms.id);
 
   const { mutateAsync: removeUserGroup } = useRemoveUser(pararms.id);
   const { mutateAsync: assignMember } = useAssignRole(pararms.id);
-
-  useEffect(() => {
-    if (groupDetailData) {
-      const temp = groupDetailData.data.user.filter(
-        (item) => item.id === auth?.user?.id
-      );
-      setUser({
-        role: temp[0]?.role ?? "member",
-      });
-    }
-  }, [loadingGroup, auth, groupDetailData]);
 
   const showRemoveButton = (record) => {
     if (user.role === "owner") {

@@ -6,7 +6,7 @@ export const useGetListPresentation = (id) => {
     ["presentation", id],
     () => axiosClient.get(`/presentation?filters[groupId]=${id}`),
     {
-      staleTime: Infinity,
+      staleTime: 10000,
     }
   );
 };
@@ -15,8 +15,10 @@ export const useCreatePresentation = () => {
   return useMutation((payload) => axiosClient.post("/presentation", payload));
 };
 
-export const useDetailGroup = (id) => {
-  return useQuery(["group", id], () => axiosClient.get(`/group/${id}`));
+export const useDetailPresentation = (id) => {
+  return useQuery(["presentation", id], () =>
+    axiosClient.get(`/presentation/${id}`)
+  );
 };
 
 export const useAssignRole = (groupId) => {
