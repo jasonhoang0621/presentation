@@ -1,9 +1,12 @@
 import { FileAddOutlined } from "@ant-design/icons";
-import { Col, Popover, Row } from "antd";
+import { Col, notification, Popover, Row } from "antd";
 import React from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useDetailPresentation } from "src/api/presentation";
+import {
+  useDetailPresentation,
+  useUpdatePresentation,
+} from "src/api/presentation";
 import { SlideType } from "src/helpers/slide";
 import MainSlide from "./MainSlide";
 import MultipleChoice from "./MultipleChoice";
@@ -14,6 +17,7 @@ const EditPresentation = () => {
   const [showAddPopover, setShowAddPopover] = React.useState(false);
   const [data, setData] = React.useState(null);
   const { data: rawData } = useDetailPresentation(presentationId);
+  const { mutateAsync } = useUpdatePresentation(presentationId);
 
   const [activeSlide, setActiveSlide] = React.useState(data ? data[0] : null);
 
@@ -91,6 +95,20 @@ const EditPresentation = () => {
     setActiveSlide(newSlide[activeSlide.index]);
   };
 
+  const handleSave = async () => {
+    const res = await mutateAsync(data);
+    console.log(res);
+    if (res?.errorCode) {
+      notification.error({
+        message: res?.data || "Save failed",
+      });
+      return;
+    }
+    notification.success({
+      message: "Save success",
+    });
+  };
+
   useEffect(() => {
     if (!rawData) return;
     setData(rawData?.data);
@@ -99,7 +117,7 @@ const EditPresentation = () => {
   useEffect(() => {
     if (!data) return;
     setActiveSlide(data?.slide[data?.slide.length - 1]);
-  }, [data]);
+  }, [data?.slide.length]);
 
   const addSlideMenu = (
     <div>
@@ -166,6 +184,14 @@ const EditPresentation = () => {
         </Col>
         <Col span={8}>
           <div className="bg-white h-full px-5 py-1">
+            <div className="flex justify-end">
+              <button
+                onClick={handleSave}
+                className="button !py-2 !min-w-[120px]"
+              >
+                <span className="!text-[12px]">Save</span>
+              </button>
+            </div>
             {activeSlide && (
               <MultipleChoice data={activeSlide} setData={handleEditQuestion} />
             )}

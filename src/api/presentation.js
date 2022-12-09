@@ -27,13 +27,8 @@ export const useRemovePresentation = (presentationId) => {
   );
 };
 
-export const useInviteUser = (groupId) => {
+export const useUpdatePresentation = (presentationId) => {
   return useMutation((payload) =>
-    axiosClient.post(`/invite/${groupId}`, payload)
-  );
-};
-export const useAcceptInvite = (inviteId) => {
-  return useMutation((payload) =>
-    axiosClient.post(`/invite/accept/${inviteId}`, payload)
+    axiosClient.patch(`/presentation/${presentationId}`, payload)
   );
 };
