@@ -26,7 +26,7 @@ const SmallSlide = ({
         </div>
         <div
           onClick={() => {
-            setDeleteSlide(data?.id);
+            setDeleteSlide(data?.index);
             setConfirmDeleteModal(true);
           }}
           className="hidden absolute -top-0 -right-0 w-5 h-5 bg-[#495e54] transition-all duration-200 cursor-pointer items-center justify-center rounded-full small-slide-close"
