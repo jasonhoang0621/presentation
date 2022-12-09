@@ -13,7 +13,7 @@ const Present = () => {
     id: 1,
     type: SlideType.MULTIPLE_CHOICE,
     question: "What is your favorite color?",
-    answers: [
+    answer: [
       "Red",
       "Blue",
       "Green",
@@ -75,7 +75,7 @@ const Present = () => {
       <div style={{ height: "calc(100vh - 64px)" }}>
         <p className="text-center text-2xl mt-5">{data?.question}</p>
         <div className="mt-10 flex flex-wrap">
-          {data?.answers.map((answer, index) => (
+          {data?.answer.map((answer, index) => (
             <div
               key={index}
               className={`app-input text-center w-[32%] mx-auto cursor-pointer ${

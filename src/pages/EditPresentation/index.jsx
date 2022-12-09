@@ -21,35 +21,46 @@ const EditPresentation = () => {
     setShowAddPopover(false);
     switch (type) {
       case SlideType.MULTIPLE_CHOICE:
-        setData([
+        setData({
           ...data,
-          {
-            id: data.length + 1,
-            type: SlideType.MULTIPLE_CHOICE,
-            question: "",
-            answers: [],
-          },
-        ]);
+          slide: [
+            ...data.slide,
+            {
+              type: SlideType.MULTIPLE_CHOICE,
+              question: "",
+              answer: [],
+              index: data.slide.length,
+            },
+          ],
+        });
         break;
       case SlideType.HEADING:
-        setData([
+        setData({
           ...data,
-          {
-            id: data.length + 1,
-            type: SlideType.HEADING,
-            question: "",
-          },
-        ]);
+          slide: [
+            ...data.slide,
+            {
+              type: SlideType.HEADING,
+              question: "",
+              answer: [],
+              index: data.slide.length,
+            },
+          ],
+        });
         break;
       case SlideType.PARAGRAPH:
-        setData([
+        setData({
           ...data,
-          {
-            id: data.length + 1,
-            type: SlideType.PARAGRAPH,
-            question: "",
-          },
-        ]);
+          slide: [
+            ...data.slide,
+            {
+              type: SlideType.PARAGRAPH,
+              question: "",
+              answer: [],
+              index: data.slide.length,
+            },
+          ],
+        });
         break;
       default:
         break;
@@ -61,8 +72,8 @@ const EditPresentation = () => {
   };
 
   const handleEditQuestion = (value) => {
-    const newData = data.map((item) => {
-      if (item.id === activeSlide.id) {
+    const newSlide = data?.slide.map((item) => {
+      if (item.index === activeSlide?.index) {
         return {
           ...item,
           ...value,
@@ -70,8 +81,11 @@ const EditPresentation = () => {
       }
       return item;
     });
-    setData(newData);
-    setActiveSlide(newData.find((item) => item.id === activeSlide.id));
+    setData({
+      ...data,
+      slide: newSlide,
+    });
+    setActiveSlide(newSlide[activeSlide.index]);
   };
 
   useEffect(() => {
@@ -79,7 +93,10 @@ const EditPresentation = () => {
     setData(rawData?.data);
   }, [rawData]);
 
-  console.log(data);
+  useEffect(() => {
+    if (!data) return;
+    setActiveSlide(data?.slide[data?.slide.length - 1]);
+  }, [data]);
 
   const addSlideMenu = (
     <div>
@@ -103,8 +120,6 @@ const EditPresentation = () => {
       </p>
     </div>
   );
-
-  console.log(activeSlide);
 
   return (
     <div>
@@ -148,7 +163,9 @@ const EditPresentation = () => {
         </Col>
         <Col span={8}>
           <div className="bg-white h-full px-5 py-1">
-            <MultipleChoice data={activeSlide} setData={handleEditQuestion} />
+            {activeSlide && (
+              <MultipleChoice data={activeSlide} setData={handleEditQuestion} />
+            )}
           </div>
         </Col>
       </Row>

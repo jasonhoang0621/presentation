@@ -32,7 +32,9 @@ const Slide = ({ data, onClick, noBorder = false, isLabel = false }) => {
 
   const chartData = {
     //get the first key of the object in item inarray
-    labels: data?.answer.map((item) => Object.keys(item)[0]),
+    labels: data?.answer
+      ? data?.answer.map((item) => Object.keys(item)[0])
+      : [],
     datasets: [
       {
         label: "Dataset 1",

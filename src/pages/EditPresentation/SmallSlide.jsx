@@ -17,7 +17,7 @@ const SmallSlide = ({
       <div
         onClick={() => setActiveSlide(data)}
         className={`flex p-2 h-[120px] hover:opacity-90 transition-all duration-200 relative small-slide ${
-          activeSlide?.id === data?.id ? "bg-[#495e544b]" : ""
+          activeSlide?.index === data?.index ? "bg-[#495e544b]" : ""
         }`}
       >
         <div className="mr-2">{index}</div>

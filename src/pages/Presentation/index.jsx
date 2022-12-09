@@ -1,5 +1,6 @@
 import { Modal, notification, Popover } from "antd";
 import React from "react";
+import { useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useDetailPresentation,
@@ -14,6 +15,8 @@ const Presentation = () => {
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [detailModal, setDetailModal] = React.useState(false);
   const [detailData, setDetailData] = React.useState({});
+
+  const queryClient = useQueryClient();
 
   const { data } = useDetailPresentation(presentationId);
   const { mutateAsync: deletePresentation } =
@@ -32,6 +35,7 @@ const Presentation = () => {
     notification.success({
       message: "Delete presentation successfully",
     });
+    queryClient.invalidateQueries("presentation");
     setDeleteModal(false);
     navigate(`/group/${groupId}`);
   };

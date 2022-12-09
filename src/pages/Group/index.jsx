@@ -58,7 +58,10 @@ const Group = () => {
           data.data.map((item, index) => (
             <div key={index}>
               <div>
-                <Slide onClick={() => navigate(`presentation/${item?.id}`)} />
+                <Slide
+                  data={item?.slide.length > 0 ? item?.slide[0] : null}
+                  onClick={() => navigate(`presentation/${item?.id}`)}
+                />
               </div>
               <p className="text-center mb-5 mt-2 font-semibold">
                 {item?.name}

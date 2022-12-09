@@ -8,6 +8,10 @@ const MultipleChoice = ({ data, setData }) => {
       <Input
         value={data?.question}
         onChange={(e) => {
+          console.log({
+            ...data,
+            question: e.target.value,
+          });
           setData({
             ...data,
             question: e.target.value,
@@ -19,11 +23,11 @@ const MultipleChoice = ({ data, setData }) => {
       <p className="font-semibold text-[16px] mt-3">Answers:</p>
 
       <EditMultipleChoiceAnswer
-        value={data?.answers}
+        value={data?.answer}
         onChange={(value) => {
           setData({
             ...data,
-            answers: value,
+            answer: value,
           });
         }}
       />
