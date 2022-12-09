@@ -6,6 +6,7 @@ import {
   useDetailPresentation,
   useRemovePresentation,
 } from "src/api/presentation";
+import PresentModal from "src/components/PresentModal";
 import Slide from "src/components/Slide";
 
 const Presentation = () => {
@@ -15,6 +16,7 @@ const Presentation = () => {
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [detailModal, setDetailModal] = React.useState(false);
   const [detailData, setDetailData] = React.useState({});
+  const [presentModal, setPresentModal] = React.useState(false);
 
   const queryClient = useQueryClient();
 
@@ -88,6 +90,12 @@ const Presentation = () => {
             <span className="!text-[14px]">Action</span>
           </button>
         </Popover>
+        <button
+          onClick={() => setPresentModal(true)}
+          className="button !py-2 !min-w-[120px]"
+        >
+          <span className="!text-[14px]">Test Socket</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-3">
@@ -137,6 +145,7 @@ const Presentation = () => {
           </button>
         </div>
       </Modal>
+      <PresentModal visible={presentModal} setVisible={setPresentModal} />
     </div>
   );
 };
