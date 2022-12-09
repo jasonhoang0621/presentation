@@ -1,10 +1,10 @@
-import {createContext} from 'react';
-import {io, Socket} from 'socket.io-client';
-const SOCKET_URL = "http://localhost:3000"
+import { createContext } from "react";
+import { io } from "socket.io-client";
+const SOCKET_URL = "http://localhost:3000";
 let socket = null;
-let socketToken = '';
+let socketToken = "";
 export const getSocket = async () => {
-  const token = localStorage.getItem('token') || '';
+  const token = localStorage.getItem("token") || "";
   if (!token) return null;
   if (socket && token === socketToken) return socket;
   if (token) {

@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
-import { SlideType } from "src/helpers/slide";
 import { WechatOutlined } from "@ant-design/icons";
 import { Drawer, Input } from "antd";
-import { useState } from "react";
-import { useEffect } from "react";
-import { emitJoinChat } from "src/socket/emit";
+import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
+import { listenChat, listenPresentation } from "src/socket/listen";
+import { offChat, offPresentation } from "src/socket/off";
 
 const Present = () => {
+  const { presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatMessage, setChatMessage] = React.useState("");
 
@@ -67,7 +68,17 @@ const Present = () => {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    emitJoinChat(socket, "test124");
+    if (!socket) return;
+    listenPresentation(socket, presentationId);
+    listenChat(socket, presentationId);
+
+    return () => {
+      offChat(socket, presentationId);
+      offPresentation(socket, presentationId);
+    };
+  }, [socket, presentationId]);
+
+  useEffect(() => {
     const chatBox = document.getElementById("chat-box");
     if (chatBox) {
       chatBox.scrollTop = chatBox.scrollHeight;

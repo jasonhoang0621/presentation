@@ -1,24 +1,15 @@
 export const offUserJoin = (socket) => {
-  socket?.off('userJoin', () => {});
+  socket?.off("userJoin", () => {});
   return true;
 };
 
-export const offUserLeft = (socket) => {
-  socket?.off('userLeft', () => {});
+export const offPresentation = (socket, presentationId) => {
+  socket.off(`present-${presentationId}`);
+
   return true;
 };
 
-export const offTyping = (socket) => {
-  socket?.off('typing', () => {});
-  return true;
-};
-
-export const offStopTyping = (socket) => {
-  socket?.off('stopTyping', () => {});
-  return true;
-};
-
-export const offNewMessage = (socket) => {
-  socket?.off('newMessage', () => {});
+export const offChat = (socket, presentationId) => {
+  socket.off(`chat-${presentationId}`);
   return true;
 };

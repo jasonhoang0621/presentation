@@ -40,13 +40,13 @@ const Root = () => {
     setSocket(await getSocket());
   };
   useEffect(() => {
-    connectSocket()
+    connectSocket();
     return () => {
       if (socket) {
         socket.disconnect();
       }
     };
-  }, [])
+  }, []);
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>
       <QueryClientProvider client={queryClient}>
