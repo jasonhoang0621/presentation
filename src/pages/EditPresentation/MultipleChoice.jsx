@@ -7,21 +7,17 @@ const MultipleChoice = ({ data, setData }) => {
       <p className="font-semibold text-[16px] mb-1">Your Question:</p>
       <Input
         value={data?.question}
-        onChange={(e) => {
-          console.log({
-            ...data,
-            question: e.target.value,
-          });
+        onChange={(e) =>
           setData({
             ...data,
             question: e.target.value,
-          });
-        }}
+          })
+        }
         className="app-input"
         placeholder="Enter question here"
+        maxLength={150}
       />
       <p className="font-semibold text-[16px] mt-3">Answers:</p>
-
       <EditMultipleChoiceAnswer
         value={data?.answer}
         onChange={(value) => {

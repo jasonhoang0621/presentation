@@ -5,7 +5,10 @@ import { DeleteOutlined, AppstoreAddOutlined } from "@ant-design/icons";
 const EditMultipleChoiceAnswer = ({ value, onChange }) => {
   const handleAdd = () => {
     const newValue = [...value];
-    newValue.push(`Answer ${newValue.length + 1}`);
+    newValue.push({
+      value: `Answer ${newValue.length + 1}`,
+      amount: 0,
+    });
     onChange(newValue);
   };
 
@@ -23,13 +26,14 @@ const EditMultipleChoiceAnswer = ({ value, onChange }) => {
             <div key={index} className="flex items-center gap-x-2">
               <Input
                 type="text"
-                value={item}
+                value={item.value}
                 className="app-input"
                 onChange={(e) => {
                   const newValue = [...value];
-                  newValue[index] = e.target.value;
+                  newValue[index].value = e.target.value;
                   onChange(newValue);
                 }}
+                maxLength={50}
               />
               <div
                 className="cursor-pointer flex items-center text-[20px]"

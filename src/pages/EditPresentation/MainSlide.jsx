@@ -31,11 +31,10 @@ const MainSlide = ({ data }) => {
   };
 
   const chartData = {
-    labels: data?.answer,
+    labels: data?.answer.map((item) => item.value),
     datasets: [
       {
-        label: "Dataset 1",
-        data: data?.answer.map(() => Math.round(Math.random() * 100)),
+        data: data?.answer.map((item) => item.amount),
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
@@ -44,12 +43,12 @@ const MainSlide = ({ data }) => {
 
   return (
     <div
-      className={`h-full min-h-[30vh] w-full mb-5 p-2 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer`}
+      className={`h-full min-h-[30vh w-full mb-5 p-2 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer overflow-hidden`}
     >
-      <p>{data?.question}</p>
+      <p className="break-all">{data?.question}</p>
       <Bar options={options} data={chartData} />
     </div>
   );
 };
 
-export default MainSlide;
+export default React.memo(MainSlide);

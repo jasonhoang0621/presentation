@@ -68,7 +68,10 @@ const EditPresentation = () => {
   };
 
   const handleDeleteSlide = (deleteSlide) => {
-    setData(data.filter((item) => item.id !== deleteSlide));
+    setData({
+      ...data,
+      slide: data?.slide.filter((item) => item.index !== deleteSlide),
+    });
   };
 
   const handleEditQuestion = (value) => {
@@ -158,7 +161,7 @@ const EditPresentation = () => {
         </Col>
         <Col span={12}>
           <div className="bg-white shadow-lg w-full h-[450px] rounded-[8px] p-5 my-5">
-            <MainSlide data={activeSlide} />
+            {activeSlide && <MainSlide data={activeSlide} />}
           </div>
         </Col>
         <Col span={8}>

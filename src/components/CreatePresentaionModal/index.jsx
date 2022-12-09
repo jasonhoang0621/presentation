@@ -10,11 +10,10 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
   const { mutateAsync } = useCreatePresentation();
   const queryClient = useQueryClient();
 
-  const handleCreatePresentaion = async () => {
+  const handleCreatePresentation = async () => {
     if (!id) return notification.error({ message: "Group id is required" });
     const formData = form.getFieldsValue();
     formData.groupId = id;
-    console.log(formData);
     const result = await mutateAsync(formData);
     if (result.errorCode) {
       notification.error({
@@ -52,7 +51,7 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
             type="primary"
             htmltype="submit"
             className="button"
-            onClick={handleCreatePresentaion}
+            onClick={handleCreatePresentation}
           >
             <span>Create</span>
           </button>
