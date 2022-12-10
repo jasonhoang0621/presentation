@@ -1,4 +1,8 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  CaretLeftOutlined,
+} from "@ant-design/icons";
 import { Layout as LayoutAntd, Menu, Spin } from "antd";
 import "./layout.css";
 
@@ -78,24 +82,28 @@ const Layout = ({ sider = false }) => {
         )}
         <LayoutAntd className="site-LayoutAntd">
           <Header
-            className={`site-layout-background w-full flex items-center p-0 ${
-              sider ? "justify-between" : "justify-end"
-            }`}
+            className={`site-layout-background w-full flex items-center p-0 justify-between 
+            ${sider ? "px-[16px]" : "px-[24px]"}`}
           >
-            {sider &&
-              React.createElement(
-                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-                {
+            {sider
+              ? React.createElement(
+                  collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                  {
+                    className: "trigger",
+                    onClick: () => setCollapsed(!collapsed),
+                  }
+                )
+              : React.createElement(CaretLeftOutlined, {
                   className: "trigger",
-                  onClick: () => setCollapsed(!collapsed),
-                }
-              )}
+                  onClick: () => navigate(-1),
+                  style: { fontSize: "20px", color: "#fff" },
+                })}
             <div className="flex items-center">
               <UsergroupAddOutlined
                 className="text-white text-[22px] cursor-pointer hover:opacity-60 mr-5"
                 onClick={() => setCreateGroupModal(true)}
               />
-              <div className="mr-10 mb-2 relative">
+              <div className="mb-2 relative">
                 <div className="user-icon-header">
                   <UserOutlined className="text-white text-[20px] cursor-pointer hover:opacity-60" />
                   <ul className="hidden absolute right-0 top-[100%] bg-white z-10 min-w-[170px] shadow-2xl p-0 m-0 list-none user-icon-header-dropdown transition-all">

@@ -46,6 +46,7 @@ const Root = () => {
         socket.disconnect();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>
