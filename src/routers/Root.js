@@ -14,6 +14,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { ToastContainer } from "react-toastify";
 
 const createQueryClient = () => {
   const queryCache = new QueryCache();
@@ -65,6 +66,18 @@ const Root = () => {
             />
             <Route path="*" element={<Navigate to={`/login`} replace />} />
           </Routes>
+          <ToastContainer
+            position="bottom-left"
+            autoClose={1500}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
         </BrowserRouter>
       </QueryClientProvider>
     </SocketContext.Provider>

@@ -1,7 +1,11 @@
+import { WechatOutlined } from "@ant-design/icons";
 import { Drawer, Input, Select, Spin } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
 import { SocketContext } from "src/socket/context";
 import {
@@ -11,11 +15,6 @@ import {
 } from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
-import { WechatOutlined } from "@ant-design/icons";
-import { useGetListChat } from "src/api/chat";
-import { useSelector } from "react-redux";
-import { useRef } from "react";
-import { useQueryClient } from "react-query";
 
 const Present = () => {
   const { socket } = useContext(SocketContext);
@@ -53,7 +52,12 @@ const Present = () => {
       console.log(data);
     });
     listenChat(socket, presentationId, (data) => {
+      toast(data?.data?.message);
       setChatData([...chatData, data?.data]);
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
     });
     return () => {
       offChat(socket, presentationId);
