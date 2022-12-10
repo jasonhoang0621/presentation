@@ -11,5 +11,5 @@ export const createPresentation = (socket, presentationId) => {
 };
 
 export const changeSlide = (socket, presentationId, index) => {
-  socket?.emit(`present-${presentationId}`, { index });
+  socket?.emit(`present-${presentationId}`, { index, presentationId });
 };

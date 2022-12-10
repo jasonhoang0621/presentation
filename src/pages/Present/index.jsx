@@ -69,7 +69,9 @@ const Present = () => {
 
   useEffect(() => {
     if (!socket) return;
-    listenPresentation(socket, presentationId);
+    listenPresentation(socket, presentationId, (data) => { 
+      console.log(data);
+    });
     listenChat(socket, presentationId);
 
     return () => {
