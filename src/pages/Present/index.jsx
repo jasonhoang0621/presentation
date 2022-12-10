@@ -1,10 +1,14 @@
-import { Drawer, Input, Select } from "antd";
+import { Drawer, Input, Select, Spin } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useParams } from "react-router-dom";
 import { useDetailPresentation } from "src/api/presentation";
 import { SocketContext } from "src/socket/context";
-import { changeSlide, createPresentation, editSendMessage } from "src/socket/emit";
+import {
+  changeSlide,
+  createPresentation,
+  editSendMessage,
+} from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
 import { WechatOutlined } from "@ant-design/icons";
@@ -21,35 +25,35 @@ const Present = () => {
   const [chatMessage, setChatMessage] = useState("");
   const { data } = useDetailPresentation(presentationId);
   const auth = useSelector((state) => state.auth);
-
-
+  const [chatLength, setChatLength] = useState(20);
   const [chatData, setChatData] = useState([]);
-  const { data: chat } = useGetListChat(presentationId, 10);
-  const containerRef = useRef()
-  // const queryClient = useQueryClient();
+  const { data: chat, isFetching } = useGetListChat(presentationId, chatLength);
+  const containerRef = useRef(null);
 
-  
   const handleChangeSlide = (index) => {
     setCurrentSlide(index);
     changeSlide(socket, presentationId, index);
   };
 
   useEffect(() => {
-    if(!chat) return;
-    setChatData(chat?.data)
-  }, [chat])
+    if (!chat) return;
+    setChatData([...chat?.data, ...chatData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chat]);
+
   useEffect(() => {
-    if(!socket) return;
-    createPresentation(socket, presentationId)
-    
-  },[socket])
+    if (!socket) return;
+    createPresentation(socket, presentationId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
   useEffect(() => {
     if (!socket) return;
     listenPresentation(socket, presentationId, (data) => {
       console.log(data);
     });
     listenChat(socket, presentationId, (data) => {
-      setChatData([...chatData, data?.data])
+      setChatData([...chatData, data?.data]);
     });
     return () => {
       offChat(socket, presentationId);
@@ -57,6 +61,36 @@ const Present = () => {
     };
   }, [socket, presentationId, chatData]);
 
+  const handleScroll = () => {
+    if (containerRef.current.scrollTop === 0) {
+      if (chatLength <= chatData.length) {
+        setChatLength(chatLength + chatData.length);
+      }
+    }
+  };
+
+  const handleSentMessage = (e) => {
+    if (e.key === "Enter") {
+      setChatData([
+        ...chatData,
+        {
+          userId: auth?.user?.id,
+          message: chatMessage,
+          user: [
+            {
+              name: auth?.user?.name,
+            },
+          ],
+        },
+      ]);
+      editSendMessage(socket, presentationId, chatMessage);
+      setChatMessage("");
+    }
+    const chatBox = document.getElementById("chat-box");
+    if (chatBox) {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  };
 
   const options = {
     responsive: true,
@@ -100,18 +134,6 @@ const Present = () => {
     ],
     scaleShowLabels: false,
   };
-
-
-  // useEffect(() => {
-  //   function handleScroll() {
-  //     if (containerRef.current && containerRef.current.scrollTop === 0) {
-  //       queryClient.invalidateQueries('chat')
-  //     }
-  //   }
-
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => window.removeEventListener('scroll', handleScroll);
-  // }, []);
 
   return (
     <>
@@ -164,58 +186,48 @@ const Present = () => {
         onClose={() => setOpenDrawer(false)}
         visible={openDrawer}
         closable={false}
-        bodyStyle={{ padding: 0 }}
+        bodyStyle={{ padding: 0, overflow: "hidden" }}
       >
-        <div className="h-full">
-          <div
-            id="chat-box"
-            className="h-[90%] my-5 overflow-auto px-4 hide-scrollbar"
-            ref={containerRef}
-          >
-            {chatData && chatData.map((chat, index) => (
-              <div key={index}>
-                {chat.userId === auth?.user?.id ? (
-                  <div className="flex justify-end">
-                    <div className="mb-5 text-end p-2 border border-[#495e54] rounded-lg inline-block">
-                      <strong>{chat.user[0].name}</strong>
-                      <p className="text-left">{chat.message}</p>
-                    </div>
+        <Spin spinning={isFetching}>
+          <div className="my-5 h-rc-rate-star-full">
+            <div
+              id="chat-box"
+              className="h-[90vh]  overflow-auto px-4 hide-scrollbar"
+              ref={containerRef}
+              onScroll={handleScroll}
+            >
+              {chatData &&
+                chatData.map((chat, index) => (
+                  <div key={index}>
+                    {chat.userId === auth?.user?.id ? (
+                      <div className="flex justify-end">
+                        <div className="mb-5 text-end p-2 border border-[#495e54] rounded-lg inline-block">
+                          <strong>{chat.user[0].name}</strong>
+                          <p className="text-left">{chat.message}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
+                        <strong className="text-white">
+                          {chat.user[0].name}
+                        </strong>
+                        <p className="text-white break-all">{chat.message}</p>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
-                    <strong className="text-white">{chat.user[0].name}</strong>
-                    <p className="text-white break-all">{chat.message}</p>
-                  </div>
-                )}
-              </div>
-            ))}
+                ))}
+            </div>
+            <div className="mt-auto px-4">
+              <Input
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                onKeyDown={(e) => handleSentMessage(e)}
+                className="app-input !m-0"
+                placeholder="Chat..."
+              />
+            </div>
           </div>
-          <div className="mt-auto px-4">
-            <Input
-              value={chatMessage}
-              onChange={(e) => setChatMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setChatData([
-                    ...chatData,
-                    {
-                      userId: auth?.user?.id,
-                      message: chatMessage,
-                      user: [{
-                        name: auth?.user?.name,
-                      }]
-                    },
-                  ]);
-                  console.log('test')
-                  editSendMessage(socket, presentationId, chatMessage);
-                  setChatMessage("");
-                }
-              }}
-              className="app-input !m-0"
-              placeholder="Chat..."
-            />
-          </div>
-        </div>
+        </Spin>
       </Drawer>
     </>
   );
