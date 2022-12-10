@@ -1,179 +1,107 @@
-import { WechatOutlined } from "@ant-design/icons";
-import { Drawer, Input } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import { Select } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
 import { useParams } from "react-router-dom";
-import { SlideType } from "src/helpers/slide";
+import { useDetailPresentation } from "src/api/presentation";
 import { SocketContext } from "src/socket/context";
-import { changeSlide, createPresentation, editSendMessage } from "src/socket/emit";
-import { listenChat, listenPresentation } from "src/socket/listen";
-import { offChat, offPresentation } from "src/socket/off";
+import { changeSlide } from "src/socket/emit";
 
 const Present = () => {
-  const { presentationId } = useParams();
-  const [openDrawer, setOpenDrawer] = React.useState(false);
-  const [chatMessage, setChatMessage] = React.useState("");
-  const [index, setIndex] = useState(0);
-  const data = {
-    id: 1,
-    type: SlideType.MULTIPLE_CHOICE,
-    question: "What is your favorite color?",
-    answer: [
-      "Red",
-      "Blue",
-      "Green",
-      "Yellow",
-      "Red",
-      "Blue",
-      "Green",
-      "Yellow",
-    ],
-  };
-
-  const [chatData, setChatData] = useState([
-    {
-      userId: 1,
-      name: "Name",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-    },
-    {
-      userId: 2,
-      name: "Name",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-    },
-    {
-      userId: 1,
-      name: "Name",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-    },
-    {
-      userId: 1,
-      name: "Name",
-      message: "Lorem ipsum dolor quod.",
-    },
-    {
-      userId: 2,
-      name: "Name",
-      message: "Lorem ipsum dolog elit. Quisquam, quod.",
-    },
-    {
-      userId: 1,
-      name: "Name",
-      message: "Lo quod.",
-    },
-  ]);
-
-  const [activeAnswer, setActiveAnswer] = React.useState(null);
   const { socket } = useContext(SocketContext);
+  const { presentationId } = useParams();
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const { data } = useDetailPresentation(presentationId);
+
+  const handleChangeSlide = (index) => {
+    setCurrentSlide(index);
+    changeSlide(socket, presentationId, index);
+  };
 
   useEffect(() => {
     if (!socket) return;
-    createPresentation(socket, presentationId);
-    changeSlide(socket, presentationId, index);
-    listenPresentation(socket, presentationId, (data) => { 
-      console.log(data);
-    });
-    listenChat(socket, presentationId, (data) => { 
-      console.log(data);
-    });
-
-    return () => {
-      offChat(socket, presentationId);
-      offPresentation(socket, presentationId);
-    };
+    // createPresentation(socket, presentationId);
   }, [socket, presentationId]);
 
-  useEffect(() => {
-    const chatBox = document.getElementById("chat-box");
-    if (chatBox) {
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  }, [chatData]);
+  const options = {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: data?.name,
+      },
+    },
+    tooltips: {
+      display: false,
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+  };
+
+  const chartData = {
+    labels: data
+      ? data.data.slide[currentSlide]?.answer.map((item) => item.value)
+      : [],
+    datasets: [
+      {
+        data: data
+          ? data.data.slide[currentSlide]?.answer.map((item) => item.count)
+          : [],
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+    scaleShowLabels: false,
+  };
 
   return (
-    <>
-      <div style={{ height: "calc(100vh - 64px)" }}>
-        <p className="text-center text-2xl mt-5">{data?.question}</p>
-        <div className="mt-10 flex flex-wrap">
-          {data?.answer.map((answer, index) => (
-            <div
-              key={index}
-              className={`app-input text-center w-[32%] mx-auto cursor-pointer ${
-                activeAnswer === index ? "bg-[#495e54] text-white" : "bg-white"
-              }`}
-              onClick={() => setActiveAnswer(index)}
-            >
-              {answer}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div
-        onClick={() => setOpenDrawer(true)}
-        className="fixed bottom-10 right-5 w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
-      >
-        <div className="flex items-center justify-center w-full h-full">
-          <WechatOutlined className="text-white text-[24px]" />
-        </div>
-      </div>
-      <Drawer
-        placement="right"
-        width={400}
-        onClose={() => setOpenDrawer(false)}
-        visible={openDrawer}
-        closable={false}
-        bodyStyle={{ padding: 0 }}
-      >
-        <div className="h-full">
-          <div
-            id="chat-box"
-            className="h-[90%] my-5 overflow-auto px-4 hide-scrollbar"
+    <div style={{ height: "calc(100vh - 64px)" }} className="p-2">
+      <div className="w-full flex items-center justify-between">
+        <div className="flex items-center gap-x-2 w-[15%]">
+          <Select
+            className="app-select"
+            style={{ width: "100%" }}
+            onChange={(value) => setCurrentSlide(value)}
+            value={currentSlide}
           >
-            {chatData.map((chat, index) => (
-              <div key={index}>
-                {chat.userId === 1 ? (
-                  <div className="flex justify-end">
-                    <div className="mb-5 text-end p-2 border border-[#495e54] rounded-lg inline-block">
-                      <strong>{chat.name}</strong>
-                      <p className="text-left">{chat.message}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
-                    <strong className="text-white">{chat.name}</strong>
-                    <p className="text-white break-all">{chat.message}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="mt-auto px-4">
-            <Input
-              value={chatMessage}
-              onChange={(e) => setChatMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setChatData([
-                    ...chatData,
-                    {
-                      userId: 1,
-                      name: "Name",
-                      message: chatMessage,
-                    },
-                  ]);
-                  editSendMessage(socket, presentationId, chatMessage)
-                  setChatMessage("");
-                }
-              }}
-              className="app-input !m-0"
-              placeholder="Chat..."
-            />
-          </div>
+            {Array.isArray(data?.data?.slide) &&
+              data?.data?.slide.map((item, index) => (
+                <Select.Option key={index} value={index}>
+                  {index + 1}. {item?.question}
+                </Select.Option>
+              ))}
+          </Select>
         </div>
-      </Drawer>
-    </>
+        <button
+          onClick={() => handleChangeSlide(currentSlide + 1)}
+          className="button !py-2 !min-w-[120px]"
+        >
+          <span className="!text-[14px]">Next</span>
+        </button>
+      </div>
+      <div className="w-full flex items-center justify-center">
+        <div
+          className={`h-[600px] w-[90%] p-5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer overflow-hidden`}
+        >
+          <p className="break-all">
+            {data?.data?.slide[currentSlide]?.question}
+          </p>
+          <Bar options={options} data={chartData} />
+        </div>
+      </div>
+    </div>
   );
 };
 

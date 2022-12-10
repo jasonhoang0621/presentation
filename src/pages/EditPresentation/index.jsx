@@ -96,7 +96,7 @@ const EditPresentation = () => {
   };
 
   const handleSave = async () => {
-    delete data._id
+    delete data._id;
     const res = await mutateAsync(data);
     if (res?.errorCode) {
       notification.error({
@@ -117,6 +117,7 @@ const EditPresentation = () => {
   useEffect(() => {
     if (!data) return;
     setActiveSlide(data?.slide[data?.slide.length - 1]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.slide.length]);
 
   const addSlideMenu = (

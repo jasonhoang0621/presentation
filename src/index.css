@@ -96,16 +96,27 @@
 .app-select {
   width: 100%;
 }
-.app-select .ant-select-selector {
-  border-radius: 4px;
+.ant-select.app-select .ant-select-selector {
+  border-radius: 10px;
   border: 1px solid #495e54;
   padding: 5px 10px !important;
   cursor: pointer;
   width: 100%;
   min-height: 40px;
 }
-.app-select .ant-select-selector .ant-select-selection-placeholder {
+.ant-select.app-select .ant-select-selector .ant-select-selection-placeholder {
   padding-left: 6px;
+}
+.ant-select.app-select .ant-select-selector:hover {
+  border: 1px solid #495e54;
+}
+.ant-select-focused:not(.ant-select-disabled).ant-select.app-select:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  border: 1px solid #495e54;
+  outline: none;
+  box-shadow: none;
 }
 
 .add-popover .ant-popover-inner-content {

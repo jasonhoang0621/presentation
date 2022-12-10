@@ -1,5 +1,6 @@
 import EditPresentation from "src/pages/EditPresentation";
 import Group from "src/pages/Group";
+import Join from "src/pages/Join";
 import Present from "src/pages/Present";
 import Presentation from "src/pages/Presentation";
 
@@ -35,6 +36,18 @@ const NoLayoutRouters = [
     name: "presentPrivate",
     path: "/group/:groupId/presentation/:presentationId/present/private",
     element: Present,
+    layout: false,
+  },
+  {
+    name: "joinPublic",
+    path: "/group/:groupId/presentation/:presentationId/join/public",
+    element: Join,
+    layout: false,
+  },
+  {
+    name: "joinPrivate",
+    path: "/group/:groupId/presentation/:presentationId/join/private",
+    element: Join,
     layout: false,
   },
 ];
