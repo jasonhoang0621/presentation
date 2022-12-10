@@ -96,8 +96,8 @@ const EditPresentation = () => {
   };
 
   const handleSave = async () => {
+    delete data._id
     const res = await mutateAsync(data);
-    console.log(res);
     if (res?.errorCode) {
       notification.error({
         message: res?.data || "Save failed",

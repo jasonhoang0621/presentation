@@ -14,7 +14,7 @@ const PresentModal = ({ visible, setVisible }) => {
 
   useEffect(() => {
     if (!socket) return;
-    createPresentation(socket, presentationId);
+    // createPresentation(socket, presentationId);
   }, [socket, presentationId]);
 
   return (

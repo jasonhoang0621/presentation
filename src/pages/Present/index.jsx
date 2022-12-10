@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
+import { changeSlide, createPresentation, editSendMessage } from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
 
@@ -11,7 +12,7 @@ const Present = () => {
   const { presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatMessage, setChatMessage] = React.useState("");
-
+  const [index, setIndex] = useState(0);
   const data = {
     id: 1,
     type: SlideType.MULTIPLE_CHOICE,
@@ -69,10 +70,14 @@ const Present = () => {
 
   useEffect(() => {
     if (!socket) return;
+    createPresentation(socket, presentationId);
+    changeSlide(socket, presentationId, index);
     listenPresentation(socket, presentationId, (data) => { 
       console.log(data);
     });
-    listenChat(socket, presentationId);
+    listenChat(socket, presentationId, (data) => { 
+      console.log(data);
+    });
 
     return () => {
       offChat(socket, presentationId);
@@ -158,6 +163,7 @@ const Present = () => {
                       message: chatMessage,
                     },
                   ]);
+                  editSendMessage(socket, presentationId, chatMessage)
                   setChatMessage("");
                 }
               }}
