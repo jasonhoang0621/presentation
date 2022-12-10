@@ -24,9 +24,9 @@ const Present = () => {
 
 
   const [chatData, setChatData] = useState([]);
-  const { data: chat } = useGetListChat(presentationId, chatData.length);
+  const { data: chat } = useGetListChat(presentationId, 10);
   const containerRef = useRef()
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   
   const handleChangeSlide = (index) => {
@@ -37,11 +37,14 @@ const Present = () => {
   useEffect(() => {
     if(!chat) return;
     setChatData(chat?.data)
-  },[chat])
-  console.log('chatDatane', chatData)
+  }, [chat])
+  useEffect(() => {
+    if(!socket) return;
+    createPresentation(socket, presentationId)
+    
+  },[socket])
   useEffect(() => {
     if (!socket) return;
-    createPresentation(socket, presentationId)
     listenPresentation(socket, presentationId, (data) => {
       console.log(data);
     });
@@ -99,16 +102,16 @@ const Present = () => {
   };
 
 
-  useEffect(() => {
-    function handleScroll() {
-      if (containerRef.current && containerRef.current.scrollTop === 0) {
-        queryClient.invalidateQueries('chat')
-      }
-    }
+  // useEffect(() => {
+  //   function handleScroll() {
+  //     if (containerRef.current && containerRef.current.scrollTop === 0) {
+  //       queryClient.invalidateQueries('chat')
+  //     }
+  //   }
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => window.removeEventListener('scroll', handleScroll);
+  // }, []);
 
   return (
     <>
@@ -203,6 +206,7 @@ const Present = () => {
                       }]
                     },
                   ]);
+                  console.log('test')
                   editSendMessage(socket, presentationId, chatMessage);
                   setChatMessage("");
                 }
