@@ -24,16 +24,16 @@ const Present = () => {
   const [chatMessage, setChatMessage] = useState("");
   const { data } = useDetailPresentation(presentationId);
   const auth = useSelector((state) => state.auth);
-  const [chatLength, setChatLength] = useState(20);
+  const [chatLength, setChatLength] = useState(0);
   const [chatData, setChatData] = useState([]);
   const { data: chat, isFetching } = useGetListChat(presentationId, chatLength);
   const containerRef = useRef(null);
-
+  
   const handleChangeSlide = (index) => {
     setCurrentSlide(index);
     changeSlide(socket, presentationId, index);
   };
-
+  
   useEffect(() => {
     if (!chat) return;
     setChatData([...chat?.data, ...chatData]);
@@ -52,7 +52,7 @@ const Present = () => {
       console.log(data);
     });
     listenChat(socket, presentationId, (data) => {
-      toast(data?.data?.message);
+      toast(data?.data?.user[0].name + " " +data?.data?.message);
       setChatData([...chatData, data?.data]);
       const chatBox = document.getElementById("chat-box");
       if (chatBox) {
@@ -68,7 +68,7 @@ const Present = () => {
   const handleScroll = () => {
     if (containerRef.current.scrollTop === 0) {
       if (chatLength <= chatData.length) {
-        setChatLength(chatLength + chatData.length);
+        setChatLength(chatData.length);
       }
     }
   };
