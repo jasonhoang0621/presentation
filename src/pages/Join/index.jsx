@@ -72,22 +72,22 @@ const Join = () => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
   const { socket } = useContext(SocketContext);
 
-  useEffect(() => {
-    if (!socket) return;
-    createPresentation(socket, presentationId);
-    changeSlide(socket, presentationId, index);
-    listenPresentation(socket, presentationId, (data) => {
-      console.log(data);
-    });
-    listenChat(socket, presentationId, (data) => {
-      console.log(data);
-    });
+  // useEffect(() => {
+  //   if (!socket) return;
+  //   createPresentation(socket, presentationId);
+  //   changeSlide(socket, presentationId, index);
+  //   listenPresentation(socket, presentationId, (data) => {
+  //     console.log(data);
+  //   });
+  //   listenChat(socket, presentationId, (data) => {
+  //     console.log(data);
+  //   });
 
-    return () => {
-      offChat(socket, presentationId);
-      offPresentation(socket, presentationId);
-    };
-  }, [socket, presentationId]);
+  //   return () => {
+  //     offChat(socket, presentationId);
+  //     offPresentation(socket, presentationId);
+  //   };
+  // }, [socket, presentationId]);
 
   useEffect(() => {
     const chatBox = document.getElementById("chat-box");

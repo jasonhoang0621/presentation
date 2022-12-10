@@ -7,8 +7,9 @@ export const emitPickAnswer = (socket, presentationId, index) => {
   socket?.emit(`present-${presentationId}`, { presentationId, index });
 };
 
-export const createPresentation = async (socket, presentationId) => {
+export const createPresentation = (socket, presentationId) => {
   socket?.emit("present", { presentationId });
+  return true
 };
 
 export const changeSlide = (socket, presentationId, index) => {
