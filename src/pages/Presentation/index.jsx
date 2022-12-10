@@ -1,7 +1,9 @@
 import { Modal, notification, Popover } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDetailGroup } from "src/api/group";
 import {
   useDetailPresentation,
   useRemovePresentation,
@@ -9,16 +11,33 @@ import {
 import Slide from "src/components/Slide";
 
 const Presentation = () => {
+  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const { groupId, presentationId } = useParams();
   const [showPopover, setShowPopover] = React.useState(false);
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [detailModal, setDetailModal] = React.useState(false);
   const [detailData, setDetailData] = React.useState({});
+  const [user, setUser] = useState({
+    role: "member",
+  });
 
   const queryClient = useQueryClient();
 
   const { data } = useDetailPresentation(presentationId);
+  const { data: groupDetailData = null, isLoading: loadingGroup } =
+    useDetailGroup(groupId);
+
+  useEffect(() => {
+    if (groupDetailData) {
+      const temp = groupDetailData.data.user.filter(
+        (item) => item.id === auth?.user?.id
+      );
+      setUser({
+        role: temp[0]?.role ?? "member",
+      });
+    }
+  }, [loadingGroup, auth, groupDetailData]);
   const { mutateAsync: deletePresentation } =
     useRemovePresentation(presentationId);
 
@@ -42,18 +61,37 @@ const Presentation = () => {
 
   const actionContent = (
     <div className="p-0">
-      <div
-        onClick={() => navigate("present/public")}
-        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
-      >
-        <p className="text-[16px]">Public Present</p>
-      </div>
-      <div
-        onClick={() => navigate("present/private")}
-        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
-      >
-        <p className="text-[16px]">Private Present</p>
-      </div>
+      {user?.role !== "member" ? (
+        <>
+          <div
+            onClick={() => navigate("present/public")}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Public Present</p>
+          </div>
+          <div
+            onClick={() => navigate("present/private")}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Private Present</p>
+          </div>
+        </>
+      ) : (
+        <>
+          <div
+            onClick={() => navigate("join/public")}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Join Public Presentation</p>
+          </div>
+          <div
+            onClick={() => navigate("join/private")}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Join Private Presentation</p>
+          </div>
+        </>
+      )}
       <div
         onClick={() => navigate("edit")}
         className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
