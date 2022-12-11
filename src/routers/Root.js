@@ -1,11 +1,3 @@
-import { useEffect, useState } from "react";
-import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Authenticate from "src/auth";
-import Login from "src/pages/Login";
-import Register from "src/pages/Register";
-import Authenticated from "./Authed";
-import { getSocket, SocketContext } from "src/socket/context";
 import {
   BarElement,
   CategoryScale,
@@ -14,7 +6,15 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { useEffect, useState } from "react";
+import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import Authenticate from "src/auth";
+import Login from "src/pages/Login";
+import Register from "src/pages/Register";
+import { getSocket, SocketContext } from "src/socket/context";
+import Authenticated from "./Authed";
 
 const createQueryClient = () => {
   const queryCache = new QueryCache();
@@ -76,7 +76,8 @@ const Root = () => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="dark"
+            toastClassName="!bg-[#495e54] !text-white"
+            closeButton={false}
           />
         </BrowserRouter>
       </QueryClientProvider>
