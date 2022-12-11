@@ -8,11 +8,7 @@ import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
 import { SocketContext } from "src/socket/context";
-import {
-  changeSlide,
-  createPresentation,
-  editSendMessage,
-} from "src/socket/emit";
+import { changeSlide, editSendMessage } from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
 
@@ -26,25 +22,35 @@ const Present = () => {
   const auth = useSelector((state) => state.auth);
   const [chatLength, setChatLength] = useState(0);
   const [chatData, setChatData] = useState([]);
-  const { data: chat, isFetching } = useGetListChat(presentationId, chatLength);
+  const { data: chat, isFetching } = useGetListChat(
+    presentationId,
+    chatLength,
+    chatLength > 20 ? 5 : 20
+  );
   const containerRef = useRef(null);
-  
+
   const handleChangeSlide = (index) => {
+    if (!socket) return;
+    if (index === data?.data?.slide.length) return;
     setCurrentSlide(index);
     changeSlide(socket, presentationId, index);
   };
-  
+
   useEffect(() => {
     if (!chat) return;
     setChatData([...chat?.data, ...chatData]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chat]);
 
-  useEffect(() => {
-    if (!socket) return;
-    createPresentation(socket, presentationId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket]);
+  const handleClickToast = () => {
+    setOpenDrawer(true);
+    setTimeout(() => {
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }, 500);
+  };
 
   useEffect(() => {
     if (!socket) return;
@@ -52,7 +58,9 @@ const Present = () => {
       console.log(data);
     });
     listenChat(socket, presentationId, (data) => {
-      toast(data?.data?.user[0].name + " " +data?.data?.message);
+      toast(data?.data?.user[0].name + ": " + data?.data?.message, {
+        onClick: handleClickToast,
+      });
       setChatData([...chatData, data?.data]);
       const chatBox = document.getElementById("chat-box");
       if (chatBox) {
@@ -89,10 +97,10 @@ const Present = () => {
       ]);
       editSendMessage(socket, presentationId, chatMessage);
       setChatMessage("");
-    }
-    const chatBox = document.getElementById("chat-box");
-    if (chatBox) {
-      chatBox.scrollTop = chatBox.scrollHeight;
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
     }
   };
 
@@ -147,7 +155,7 @@ const Present = () => {
             <Select
               className="app-select"
               style={{ width: "100%" }}
-              onChange={(value) => setCurrentSlide(value)}
+              onChange={(value) => handleChangeSlide(value)}
               value={currentSlide}
             >
               {Array.isArray(data?.data?.slide) &&

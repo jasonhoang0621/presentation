@@ -76,7 +76,7 @@ const Root = () => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="colored"
+            theme="dark"
           />
         </BrowserRouter>
       </QueryClientProvider>

@@ -1,21 +1,24 @@
 import { WechatOutlined } from "@ant-design/icons";
-import { Drawer, Input } from "antd";
+import { Drawer, Input, Spin } from "antd";
 import React, { useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useGetListChat } from "src/api/chat";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
-import {
-  changeSlide,
-  createPresentation,
-  editSendMessage,
-} from "src/socket/emit";
+import { editSendMessage } from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
 
 const Join = () => {
+  const auth = useSelector((state) => state.auth);
+
   const { presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatMessage, setChatMessage] = React.useState("");
+  const [chatLength, setChatLength] = useState(0);
+  const containerRef = React.useRef(null);
   const [index, setIndex] = useState(0);
   const data = {
     id: 1,
@@ -33,61 +36,85 @@ const Join = () => {
     ],
   };
 
-  const [chatData, setChatData] = useState([
-    {
-      userId: 1,
-      name: "Name",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-    },
-    {
-      userId: 2,
-      name: "Name",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-    },
-    {
-      userId: 1,
-      name: "Name",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-    },
-    {
-      userId: 1,
-      name: "Name",
-      message: "Lorem ipsum dolor quod.",
-    },
-    {
-      userId: 2,
-      name: "Name",
-      message: "Lorem ipsum dolog elit. Quisquam, quod.",
-    },
-    {
-      userId: 1,
-      name: "Name",
-      message: "Lo quod.",
-    },
-  ]);
+  const [chatData, setChatData] = useState([]);
+  const { data: chat, isFetching } = useGetListChat(
+    presentationId,
+    chatLength,
+    chatLength > 20 ? 5 : 20
+  );
 
   const [activeAnswer, setActiveAnswer] = React.useState(null);
   const { socket } = useContext(SocketContext);
 
-  // useEffect(() => {
-  //   if (!socket) return;
-  //   createPresentation(socket, presentationId);
-  //   changeSlide(socket, presentationId, index);
-  //   listenPresentation(socket, presentationId, (data) => {
-  //     console.log(data);
-  //   });
-  //   listenChat(socket, presentationId, (data) => {
-  //     console.log(data);
-  //   });
+  const handleSentMessage = (e) => {
+    if (e.key === "Enter") {
+      setChatData([
+        ...chatData,
+        {
+          userId: auth?.user?.id,
+          message: chatMessage,
+          user: [
+            {
+              name: auth?.user?.name,
+            },
+          ],
+        },
+      ]);
+      editSendMessage(socket, presentationId, chatMessage);
+      setChatMessage("");
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
+  };
 
-  //   return () => {
-  //     offChat(socket, presentationId);
-  //     offPresentation(socket, presentationId);
-  //   };
-  // }, [socket, presentationId]);
+  const handleScroll = () => {
+    if (containerRef.current.scrollTop === 0) {
+      if (chatLength <= chatData.length) {
+        setChatLength(chatData.length);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!chat) return;
+    setChatData([...chat?.data, ...chatData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chat]);
+
+  const handleClickToast = () => {
+    setOpenDrawer(true);
+    setTimeout(() => {
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }, 500);
+  };
+
+  useEffect(() => {
+    if (!socket) return;
+    listenPresentation(socket, presentationId, (data) => {
+      console.log(data);
+    });
+
+    listenChat(socket, presentationId, (data) => {
+      console.log(data);
+      toast(data?.data?.user[0].name + ": " + data?.data?.message, {
+        onClick: handleClickToast,
+      });
+      setChatData([...chatData, data?.data]);
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    });
+    return () => {
+      offChat(socket, presentationId);
+      offPresentation(socket, presentationId);
+    };
+  }, [socket, presentationId, chatData]);
 
   useEffect(() => {
     const chatBox = document.getElementById("chat-box");
@@ -128,54 +155,48 @@ const Join = () => {
         onClose={() => setOpenDrawer(false)}
         visible={openDrawer}
         closable={false}
-        bodyStyle={{ padding: 0 }}
+        bodyStyle={{ padding: 0, overflow: "hidden" }}
       >
-        <div className="h-full">
-          <div
-            id="chat-box"
-            className="h-[90%] my-5 overflow-auto px-4 hide-scrollbar"
-          >
-            {chatData.map((chat, index) => (
-              <div key={index}>
-                {chat.userId === 1 ? (
-                  <div className="flex justify-end">
-                    <div className="mb-5 text-end p-2 border border-[#495e54] rounded-lg inline-block">
-                      <strong>{chat.name}</strong>
-                      <p className="text-left">{chat.message}</p>
-                    </div>
+        <Spin spinning={isFetching}>
+          <div className="my-5 h-rc-rate-star-full">
+            <div
+              id="chat-box"
+              className="h-[90vh]  overflow-auto px-4 hide-scrollbar"
+              ref={containerRef}
+              onScroll={handleScroll}
+            >
+              {chatData &&
+                chatData.map((chat, index) => (
+                  <div key={index}>
+                    {chat.userId === auth?.user?.id ? (
+                      <div className="flex justify-end">
+                        <div className="mb-5 text-end p-2 border border-[#495e54] rounded-lg inline-block">
+                          <strong>{chat.user[0].name}</strong>
+                          <p className="text-left">{chat.message}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
+                        <strong className="text-white">
+                          {chat.user[0].name}
+                        </strong>
+                        <p className="text-white break-all">{chat.message}</p>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
-                    <strong className="text-white">{chat.name}</strong>
-                    <p className="text-white break-all">{chat.message}</p>
-                  </div>
-                )}
-              </div>
-            ))}
+                ))}
+            </div>
+            <div className="mt-auto px-4">
+              <Input
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                onKeyDown={(e) => handleSentMessage(e)}
+                className="app-input !m-0"
+                placeholder="Chat..."
+              />
+            </div>
           </div>
-          <div className="mt-auto px-4">
-            <Input
-              value={chatMessage}
-              onChange={(e) => setChatMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setChatData([
-                    ...chatData,
-                    {
-                      userId: 1,
-                      name: "Name",
-                      message: chatMessage,
-                    },
-                  ]);
-                  editSendMessage(socket, presentationId, chatMessage);
-                  setChatMessage("");
-                }
-              }}
-              className="app-input !m-0"
-              placeholder="Chat..."
-            />
-          </div>
-        </div>
+        </Spin>
       </Drawer>
     </>
   );
