@@ -45,12 +45,14 @@ const Group = () => {
               {user?.role === "owner" ? "Edit Group" : "View Group"}
             </span>
           </button>
-          <button
-            className="button !py-2 !min-w-[200px]"
-            onClick={() => setCreatePresentationModal(true)}
-          >
-            <span className="!text-[12px]">Create Presentation</span>
-          </button>
+          {user?.role === "owner" && (
+            <button
+              className="button !py-2 !min-w-[200px]"
+              onClick={() => setCreatePresentationModal(true)}
+            >
+              <span className="!text-[12px]">Create Presentation</span>
+            </button>
+          )}
         </>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">

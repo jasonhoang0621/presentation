@@ -76,6 +76,21 @@ const Presentation = () => {
           >
             <p className="text-[16px]">Private Present</p>
           </div>
+          <div
+            onClick={() => navigate("edit")}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Edit</p>
+          </div>
+          <div
+            onClick={() => {
+              setDeleteModal(true);
+              setShowPopover(false);
+            }}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Delete</p>
+          </div>
         </>
       ) : (
         <>
@@ -93,21 +108,6 @@ const Presentation = () => {
           </div>
         </>
       )}
-      <div
-        onClick={() => navigate("edit")}
-        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
-      >
-        <p className="text-[16px]">Edit</p>
-      </div>
-      <div
-        onClick={() => {
-          setDeleteModal(true);
-          setShowPopover(false);
-        }}
-        className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
-      >
-        <p className="text-[16px]">Delete</p>
-      </div>
     </div>
   );
 

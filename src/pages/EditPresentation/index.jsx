@@ -8,6 +8,7 @@ import {
   useUpdatePresentation,
 } from "src/api/presentation";
 import { SlideType } from "src/helpers/slide";
+import Heading from "./Heading";
 import MainSlide from "./MainSlide";
 import MultipleChoice from "./MultipleChoice";
 import SmallSlide from "./SmallSlide";
@@ -46,7 +47,8 @@ const EditPresentation = () => {
             {
               type: SlideType.HEADING,
               question: "",
-              answer: [],
+              paragraph: "",
+              icon: [],
               index: data.slide.length,
             },
           ],
@@ -119,6 +121,21 @@ const EditPresentation = () => {
     setActiveSlide(data?.slide[data?.slide.length - 1]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.slide.length]);
+
+  const renderEditQuestionTab = () => {
+    switch (activeSlide?.type) {
+      case SlideType.MULTIPLE_CHOICE:
+        return (
+          <MultipleChoice data={activeSlide} setData={handleEditQuestion} />
+        );
+      case SlideType.HEADING:
+        return <Heading data={activeSlide} setData={handleEditQuestion} />;
+      case SlideType.PARAGRAPH:
+        return;
+      default:
+        return;
+    }
+  };
 
   const addSlideMenu = (
     <div>
@@ -193,9 +210,7 @@ const EditPresentation = () => {
                 <span className="!text-[12px]">Save</span>
               </button>
             </div>
-            {activeSlide && (
-              <MultipleChoice data={activeSlide} setData={handleEditQuestion} />
-            )}
+            {activeSlide && renderEditQuestionTab()}
           </div>
         </Col>
       </Row>

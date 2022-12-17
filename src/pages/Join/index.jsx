@@ -19,21 +19,12 @@ const Join = () => {
   const [chatMessage, setChatMessage] = React.useState("");
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
-  const [index, setIndex] = useState(0);
+  // const [index, setIndex] = useState(0);
   const data = {
     id: 1,
     type: SlideType.MULTIPLE_CHOICE,
     question: "What is your favorite color?",
-    answer: [
-      "Red",
-      "Blue",
-      "Green",
-      "Yellow",
-      "Red",
-      "Blue",
-      "Green",
-      "Yellow",
-    ],
+    answer: ["Red", "Blue", "Yellow", "Red", "Blue", "Green", "Yellow"],
   };
 
   const [chatData, setChatData] = useState([]);
