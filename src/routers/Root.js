@@ -11,6 +11,8 @@ import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Authenticate from "src/auth";
+import GoogleRedirect from "src/components/GoogleRedirect";
+import JoinGroupRedirect from "src/components/JoinGroupRedirect";
 import Login from "src/pages/Login";
 import Register from "src/pages/Register";
 import { getSocket, SocketContext } from "src/socket/context";
@@ -56,6 +58,8 @@ const Root = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/login/google" element={<GoogleRedirect />} />
+            <Route path="/invite/:id" element={<JoinGroupRedirect />} />
             <Route
               path="*"
               element={

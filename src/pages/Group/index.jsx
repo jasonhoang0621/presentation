@@ -36,22 +36,22 @@ const Group = () => {
   return (
     <div>
       <div className="flex items-center justify-end mb-3">
-        {user?.role === "owner" && (
-          <>
-            <button
-              className="button button-danger !py-2 !min-w-[120px]"
-              onClick={() => setEditGroupModal(true)}
-            >
-              <span className="!text-[12px]">Edit Group</span>
-            </button>
-            <button
-              className="button !py-2 !min-w-[200px]"
-              onClick={() => setCreatePresentationModal(true)}
-            >
-              <span className="!text-[12px]">Create Presentation</span>
-            </button>
-          </>
-        )}
+        <>
+          <button
+            className="button button-danger !py-2 !min-w-[120px]"
+            onClick={() => setEditGroupModal(true)}
+          >
+            <span className="!text-[12px]">
+              {user?.role === "owner" ? "Edit Group" : "View Group"}
+            </span>
+          </button>
+          <button
+            className="button !py-2 !min-w-[200px]"
+            onClick={() => setCreatePresentationModal(true)}
+          >
+            <span className="!text-[12px]">Create Presentation</span>
+          </button>
+        </>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
         {data &&
