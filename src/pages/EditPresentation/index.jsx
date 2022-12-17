@@ -60,9 +60,10 @@ const EditPresentation = () => {
           slide: [
             ...data.slide,
             {
-              type: SlideType.PARAGRAPH,
+              type: SlideType.HEADING,
               question: "",
-              answer: [],
+              paragraph: "",
+              icon: [],
               index: data.slide.length,
             },
           ],
@@ -131,7 +132,7 @@ const EditPresentation = () => {
       case SlideType.HEADING:
         return <Heading data={activeSlide} setData={handleEditQuestion} />;
       case SlideType.PARAGRAPH:
-        return;
+        return <Heading data={activeSlide} setData={handleEditQuestion} />;
       default:
         return;
     }

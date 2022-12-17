@@ -10,6 +10,7 @@ import {
 } from "src/api/presentation";
 import Slide from "src/components/Slide";
 import { SettingOutlined } from "@ant-design/icons";
+import { SlideType } from "src/helpers/slide";
 
 const Presentation = () => {
   const auth = useSelector((state) => state.auth);
@@ -153,7 +154,16 @@ const Presentation = () => {
         destroyOnClose
         width={"70%"}
       >
-        <Slide noBorder isLabel data={detailData} />
+        <div
+          className={
+            detailData.type === SlideType.HEADING ||
+            detailData.type === SlideType.PARAGRAPH
+              ? "min-h-[70vh] flex items-center justify-center"
+              : ""
+          }
+        >
+          <Slide noBorder isLabel data={detailData} />
+        </div>
       </Modal>
       <Modal
         title="Confirm Delete"

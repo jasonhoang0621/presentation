@@ -51,7 +51,7 @@ const MainSlide = ({ data }) => {
       </div>
     );
   }
-  if (data?.type === SlideType.HEADING) {
+  if (data?.type === SlideType.HEADING || data?.type === SlideType.PARAGRAPH) {
     return (
       <div
         className={`h-full min-h-[30vh w-full mb-5 p-2 transition-all duration-300 flex flex-col items-center justify-center overflow-hidden`}
@@ -65,13 +65,13 @@ const MainSlide = ({ data }) => {
               <div
                 key={type}
                 className={
-                  "flex items-center justify-center w-10 h-10 bg-white drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
+                  "flex items-center justify-center w-10 h-10 bg-[#495e54] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
                 }
               >
-                <Icon />
+                <Icon className="text-white" />
                 {data?.icon?.find((item) => item?.type === type)?.amount >
                   0 && (
-                  <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-[#495e54] text-white text-[10px]">
+                  <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
                     {data?.icon?.find((item) => item?.type === type)?.amount}
                   </div>
                 )}
