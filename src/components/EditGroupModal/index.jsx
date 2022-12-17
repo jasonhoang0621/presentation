@@ -1,11 +1,12 @@
 import { CopyOutlined } from "@ant-design/icons";
-import { Input, Modal, notification, Select, Table, Tag } from "antd";
+import { Input, Modal, notification, Popover, Select, Table, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useAssignRole, useInviteUser, useRemoveUser } from "src/api/group";
 import { useGetListUser } from "src/api/user";
+import { SettingOutlined } from "@ant-design/icons";
 
 const EditGroupModal = ({
   visible,
@@ -24,6 +25,8 @@ const EditGroupModal = ({
   const [inviteModal, setInviteModal] = React.useState(false);
   const [assignUser, setAssignUser] = React.useState(null);
   const [removeUser, setRemoveUser] = React.useState(null);
+  const [leaveGroupModal, setLeaveGroupModal] = React.useState(false);
+  const [showPopover, setShowPopover] = React.useState(false);
   const [shareLink, setShareLink] = React.useState("");
   const [listInviteByEmail, setListInviteByEmail] = React.useState([]);
   const [role, setRole] = useState("member");
@@ -137,6 +140,55 @@ const EditGroupModal = ({
     },
   ];
 
+  const actionContent = (
+    <div className="p-0">
+      {user?.role !== "member" && (
+        <>
+          <div
+            onClick={() => {
+              setShareLinkModal(true);
+              setShowPopover(false);
+            }}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Create Link</p>
+          </div>
+          <div
+            onClick={() => {
+              setInviteModal(true);
+              setShowPopover(false);
+            }}
+            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+          >
+            <p className="text-[16px]">Invite</p>
+          </div>
+        </>
+      )}
+      {user?.role === "owner" && (
+        <div
+          onClick={() => {
+            leaveGroupModal(true);
+            setShowPopover(false);
+          }}
+          className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+        >
+          <p className="text-[16px]">Delete</p>
+        </div>
+      )}
+      {user?.role !== "owner" && (
+        <div
+          onClick={() => {
+            setLeaveGroupModal(true);
+            setShowPopover(false);
+          }}
+          className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+        >
+          <p className="text-[16px]">Leave group</p>
+        </div>
+      )}
+    </div>
+  );
+
   const handleInviteUserByEmail = async () => {
     try {
       const result = await inviteUser({
@@ -213,6 +265,8 @@ const EditGroupModal = ({
     setInviteModal(false);
   };
 
+  const handleLeaveGroup = async () => {};
+
   useEffect(() => {
     const getLinkInvite = async () => {
       const result = await inviteUser({
@@ -241,22 +295,21 @@ const EditGroupModal = ({
     >
       <>
         <div className="flex items-center justify-end mb-5">
-          {user.role !== "member" && (
-            <>
-              <button
-                className="button button-danger !py-[8px] !min-w-[120px]"
-                onClick={() => setShareLinkModal(true)}
-              >
-                <span className="!text-[13px]">Create Link</span>
-              </button>
-              <button
-                className="button !py-[8px] !min-w-[120px]"
-                onClick={() => setInviteModal(true)}
-              >
-                <span className="!text-[13px]">Invite</span>
-              </button>
-            </>
-          )}
+          <Popover
+            content={actionContent}
+            placement="bottomRight"
+            trigger="click"
+            overlayClassName="add-popover"
+            visible={showPopover}
+            onVisibleChange={(visible) => setShowPopover(visible)}
+          >
+            <div
+              className="w-8 h-8 drop-shadow-lg bg-white rounded-full flex items-center justify-center cursor-pointer
+          "
+            >
+              <SettingOutlined />
+            </div>
+          </Popover>
         </div>
         <Table
           columns={columns}
@@ -297,6 +350,39 @@ const EditGroupModal = ({
                 onClick={handleRemoveUser}
               >
                 <span className="!text-[12px]">Remove</span>
+              </button>
+            </div>
+          </div>
+        </Modal>
+        <Modal
+          title={"Remove User"}
+          visible={leaveGroupModal}
+          onCancel={() => setLeaveGroupModal(false)}
+          footer={null}
+          destroyOnClose
+        >
+          <div>
+            <div className="">
+              <p className="text-lg">
+                Are you sure you want to leave this group?
+              </p>
+            </div>
+            <div className="flex items-center justify-end mt-4">
+              <button
+                className="button button-danger mr-2 !py-[8px] !min-w-[120px]"
+                onClick={() => {
+                  setRemoveUserModal(false);
+                  setAssignUser(null);
+                  setRemoveUser(null);
+                }}
+              >
+                <span className="!text-[12px]">Cancel</span>
+              </button>
+              <button
+                className="button button-secondary !py-[8px] !min-w-[120px]"
+                onClick={handleLeaveGroup}
+              >
+                <span className="!text-[12px]">Leave</span>
               </button>
             </div>
           </div>

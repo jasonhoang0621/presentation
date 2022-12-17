@@ -9,6 +9,7 @@ import {
   useRemovePresentation,
 } from "src/api/presentation";
 import Slide from "src/components/Slide";
+import { SettingOutlined } from "@ant-design/icons";
 
 const Presentation = () => {
   const auth = useSelector((state) => state.auth);
@@ -122,9 +123,12 @@ const Presentation = () => {
           visible={showPopover}
           onVisibleChange={(visible) => setShowPopover(visible)}
         >
-          <button className="button !py-2 !min-w-[120px]">
-            <span className="!text-[14px]">Action</span>
-          </button>
+          <div
+            className="w-8 h-8 drop-shadow-lg bg-white rounded-full flex items-center justify-center cursor-pointer
+          "
+          >
+            <SettingOutlined />
+          </div>
         </Popover>
       </div>
 
