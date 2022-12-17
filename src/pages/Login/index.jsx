@@ -55,9 +55,16 @@ const Login = () => {
               rules={[
                 { required: true, message: "Please input your password!" },
               ]}
+              className="!mb-0"
             >
               <Input.Password className="app-input" placeholder="Password" />
             </Form.Item>
+            <Link
+              to="/forget-password"
+              className="flex justify-end text-[#495E54] cursor-pointer hover:text-white mb-3 mt-1"
+            >
+              Forget password
+            </Link>
             <div className="flex justify-center">
               <button type="primary" htmltype="submit" className="button">
                 <span>Login</span>

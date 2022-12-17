@@ -1,5 +1,6 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Layout from "src/components/Layout";
+import NotFound from "src/pages/NotFound";
 import { LayoutRouters, NoLayoutRouters } from "./index";
 
 const Authenticated = () => {
@@ -15,7 +16,7 @@ const Authenticated = () => {
           <Route key={idx} path={item.path} element={<item.element />} />
         ))}
       </Route>
-      <Route path="*" element={<Navigate to={"not-found"} />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

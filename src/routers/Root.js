@@ -13,6 +13,7 @@ import { ToastContainer } from "react-toastify";
 import Authenticate from "src/auth";
 import GoogleRedirect from "src/components/GoogleRedirect";
 import JoinGroupRedirect from "src/components/JoinGroupRedirect";
+import ForgetPassword from "src/pages/ForgetPassword";
 import Login from "src/pages/Login";
 import Register from "src/pages/Register";
 import { getSocket, SocketContext } from "src/socket/context";
@@ -57,6 +58,7 @@ const Root = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/forget-password" element={<ForgetPassword />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login/google" element={<GoogleRedirect />} />
             <Route path="/invite/:id" element={<JoinGroupRedirect />} />
