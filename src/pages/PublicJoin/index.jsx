@@ -1,7 +1,8 @@
 import { WechatOutlined } from "@ant-design/icons";
-import { Drawer, Spin } from "antd";
+import { Drawer, Input, Spin } from "antd";
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
 import { SlideType } from "src/helpers/slide";
@@ -9,11 +10,13 @@ import { SocketContext } from "src/socket/context";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
 
-const PublicPresent = () => {
-  const { presentationId } = useParams();
+const PublicJoin = () => {
+  const navigate = useNavigate();
+  const { groupId, presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
+  const [userName, setUserName] = useState(localStorage.getItem("name"));
   // const [index, setIndex] = useState(0);
   const data = {
     id: 1,
@@ -87,6 +90,29 @@ const PublicPresent = () => {
       }
     }, 2000);
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    if (token) {
+      navigate(`/group/${groupId}/presentation/${presentationId}/join`, {
+        replace: true,
+      });
+    }
+  }, [groupId, presentationId, navigate]);
+
+  if (!userName) {
+    return (
+      <div>
+        <p>Enter your name:</p>
+        <Input
+          className="app-input"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+        />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -165,4 +191,4 @@ const PublicPresent = () => {
   );
 };
 
-export default PublicPresent;
+export default PublicJoin;

@@ -96,16 +96,10 @@ const Presentation = () => {
       ) : (
         <>
           <div
-            onClick={() => navigate("join/public")}
+            onClick={() => navigate("join")}
             className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
           >
-            <p className="text-[16px]">Join Public Presentation</p>
-          </div>
-          <div
-            onClick={() => navigate("join/private")}
-            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
-          >
-            <p className="text-[16px]">Join Private Presentation</p>
+            <p className="text-[16px]">Join Presentation</p>
           </div>
         </>
       )}

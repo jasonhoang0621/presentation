@@ -39,14 +39,8 @@ const NoLayoutRouters = [
     layout: false,
   },
   {
-    name: "joinPublic",
-    path: "/group/:groupId/presentation/:presentationId/join/public",
-    element: Join,
-    layout: false,
-  },
-  {
-    name: "joinPrivate",
-    path: "/group/:groupId/presentation/:presentationId/join/private",
+    name: "userJoin",
+    path: "/group/:groupId/presentation/:presentationId/join",
     element: Join,
     layout: false,
   },

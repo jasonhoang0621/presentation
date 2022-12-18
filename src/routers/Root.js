@@ -15,7 +15,7 @@ import GoogleRedirect from "src/components/GoogleRedirect";
 import JoinGroupRedirect from "src/components/JoinGroupRedirect";
 import ForgetPassword from "src/pages/ForgetPassword";
 import Login from "src/pages/Login";
-import PublicPresent from "src/pages/PublicPresent";
+import PublicJoin from "src/pages/PublicJoin";
 import Register from "src/pages/Register";
 import { getSocket, SocketContext } from "src/socket/context";
 import Authenticated from "./Authed";
@@ -53,6 +53,7 @@ const Root = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>
       <QueryClientProvider client={queryClient}>
@@ -64,8 +65,8 @@ const Root = () => {
             <Route path="/login/google" element={<GoogleRedirect />} />
             <Route path="/invite/:id" element={<JoinGroupRedirect />} />
             <Route
-              path="/presentation/:presentationId/join"
-              element={<PublicPresent />}
+              path="/group/:groupId/presentation/:presentationId/join/public"
+              element={<PublicJoin />}
             />
             <Route
               path="*"

@@ -15,7 +15,7 @@ import { offChat, offPresentation } from "src/socket/off";
 
 const Present = () => {
   const { socket } = useContext(SocketContext);
-  const { presentationId } = useParams();
+  const { groupId, presentationId } = useParams();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
@@ -45,7 +45,7 @@ const Present = () => {
 
   const handleShare = () => {
     navigator.clipboard.writeText(
-      window.location.origin + "/presentation/" + presentationId + "/join"
+      `${window.location.origin}/group/${groupId}/presentation/${presentationId}/join/public`
     );
     notification.success({
       message: "Link copied to clipboard",
