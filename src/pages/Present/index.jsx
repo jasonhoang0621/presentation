@@ -284,12 +284,14 @@ const Present = () => {
             </Select>
           </div>
           <div className="flex items-center">
-            <button
-              onClick={handleShare}
-              className="button button-danger !py-2 !min-w-[120px]"
-            >
-              <span className="!text-[14px]">Share</span>
-            </button>
+            {window.location.pathname.includes("public") && (
+              <button
+                onClick={handleShare}
+                className="button button-danger !py-2 !min-w-[120px]"
+              >
+                <span className="!text-[14px]">Share</span>
+              </button>
+            )}
             <button
               onClick={() => handleChangeSlide(currentSlide + 1)}
               className="button !py-2 !min-w-[120px]"

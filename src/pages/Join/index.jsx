@@ -154,7 +154,7 @@ const Join = () => {
           <div className="my-5 h-rc-rate-star-full">
             <div
               id="chat-box"
-              className="h-[90vh]  overflow-auto px-4 hide-scrollbar"
+              className="h-[90vh]  overflow-auto px-4"
               ref={containerRef}
               onScroll={handleScroll}
             >
