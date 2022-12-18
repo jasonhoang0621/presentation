@@ -108,15 +108,17 @@ const Join = () => {
   }, [socket, presentationId, chatData]);
 
   useEffect(() => {
-    const chatBox = document.getElementById("chat-box");
-    if (chatBox) {
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  }, [chatData]);
+    setTimeout(() => {
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }, 2000);
+  }, []);
 
   return (
     <>
-      <div style={{ height: "calc(100vh - 64px)" }}>
+      <div className="px-[15vw]" style={{ height: "calc(100vh - 64px)" }}>
         <p className="text-center text-2xl mt-5">{data?.question}</p>
         <div className="mt-10 flex flex-wrap">
           {data?.answer.map((answer, index) => (

@@ -1,5 +1,5 @@
 import { WechatOutlined } from "@ant-design/icons";
-import { Drawer, Input, Select, Spin } from "antd";
+import { Drawer, Input, notification, Select, Spin } from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
+import { Reaction, SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { changeSlide, editSendMessage } from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
@@ -31,9 +32,24 @@ const Present = () => {
 
   const handleChangeSlide = (index) => {
     if (!socket) return;
-    if (index === data?.data?.slide.length) return;
+    if (index === data?.data?.slide.length) {
+      notification.error({
+        message: "Error",
+        description: "You are at the last slide",
+      });
+      return;
+    }
     setCurrentSlide(index);
     changeSlide(socket, presentationId, index);
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(
+      window.location.origin + "/presentation/" + presentationId + "/join"
+    );
+    notification.success({
+      message: "Link copied to clipboard",
+    });
   };
 
   useEffect(() => {
@@ -73,6 +89,15 @@ const Present = () => {
     };
   }, [socket, presentationId, chatData]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }, 2000);
+  }, []);
+
   const handleScroll = () => {
     if (containerRef.current.scrollTop === 0) {
       if (chatLength <= chatData.length) {
@@ -104,47 +129,139 @@ const Present = () => {
     }
   };
 
-  const options = {
-    responsive: true,
-    plugins: {
-      title: {
-        display: true,
-        text: data?.name,
-      },
-    },
-    tooltips: {
-      display: false,
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-      y: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          stepSize: 1,
-        },
-      },
-    },
-  };
-
-  const chartData = {
-    labels: data
-      ? data.data.slide[currentSlide]?.answer.map((item) => item.value)
-      : [],
-    datasets: [
-      {
-        data: data
-          ? data.data.slide[currentSlide]?.answer.map((item) => item.count)
-          : [],
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-    ],
-    scaleShowLabels: false,
+  const renderQuestionType = () => {
+    const type = data?.data?.slide[currentSlide]?.type;
+    switch (type) {
+      case SlideType.MULTIPLE_CHOICE: {
+        const options = {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: data?.name,
+            },
+          },
+          tooltips: {
+            display: false,
+          },
+          scales: {
+            x: {
+              grid: {
+                display: false,
+              },
+            },
+            y: {
+              grid: {
+                display: false,
+              },
+              ticks: {
+                stepSize: 1,
+              },
+            },
+          },
+        };
+        const chartData = {
+          labels: data
+            ? data.data.slide[currentSlide]?.answer.map((item) => item.value)
+            : [],
+          datasets: [
+            {
+              data: data
+                ? data.data.slide[currentSlide]?.answer.map(
+                    (item) => item.count
+                  )
+                : [],
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+            },
+          ],
+          scaleShowLabels: false,
+        };
+        return (
+          <>
+            <p className="break-all text-xl">
+              {data?.data?.slide[currentSlide]?.question}
+            </p>
+            <Bar options={options} data={chartData} />
+          </>
+        );
+      }
+      case SlideType.HEADING:
+        return (
+          <>
+            <p className="break-all text-[40px]">
+              {data?.data?.slide[currentSlide]?.question}
+            </p>
+            <p className="break-all mt-2 text-[20px]">
+              {data?.data?.slide[currentSlide]?.paragraph}
+            </p>
+            <div className="flex items-center justify-center mt-5">
+              {data?.data?.slide[currentSlide]?.icon.map(({ type }) => {
+                const Icon = Reaction.find((item) => item.type === type)?.Icon;
+                return (
+                  <div
+                    key={type}
+                    className={
+                      "flex items-center justify-center w-12 h-12 bg-[#495e54] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
+                    }
+                  >
+                    <Icon className="text-white text-[20px]" />
+                    {data?.data?.slide[currentSlide]?.icon?.find(
+                      (item) => item?.type === type
+                    )?.amount > 0 && (
+                      <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
+                        {
+                          data?.data?.slide[currentSlide]?.icon?.find(
+                            (item) => item?.type === type
+                          )?.amount
+                        }
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        );
+      case SlideType.PARAGRAPH:
+        return (
+          <>
+            <p className="break-all text-[40px]">
+              {data?.data?.slide[currentSlide]?.question}
+            </p>
+            <p className="break-all mt-2 text-[30px]">
+              {data?.data?.slide[currentSlide]?.paragraph}
+            </p>
+            <div className="flex items-center justify-center mt-5">
+              {data?.data?.slide[currentSlide]?.icon.map(({ type }) => {
+                const Icon = Reaction.find((item) => item.type === type)?.Icon;
+                return (
+                  <div
+                    key={type}
+                    className={
+                      "flex items-center justify-center w-12 h-12 bg-[#495e54] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
+                    }
+                  >
+                    <Icon className="text-white text-[20px]" />
+                    {data?.data?.slide[currentSlide]?.icon?.find(
+                      (item) => item?.type === type
+                    )?.amount > 0 && (
+                      <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
+                        {
+                          data?.data?.slide[currentSlide]?.icon?.find(
+                            (item) => item?.type === type
+                          )?.amount
+                        }
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        );
+      default:
+        return <></>;
+    }
   };
 
   return (
@@ -166,21 +283,26 @@ const Present = () => {
                 ))}
             </Select>
           </div>
-          <button
-            onClick={() => handleChangeSlide(currentSlide + 1)}
-            className="button !py-2 !min-w-[120px]"
-          >
-            <span className="!text-[14px]">Next</span>
-          </button>
+          <div className="flex items-center">
+            <button
+              onClick={handleShare}
+              className="button button-danger !py-2 !min-w-[120px]"
+            >
+              <span className="!text-[14px]">Share</span>
+            </button>
+            <button
+              onClick={() => handleChangeSlide(currentSlide + 1)}
+              className="button !py-2 !min-w-[120px]"
+            >
+              <span className="!text-[14px]">Next</span>
+            </button>
+          </div>
         </div>
         <div className="w-full flex items-center justify-center">
           <div
-            className={`h-[600px] w-[90%] p-5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer overflow-hidden`}
+            className={`h-[600px] w-[90%] p-5 transition-all duration-300 flex flex-col items-center justify-center overflow-hidden`}
           >
-            <p className="break-all">
-              {data?.data?.slide[currentSlide]?.question}
-            </p>
-            <Bar options={options} data={chartData} />
+            {renderQuestionType()}
           </div>
         </div>
       </div>

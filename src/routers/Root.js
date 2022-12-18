@@ -64,7 +64,7 @@ const Root = () => {
             <Route path="/login/google" element={<GoogleRedirect />} />
             <Route path="/invite/:id" element={<JoinGroupRedirect />} />
             <Route
-              path="/presentation/:id/present"
+              path="/presentation/:presentationId/join"
               element={<PublicPresent />}
             />
             <Route
