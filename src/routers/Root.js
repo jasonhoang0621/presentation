@@ -15,6 +15,7 @@ import GoogleRedirect from "src/components/GoogleRedirect";
 import JoinGroupRedirect from "src/components/JoinGroupRedirect";
 import ForgetPassword from "src/pages/ForgetPassword";
 import Login from "src/pages/Login";
+import PublicPresent from "src/pages/PublicPresent";
 import Register from "src/pages/Register";
 import { getSocket, SocketContext } from "src/socket/context";
 import Authenticated from "./Authed";
@@ -62,6 +63,10 @@ const Root = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/login/google" element={<GoogleRedirect />} />
             <Route path="/invite/:id" element={<JoinGroupRedirect />} />
+            <Route
+              path="/presentation/:id/present"
+              element={<PublicPresent />}
+            />
             <Route
               path="*"
               element={

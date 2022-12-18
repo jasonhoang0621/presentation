@@ -58,7 +58,7 @@ const Present = () => {
       console.log(data);
     });
     listenChat(socket, presentationId, (data) => {
-      toast(data?.data?.user[0].name + ": " + data?.data?.message, {
+      toast(data?.data?.user[0]?.name + ": " + data?.data?.message, {
         onClick: handleClickToast,
       });
       setChatData([...chatData, data?.data]);
