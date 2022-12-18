@@ -158,7 +158,7 @@ const Presentation = () => {
           className={
             detailData.type === SlideType.HEADING ||
             detailData.type === SlideType.PARAGRAPH
-              ? "min-h-[70vh] flex items-center justify-center"
+              ? "min-h-[55vh] flex items-center justify-center"
               : ""
           }
         >
