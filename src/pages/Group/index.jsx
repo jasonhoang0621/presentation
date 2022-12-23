@@ -32,7 +32,7 @@ const Group = () => {
       });
     }
   }, [loadingGroup, auth, groupDetailData]);
-
+  console.log(data)
   return (
     <div>
       <div className="flex items-center justify-end mb-3">

@@ -2,7 +2,7 @@ import { Bar } from "react-chartjs-2";
 import { Reaction, SlideType } from "src/helpers/slide";
 
 const Slide = ({ data, onClick, noBorder = false, isLabel = false }) => {
-  if (data.type === SlideType.MULTIPLE_CHOICE) {
+  if (data?.type === SlideType.MULTIPLE_CHOICE) {
     const options = {
       responsive: true,
       plugins: {
@@ -59,7 +59,7 @@ const Slide = ({ data, onClick, noBorder = false, isLabel = false }) => {
     );
   }
 
-  if (data.type === SlideType.HEADING || data.type === SlideType.PARAGRAPH) {
+  if (data?.type === SlideType.HEADING || data?.type === SlideType.PARAGRAPH) {
     return (
       <div
         className={`h-full min-h-[30vh] w-full p-2 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${
