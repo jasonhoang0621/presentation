@@ -1,23 +1,29 @@
 import { Form, Input, notification, Spin } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { Link, useNavigate } from "react-router-dom";
-import { useLogin } from "src/api/user";
+import { useForgotPassword } from "src/api/user";
 
 const ForgetPassword = () => {
   const [form] = useForm();
   const navigate = useNavigate();
-  const { mutateAsync, isLoading } = useLogin();
+  const { mutateAsync, isLoading } = useForgotPassword();
 
   const handleLogin = async () => {
     const res = await mutateAsync(form.getFieldsValue());
-    if (res.errorCode) {
+    console.log(res);
+
+    if (res?.errorCode) {
       notification.error({
-        message: "Login failed",
+        message: "Reset password failed",
         description: res.data,
         duration: 1,
       });
     }
-
+    notification.success({
+      message: "Reset password success",
+      description: res?.data,
+      duration: 1,
+    })
     navigate("/login");
   };
 

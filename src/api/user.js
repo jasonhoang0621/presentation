@@ -4,6 +4,9 @@ import { useQuery, useMutation } from "react-query";
 export const useLogin = () => {
   return useMutation((payload) => axiosClient.post("/login", payload));
 };
+export const useForgotPassword= () => {
+  return useMutation((payload) => axiosClient.post("/forgotPass", payload));
+};
 export const getGoogleLink = async () => {
   return await axiosClient.get("/loginGoogle");
 };
