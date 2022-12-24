@@ -172,3 +172,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+.presentation-table .ant-table-row:hover td {
+  background-color: #495e5448 !important;
+}

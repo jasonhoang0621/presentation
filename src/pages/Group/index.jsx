@@ -1,3 +1,5 @@
+import { Table } from "antd";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -5,7 +7,6 @@ import { useDetailGroup } from "src/api/group";
 import { useGetListPresentation } from "src/api/presentation";
 import CreatePresentationModal from "src/components/CreatePresentaionModal";
 import EditGroupModal from "src/components/EditGroupModal";
-import Slide from "src/components/Slide";
 
 const Group = () => {
   const auth = useSelector((state) => state.auth);
@@ -32,7 +33,50 @@ const Group = () => {
       });
     }
   }, [loadingGroup, auth, groupDetailData]);
-  console.log(data)
+  console.log(data);
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      width: "30%",
+    },
+    {
+      title: "Number of slide",
+      dataIndex: "slide",
+      key: "slide",
+      render: (slide) => (
+        <div className="text-center">
+          <span>{slide.length}</span>
+        </div>
+      ),
+      width: "20%",
+    },
+    {
+      title: "Created date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => (
+        <div className="text-center">
+          <span>{moment(createdAt).format("DD/MM/YYYY HH:mm")}</span>
+        </div>
+      ),
+      width: "25%",
+    },
+    {
+      title: "Last update",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (updatedAt) => (
+        <div className="text-center">
+          <span>{moment(updatedAt).format("DD/MM/YYYY HH:mm")}</span>
+        </div>
+      ),
+      width: "25%",
+    },
+  ];
+
   return (
     <div>
       <div className="flex items-center justify-end mb-3">
@@ -55,21 +99,19 @@ const Group = () => {
           )}
         </>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-        {data &&
-          data.data.map((item, index) => (
-            <div key={index}>
-              <div>
-                <Slide
-                  data={item?.slide.length > 0 ? item?.slide[0] : null}
-                  onClick={() => navigate(`presentation/${item?.id}`)}
-                />
-              </div>
-              <p className="text-center mb-5 mt-2 font-semibold">
-                {item?.name}
-              </p>
-            </div>
-          ))}
+      <div className="w-full">
+        <Table
+          columns={columns}
+          dataSource={data?.data}
+          pagination={false}
+          onRow={(record, _rowIndex) => {
+            return {
+              onClick: () => navigate(`/group/${id}/presentation/${record.id}`),
+            };
+          }}
+          className="presentation-table"
+          rowClassName="cursor-pointer"
+        />
       </div>
       <EditGroupModal
         visible={editGroupModal}
