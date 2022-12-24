@@ -19,6 +19,10 @@ export const usePresentPresentation = () => {
   return useMutation((payload) => axiosClient.patch("/present/presentation", payload));
 };
 
+export const useExitPresentation = () => {
+  return useMutation((payload) => axiosClient.patch("/exit/presentation", payload));
+};
+
 
 export const useDetailPresentation = (id) => {
   return useQuery(["presentation", id], () =>

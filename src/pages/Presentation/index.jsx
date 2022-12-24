@@ -70,7 +70,6 @@ const Presentation = () => {
       return;
     }
     const res = await mutateAsync({ presentationId: data?.data?.id });
-    console.log(res);
     if (res?.errorCode) {
       notification.error({
         message: res?.data,

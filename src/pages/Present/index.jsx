@@ -3,10 +3,13 @@ import { Drawer, Input, notification, Select, Spin } from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
-import { useDetailPresentation } from "src/api/presentation";
+import {
+  useDetailPresentation,
+  useExitPresentation,
+} from "src/api/presentation";
 import { Reaction, SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { changeSlide, editSendMessage } from "src/socket/emit";
@@ -23,6 +26,8 @@ const Present = () => {
   const auth = useSelector((state) => state.auth);
   const [chatLength, setChatLength] = useState(0);
   const [chatData, setChatData] = useState([]);
+  const { mutateAsync } = useExitPresentation();
+  const navigate = useNavigate();
   const { data: chat, isFetching } = useGetListChat(
     presentationId,
     chatLength,
@@ -41,6 +46,14 @@ const Present = () => {
     }
     setCurrentSlide(index);
     changeSlide(socket, presentationId, index);
+  };
+
+  const handleEndShow = async (index) => {
+    if (!socket) return;
+    const res = await mutateAsync({ presentationId: data?.data?.id });
+    if (!res?.errorCode) {
+      navigate(-1);
+    }
   };
 
   const handleShare = () => {
@@ -297,6 +310,12 @@ const Present = () => {
               className="button !py-2 !min-w-[120px]"
             >
               <span className="!text-[14px]">Next</span>
+            </button>
+            <button
+              onClick={() => handleEndShow()}
+              className="button button-danger !py-2 !min-w-[120px]"
+            >
+              <span className="!text-[14px]">End Show</span>
             </button>
           </div>
         </div>
