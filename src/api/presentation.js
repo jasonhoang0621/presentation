@@ -15,6 +15,11 @@ export const useCreatePresentation = () => {
   return useMutation((payload) => axiosClient.post("/presentation", payload));
 };
 
+export const usePresentPresentation = () => {
+  return useMutation((payload) => axiosClient.patch("/present/presentation", payload));
+};
+
+
 export const useDetailPresentation = (id) => {
   return useQuery(["presentation", id], () =>
     axiosClient.get(`/presentation/${id}`)

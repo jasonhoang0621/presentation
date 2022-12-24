@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDetailGroup } from "src/api/group";
 import {
   useDetailPresentation,
+  usePresentPresentation,
   useRemovePresentation,
 } from "src/api/presentation";
 import Slide from "src/components/Slide";
@@ -20,6 +21,7 @@ const Presentation = () => {
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [detailModal, setDetailModal] = React.useState(false);
   const [detailData, setDetailData] = React.useState({});
+  const { mutateAsync } = usePresentPresentation();
   const [user, setUser] = useState({
     role: "member",
   });
@@ -60,13 +62,31 @@ const Presentation = () => {
     setDeleteModal(false);
     navigate(`/group/${groupId}`);
   };
+  const handlePublicPresent = async () => {
+    if (data?.data?.slide.length === 0) {
+      notification.error({
+        message: "Please add slide to present",
+      });
+      return;
+    }
+    const res = await mutateAsync({ presentationId: data?.data?.id });
+    console.log(res);
+    if (res?.errorCode) {
+      notification.error({
+        message: res?.data,
+      });
+      return;
+    } else {
+      navigate("present/public")
+    }
+  };
 
   const actionContent = (
     <div className="p-0">
       {user?.role !== "member" ? (
         <>
           <div
-            onClick={() => navigate("present/public")}
+            onClick={() => handlePublicPresent()}
             className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
           >
             <p className="text-[16px]">Public Present</p>
