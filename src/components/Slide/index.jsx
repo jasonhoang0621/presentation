@@ -1,7 +1,13 @@
 import { Bar } from "react-chartjs-2";
 import { Reaction, SlideType } from "src/helpers/slide";
 
-const Slide = ({ data, onClick, noBorder = false, isLabel = false }) => {
+const Slide = ({
+  data,
+  onClick,
+  noBorder = false,
+  noQuestion = false,
+  isLabel = false,
+}) => {
   if (data?.type === SlideType.MULTIPLE_CHOICE) {
     const options = {
       responsive: true,
@@ -53,7 +59,7 @@ const Slide = ({ data, onClick, noBorder = false, isLabel = false }) => {
         }`}
         onClick={onClick}
       >
-        <p>{data?.question}</p>
+        {!noQuestion && <p>{data?.question}</p>}
         <Bar options={options} data={chartData} />
       </div>
     );

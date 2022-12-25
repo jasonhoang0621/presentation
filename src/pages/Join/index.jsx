@@ -1,31 +1,32 @@
 import { WechatOutlined } from "@ant-design/icons";
-import { Drawer, Input, Spin } from "antd";
+import { Drawer, Input, notification, Spin } from "antd";
 import React, { useContext, useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
+import { useDetailPresentation } from "src/api/presentation";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { editSendMessage } from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
+import Heading from "./Heading";
+import MultipleChoice from "./MultiplceChoice";
 
 const Join = () => {
   const auth = useSelector((state) => state.auth);
-
+  const navigate = useNavigate();
   const { presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatMessage, setChatMessage] = React.useState("");
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
-  // const [index, setIndex] = useState(0);
-  const data = {
-    id: 1,
-    type: SlideType.MULTIPLE_CHOICE,
-    question: "What is your favorite color?",
-    answer: ["Red", "Blue", "Yellow", "Red", "Blue", "Green", "Yellow"],
-  };
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [data, setData] = useState(null);
+
+  const { data: presentationData } = useDetailPresentation(presentationId);
 
   const [chatData, setChatData] = useState([]);
   const { data: chat, isFetching } = useGetListChat(
@@ -34,7 +35,6 @@ const Join = () => {
     chatLength > 20 ? 5 : 20
   );
 
-  const [activeAnswer, setActiveAnswer] = React.useState(null);
   const { socket } = useContext(SocketContext);
 
   const handleSentMessage = (e) => {
@@ -87,7 +87,7 @@ const Join = () => {
   useEffect(() => {
     if (!socket) return;
     listenPresentation(socket, presentationId, (data) => {
-      console.log(data);
+      setSlideIndex(data?.data?.index);
     });
 
     listenChat(socket, presentationId, (data) => {
@@ -115,23 +115,42 @@ const Join = () => {
     }, 2000);
   }, []);
 
+  useEffect(() => {
+    if (data) {
+      if (data?.data?.slideIndex === null) {
+        notification.error({
+          description: "Presentation not found",
+        });
+        navigate(-1);
+        return;
+      }
+      setSlideIndex(data?.data?.slideIndex);
+    }
+  }, [data, navigate]);
+
+  useEffect(() => {
+    if (presentationData) {
+      setData(presentationData);
+    }
+  }, [presentationData]);
+
+  const renderSlide = useMemo(() => {
+    if (!data) return;
+    switch (data?.data?.slide[slideIndex]?.type) {
+      case SlideType.MULTIPLE_CHOICE:
+        return <MultipleChoice data={data?.data?.slide[slideIndex]} />;
+      case SlideType.HEADING:
+      case SlideType.PARAGRAPH:
+        return <Heading data={data?.data?.slide[slideIndex]} />;
+      default:
+        return <div className="text-center mt-5 text-2xl">Slide not found</div>;
+    }
+  }, [slideIndex, data]);
+
   return (
     <>
       <div className="px-[15vw]" style={{ height: "calc(100vh - 64px)" }}>
-        <p className="text-center text-2xl mt-5">{data?.question}</p>
-        <div className="mt-10 flex flex-wrap">
-          {data?.answer.map((answer, index) => (
-            <div
-              key={index}
-              className={`app-input text-center w-[32%] mx-auto cursor-pointer ${
-                activeAnswer === index ? "bg-[#495e54] text-white" : "bg-white"
-              }`}
-              onClick={() => setActiveAnswer(index)}
-            >
-              {answer}
-            </div>
-          ))}
-        </div>
+        {renderSlide}
       </div>
       <div
         onClick={() => setOpenDrawer(true)}

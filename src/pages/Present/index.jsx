@@ -314,12 +314,6 @@ const Present = () => {
             >
               <span className="!text-[14px]">Next</span>
             </button>
-            <button
-              onClick={() => handleEndShow()}
-              className="button button-danger !py-2 !min-w-[120px]"
-            >
-              <span className="!text-[14px]">End Show</span>
-            </button>
           </div>
         </div>
         <div className="w-full flex items-center justify-center">
