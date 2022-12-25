@@ -91,7 +91,6 @@ const Join = () => {
     });
 
     listenChat(socket, presentationId, (data) => {
-      console.log(data);
       toast(data?.data?.user[0].name + ": " + data?.data?.message, {
         onClick: handleClickToast,
       });

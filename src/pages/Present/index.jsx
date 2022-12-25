@@ -2,8 +2,9 @@ import { WechatOutlined } from "@ant-design/icons";
 import { Drawer, Input, notification, Select, Spin } from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
 import {
@@ -27,7 +28,7 @@ const Present = () => {
   const [chatLength, setChatLength] = useState(0);
   const [chatData, setChatData] = useState([]);
   const { mutateAsync } = useExitPresentation();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: chat, isFetching } = useGetListChat(
     presentationId,
     chatLength,
@@ -48,12 +49,9 @@ const Present = () => {
     changeSlide(socket, presentationId, index);
   };
 
-  const handleEndShow = async (index) => {
-    if (!socket) return;
-    const res = await mutateAsync({ presentationId: data?.data?.id });
-    if (!res?.errorCode) {
-      navigate(-1);
-    }
+  const handleEndShow = async () => {
+    await mutateAsync({ presentationId: presentationId });
+    queryClient.invalidateQueries(["group", groupId]);
   };
 
   const handleShare = () => {
@@ -141,6 +139,11 @@ const Present = () => {
       }
     }
   };
+
+  useEffect(() => {
+    return () => handleEndShow();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderQuestionType = () => {
     const type = data?.data?.slide[currentSlide]?.type;

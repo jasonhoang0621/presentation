@@ -21,6 +21,7 @@ const Presentation = () => {
   const [deleteModal, setDeleteModal] = React.useState(false);
   const [detailModal, setDetailModal] = React.useState(false);
   const [detailData, setDetailData] = React.useState({});
+  const [disablePresent, setDisablePresent] = React.useState(false);
   const { mutateAsync } = usePresentPresentation();
   const [user, setUser] = useState({
     role: "member",
@@ -29,8 +30,7 @@ const Presentation = () => {
   const queryClient = useQueryClient();
 
   const { data } = useDetailPresentation(presentationId);
-  const { data: groupDetailData = null, isLoading: loadingGroup } =
-    useDetailGroup(groupId);
+  const { data: groupDetailData = null } = useDetailGroup(groupId);
 
   useEffect(() => {
     if (groupDetailData) {
@@ -40,8 +40,13 @@ const Presentation = () => {
       setUser({
         role: temp[0]?.role ?? "member",
       });
+      if (groupDetailData.data?.presenting) {
+        setDisablePresent(true);
+        return;
+      }
+      setDisablePresent(false);
     }
-  }, [loadingGroup, auth, groupDetailData]);
+  }, [auth, groupDetailData]);
   const { mutateAsync: deletePresentation } =
     useRemovePresentation(presentationId);
 
@@ -74,9 +79,10 @@ const Presentation = () => {
       notification.error({
         message: res?.data,
       });
+      setDisablePresent(true);
       return;
     } else {
-      navigate("present/public")
+      navigate("present/public");
     }
   };
 
@@ -86,13 +92,17 @@ const Presentation = () => {
         <>
           <div
             onClick={() => handlePublicPresent()}
-            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+            className={`px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200 ${
+              disablePresent ? "pointer-events-none text-gray-200" : ""
+            }`}
           >
             <p className="text-[16px]">Public Present</p>
           </div>
           <div
             onClick={() => navigate("present/private")}
-            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+            className={`px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200 ${
+              disablePresent ? "pointer-events-none text-gray-200" : ""
+            }`}
           >
             <p className="text-[16px]">Private Present</p>
           </div>

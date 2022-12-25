@@ -33,7 +33,6 @@ const Group = () => {
       });
     }
   }, [loadingGroup, auth, groupDetailData]);
-  console.log(data);
 
   const columns = [
     {
@@ -101,6 +100,7 @@ const Group = () => {
       </div>
       <div className="w-full">
         <Table
+          rowKey={(record) => record._id}
           columns={columns}
           dataSource={data?.data}
           pagination={false}

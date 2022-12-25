@@ -23,7 +23,6 @@ const JoinGroupRedirect = () => {
           notification.success({
             message: result?.data,
           });
-          console.log(result.data);
           navigate(`/group/${result?.data?.id}`);
         }
       } else {

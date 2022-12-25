@@ -10,7 +10,6 @@ const ForgetPassword = () => {
 
   const handleLogin = async () => {
     const res = await mutateAsync(form.getFieldsValue());
-    console.log(res);
 
     if (res?.errorCode) {
       notification.error({
@@ -23,7 +22,7 @@ const ForgetPassword = () => {
       message: "Reset password success",
       description: res?.data,
       duration: 1,
-    })
+    });
     navigate("/login");
   };
 
