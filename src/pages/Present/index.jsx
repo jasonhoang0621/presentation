@@ -184,7 +184,7 @@ const Present = () => {
             {
               data: data
                 ? data.data.slide[currentSlide]?.answer.map(
-                    (item) => item.count
+                    (item) => item.amount
                   )
                 : [],
               backgroundColor: "rgba(255, 99, 132, 0.5)",
