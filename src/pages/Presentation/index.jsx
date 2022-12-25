@@ -67,7 +67,7 @@ const Presentation = () => {
     setDeleteModal(false);
     navigate(`/group/${groupId}`);
   };
-  const handlePublicPresent = async () => {
+  const handlePublicPresent = async (url = "present/public") => {
     if (data?.data?.slide.length === 0) {
       notification.error({
         message: "Please add slide to present",
@@ -82,7 +82,7 @@ const Presentation = () => {
       setDisablePresent(true);
       return;
     } else {
-      navigate("present/public");
+      navigate(url);
     }
   };
 
@@ -99,7 +99,7 @@ const Presentation = () => {
             <p className="text-[16px]">Public Present</p>
           </div>
           <div
-            onClick={() => navigate("present/private")}
+            onClick={() => handlePublicPresent("present/private")}
             className={`px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200 ${
               disablePresent ? "pointer-events-none text-gray-200" : ""
             }`}
