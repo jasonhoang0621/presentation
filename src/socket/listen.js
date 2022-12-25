@@ -15,3 +15,12 @@ export const listenChat = (socket, presentationId, cb) => {
     });
   return true;
 };
+
+export const listenAnswer = (socket, presentationId, cb) => {
+  socket
+    .off(`answer-${presentationId}`)
+    .on(`answer-${presentationId}`, function (data) {
+      cb(data);
+    });
+  return true;
+};

@@ -14,8 +14,12 @@ import {
 import { Reaction, SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { changeSlide, editSendMessage } from "src/socket/emit";
-import { listenChat, listenPresentation } from "src/socket/listen";
-import { offChat, offPresentation } from "src/socket/off";
+import {
+  listenAnswer,
+  listenChat,
+  listenPresentation,
+} from "src/socket/listen";
+import { offAnswer, offChat, offPresentation } from "src/socket/off";
 
 const Present = () => {
   const { socket } = useContext(SocketContext);
@@ -23,7 +27,7 @@ const Present = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
-  const { data } = useDetailPresentation(presentationId);
+  const { data, isLoading } = useDetailPresentation(presentationId);
   const auth = useSelector((state) => state.auth);
   const [chatLength, setChatLength] = useState(0);
   const [chatData, setChatData] = useState([]);
@@ -35,7 +39,10 @@ const Present = () => {
     chatLength > 20 ? 5 : 20
   );
   const containerRef = useRef(null);
-
+  const [presentation, setPresentation] = useState(data);
+  useEffect(() => {
+    setPresentation(data);
+  }, [isLoading]);
   const handleChangeSlide = (index) => {
     if (!socket) return;
     if (index === data?.data?.slide.length) {
@@ -84,6 +91,10 @@ const Present = () => {
     listenPresentation(socket, presentationId, (data) => {
       console.log(data);
     });
+    listenAnswer(socket, presentationId, (response) => {
+      console.log(response);
+      setPresentation(response)
+    });
     listenChat(socket, presentationId, (data) => {
       toast(data?.data?.user[0]?.name + ": " + data?.data?.message, {
         onClick: handleClickToast,
@@ -97,6 +108,7 @@ const Present = () => {
     return () => {
       offChat(socket, presentationId);
       offPresentation(socket, presentationId);
+      offAnswer(socket, presentationId);
     };
   }, [socket, presentationId, chatData]);
 
@@ -146,7 +158,7 @@ const Present = () => {
   }, []);
 
   const renderQuestionType = () => {
-    const type = data?.data?.slide[currentSlide]?.type;
+    const type = presentation?.data?.slide[currentSlide]?.type;
     switch (type) {
       case SlideType.MULTIPLE_CHOICE: {
         const options = {
@@ -154,7 +166,7 @@ const Present = () => {
           plugins: {
             title: {
               display: true,
-              text: data?.name,
+              text: presentation?.name,
             },
           },
           tooltips: {
@@ -177,13 +189,13 @@ const Present = () => {
           },
         };
         const chartData = {
-          labels: data
-            ? data.data.slide[currentSlide]?.answer.map((item) => item.value)
+          labels: presentation
+            ? presentation.data.slide[currentSlide]?.answer.map((item) => item.value)
             : [],
           datasets: [
             {
-              data: data
-                ? data.data.slide[currentSlide]?.answer.map(
+              data: presentation
+                ? presentation.data.slide[currentSlide]?.answer.map(
                     (item) => item.amount
                   )
                 : [],
@@ -195,7 +207,7 @@ const Present = () => {
         return (
           <>
             <p className="break-all text-xl">
-              {data?.data?.slide[currentSlide]?.question}
+              {presentation?.data?.slide[currentSlide]?.question}
             </p>
             <Bar options={options} data={chartData} />
           </>
@@ -205,13 +217,13 @@ const Present = () => {
         return (
           <>
             <p className="break-all text-[40px]">
-              {data?.data?.slide[currentSlide]?.question}
+              {presentation?.data?.slide[currentSlide]?.question}
             </p>
             <p className="break-all mt-2 text-[20px]">
-              {data?.data?.slide[currentSlide]?.paragraph}
+              {presentation?.data?.slide[currentSlide]?.paragraph}
             </p>
             <div className="flex items-center justify-center mt-5">
-              {data?.data?.slide[currentSlide]?.icon.map(({ type }) => {
+              {presentation?.data?.slide[currentSlide]?.icon.map(({ type }) => {
                 const Icon = Reaction.find((item) => item.type === type)?.Icon;
                 return (
                   <div
@@ -221,12 +233,12 @@ const Present = () => {
                     }
                   >
                     <Icon className="text-white text-[20px]" />
-                    {data?.data?.slide[currentSlide]?.icon?.find(
+                    {presentation?.data?.slide[currentSlide]?.icon?.find(
                       (item) => item?.type === type
                     )?.amount > 0 && (
                       <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
                         {
-                          data?.data?.slide[currentSlide]?.icon?.find(
+                          presentation?.data?.slide[currentSlide]?.icon?.find(
                             (item) => item?.type === type
                           )?.amount
                         }
@@ -242,13 +254,13 @@ const Present = () => {
         return (
           <>
             <p className="break-all text-[40px]">
-              {data?.data?.slide[currentSlide]?.question}
+              {presentation?.data?.slide[currentSlide]?.question}
             </p>
             <p className="break-all mt-2 text-[30px]">
-              {data?.data?.slide[currentSlide]?.paragraph}
+              {presentation?.data?.slide[currentSlide]?.paragraph}
             </p>
             <div className="flex items-center justify-center mt-5">
-              {data?.data?.slide[currentSlide]?.icon.map(({ type }) => {
+              {presentation?.data?.slide[currentSlide]?.icon.map(({ type }) => {
                 const Icon = Reaction.find((item) => item.type === type)?.Icon;
                 return (
                   <div
@@ -258,12 +270,12 @@ const Present = () => {
                     }
                   >
                     <Icon className="text-white text-[20px]" />
-                    {data?.data?.slide[currentSlide]?.icon?.find(
+                    {presentation?.data?.slide[currentSlide]?.icon?.find(
                       (item) => item?.type === type
                     )?.amount > 0 && (
                       <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
                         {
-                          data?.data?.slide[currentSlide]?.icon?.find(
+                          presentation?.data?.slide[currentSlide]?.icon?.find(
                             (item) => item?.type === type
                           )?.amount
                         }
@@ -292,7 +304,7 @@ const Present = () => {
               value={currentSlide}
             >
               {Array.isArray(data?.data?.slide) &&
-                data?.data?.slide.map((item, index) => (
+                presentation?.data?.slide.map((item, index) => (
                   <Select.Option key={index} value={index}>
                     {index + 1}. {item?.question}
                   </Select.Option>

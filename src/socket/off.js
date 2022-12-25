@@ -13,3 +13,7 @@ export const offChat = (socket, presentationId) => {
   socket.off(`chat-${presentationId}`);
   return true;
 };
+export const offAnswer = (socket, presentationId) => {
+  socket.off(`answer-${presentationId}`);
+  return true;
+};

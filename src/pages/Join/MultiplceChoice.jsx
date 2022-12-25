@@ -1,18 +1,44 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect } from "react";
 import Slide from "src/components/Slide";
+import { listenAnswer } from "src/socket/listen";
+import { offAnswer } from "src/socket/off";
+import { SocketContext } from "src/socket/context";
+import { useParams } from "react-router-dom";
+import { answerQuestion } from "src/socket/emit";
 
 const MultipleChoice = ({ data }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
+  const [slideData, setSlideData] = React.useState(data)
   const [showStatistic, setShowStatistic] = React.useState(false);
   const onSubmit = () => {
+    answerQuestion(socket, presentationId, data.index, activeAnswer)
+    let temp = slideData
+    temp.answer[activeAnswer].amount = temp?.answer[activeAnswer].amount + 1
+    setSlideData(temp)
     setShowStatistic(true);
   };
+  const { socket } = useContext(SocketContext);
+  const { presentationId } = useParams();
 
   useEffect(() => {
     setActiveAnswer(null);
     setShowStatistic(false);
   }, [data]);
+
+  
+  useEffect(() => {
+    if (!socket) return;
+    listenAnswer(socket, presentationId, (response) => {
+      console.log(response);
+      setSlideData(response.slide[data.index])
+    });
+    
+    return () => {
+      offAnswer(socket, presentationId);
+    };
+  }, [socket, presentationId]);
+
 
   return (
     <div>
