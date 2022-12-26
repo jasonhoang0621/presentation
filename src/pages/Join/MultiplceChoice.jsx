@@ -44,6 +44,9 @@ const MultipleChoice = ({ data }) => {
       {showStatistic ? (
         <div className="mt-5">
           <Slide noQuestion noBorder data={data} isLabel={true} />
+          <p className="text-xl text-center mt-5">
+            Wait for the host to change the slide
+          </p>
         </div>
       ) : (
         <>

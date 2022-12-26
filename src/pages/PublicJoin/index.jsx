@@ -8,6 +8,7 @@ import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
+import { v4 as uuidv4 } from "uuid";
 
 const PublicJoin = () => {
   const navigate = useNavigate();
@@ -15,7 +16,8 @@ const PublicJoin = () => {
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
-  const [userName, setUserName] = useState(localStorage.getItem("name"));
+  const [guestId, setGuestId] = useState(localStorage.getItem("guestId"));
+  const [username, setUsername] = useState(localStorage.getItem("username"));
   // const [index, setIndex] = useState(0);
   const data = {
     id: 1,
@@ -55,6 +57,16 @@ const PublicJoin = () => {
       if (chatBox) {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
+    }, 500);
+  };
+
+  const handleSubmitName = () => {
+    if (guestId) return;
+    localStorage.setItem("guestId", uuidv4());
+    localStorage.setItem("username", username);
+    setTimeout(() => {
+      setGuestId(localStorage.getItem("guestId"));
+      setUsername(localStorage.getItem("username"));
     }, 500);
   };
 
@@ -101,15 +113,22 @@ const PublicJoin = () => {
     }
   }, [groupId, presentationId, navigate]);
 
-  if (!userName) {
+  if (!guestId) {
     return (
-      <div>
-        <p>Enter your name:</p>
-        <Input
-          className="app-input"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-        />
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-[50vw]">
+          <p className="pl-1">Enter your name:</p>
+          <Input
+            className="app-input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <div onClick={handleSubmitName} className="flex justify-center">
+            <button className="button !py-2 mt-2">
+              <span className="text-[14px]">Join</span>
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

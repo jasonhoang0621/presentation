@@ -1,9 +1,8 @@
 import { WechatOutlined } from "@ant-design/icons";
 import { Drawer, Input, notification, Spin } from "antd";
-import React, { useContext, useEffect, useState } from "react";
-import { useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
@@ -17,13 +16,13 @@ import MultipleChoice from "./MultiplceChoice";
 
 const Join = () => {
   const auth = useSelector((state) => state.auth);
-  const navigate = useNavigate();
   const { presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatMessage, setChatMessage] = React.useState("");
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
   const [slideIndex, setSlideIndex] = useState(0);
+  const [noPresent, setNoPresent] = useState(false);
   const [data, setData] = useState(null);
 
   const { data: presentationData } = useDetailPresentation(presentationId);
@@ -125,12 +124,12 @@ const Join = () => {
         notification.error({
           description: "Presentation not found",
         });
-        navigate(-1);
+        setNoPresent(true);
         return;
       }
       setSlideIndex(data?.data?.slideIndex);
     }
-  }, [data, navigate]);
+  }, [data]);
 
   useEffect(() => {
     if (presentationData) {
@@ -153,17 +152,25 @@ const Join = () => {
 
   return (
     <>
-      <div className="px-[15vw]" style={{ height: "calc(100vh - 64px)" }}>
-        {renderSlide}
-      </div>
-      <div
-        onClick={() => setOpenDrawer(true)}
-        className="fixed bottom-10 right-5 w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
-      >
-        <div className="flex items-center justify-center w-full h-full">
-          <WechatOutlined className="text-white text-[24px]" />
+      {noPresent ? (
+        <div className="h-screen flex items-center justify-center">
+          <p className="text-[40px]">Waiting for the host to present</p>
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="px-[15vw]" style={{ height: "calc(100vh - 64px)" }}>
+            {renderSlide}
+          </div>
+          <div
+            onClick={() => setOpenDrawer(true)}
+            className="fixed bottom-10 right-5 w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
+          >
+            <div className="flex items-center justify-center w-full h-full">
+              <WechatOutlined className="text-white text-[24px]" />
+            </div>
+          </div>
+        </>
+      )}
       <Drawer
         placement="right"
         width={400}

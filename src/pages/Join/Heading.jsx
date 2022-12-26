@@ -51,7 +51,11 @@ const Heading = ({ data }) => {
           );
         })}
       </div>
-      {!showStatistic && (
+      {showStatistic ? (
+        <p className="text-xl text-center mt-5">
+          Wait for the host to change the slide
+        </p>
+      ) : (
         <div className="flex items-center justify-center mt-10">
           <button onClick={onSubmit} className="button !py-2">
             <span className="text-[14px]">Submit</span>
