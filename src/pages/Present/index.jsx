@@ -16,6 +16,7 @@ import {
   useExitPresentation,
 } from "src/api/presentation";
 import Chat from "src/components/Present/Chat";
+import Question from "src/components/Present/Question";
 import { Reaction, SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { changeSlide, editSendMessage } from "src/socket/emit";
@@ -30,7 +31,8 @@ const Present = () => {
   const { socket } = useContext(SocketContext);
   const { groupId, presentationId } = useParams();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openChatDrawer, setOpenChatDrawer] = useState(false);
+  const [openQuestionDrawer, setOpenQuestionDrawer] = useState(false);
   const { data } = useDetailPresentation(presentationId);
   const auth = useSelector((state) => state.auth);
   const [chatLength, setChatLength] = useState(0);
@@ -44,6 +46,58 @@ const Present = () => {
   );
   const containerRef = useRef(null);
   const [presentation, setPresentation] = useState(data);
+  const [questionData, setQuestionData] = useState([
+    {
+      id: 1,
+      name: "John Doe",
+      question: "How to use React?",
+      upVote: ["123", "adcjnadjhcn ajd"],
+      answer: [
+        {
+          id: 1,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "John Doe",
+      question: "How to use React?",
+      upVote: ["123", "adcjnadjhcn ajd"],
+      answer: [
+        {
+          id: 1,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: "John Doe",
+      question:
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates dolor ea perferendis mollitia. Deserunt odit accusantium id tempore similique iste, tempora veniam quaerat laborum numquam facere sunt deleniti. Tempora, dignissimos!Possimus, ut saepe eius nemo voluptas praesentium ad nisi. Esse qui itaque iusto harum, dolores autem similique voluptas, numquam est aliquid soluta suscipit ipsa minima nam adipisci neque. Error, aspernatur?",
+      upVote: ["123", "adcjnadjhcn ajd"],
+      answer: [
+        {
+          id: 1,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+        {
+          id: 2,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+        {
+          id: 3,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+      ],
+    },
+  ]);
 
   const handleChangeSlide = (index) => {
     if (!socket) return;
@@ -79,7 +133,7 @@ const Present = () => {
   }, [chat]);
 
   const handleClickToast = () => {
-    setOpenDrawer(true);
+    setOpenChatDrawer(true);
     setTimeout(() => {
       const chatBox = document.getElementById("chat-box");
       if (chatBox) {
@@ -158,7 +212,34 @@ const Present = () => {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
     }, 500);
-    setOpenDrawer(true);
+    setOpenChatDrawer(true);
+  };
+
+  const handleUpVote = (questionId) => {
+    const question = questionData.find((item) => item.id === questionId);
+    if (question?.upVote?.includes(auth?.user?.id)) {
+      const newQuestionData = questionData.map((item) => {
+        if (item.id === questionId) {
+          return {
+            ...item,
+            upVote: item.upVote.filter((item) => item !== auth?.user?.id),
+          };
+        }
+        return item;
+      });
+      setQuestionData(newQuestionData);
+      return;
+    }
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        return {
+          ...item,
+          upVote: [...item.upVote, auth?.user?.id],
+        };
+      }
+      return item;
+    });
+    setQuestionData(newQuestionData);
   };
 
   useEffect(() => {
@@ -359,7 +440,7 @@ const Present = () => {
       <div className="fixed bottom-10 right-5 ">
         <div className="flex items-center gap-x-2">
           <div
-            onClick={() => setOpenDrawer(true)}
+            onClick={() => setOpenQuestionDrawer(true)}
             className="w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
           >
             <div className="flex items-center justify-center w-full h-full">
@@ -387,8 +468,8 @@ const Present = () => {
       <Drawer
         placement="right"
         width={400}
-        onClose={() => setOpenDrawer(false)}
-        visible={openDrawer}
+        onClose={() => setOpenChatDrawer(false)}
+        visible={openChatDrawer}
         closable={false}
         bodyStyle={{ padding: 0, overflow: "hidden" }}
       >
@@ -399,6 +480,18 @@ const Present = () => {
             chatData={chatData}
             handleSentMessage={handleSentMessage}
           />
+        </Spin>
+      </Drawer>
+      <Drawer
+        placement="right"
+        width={600}
+        onClose={() => setOpenQuestionDrawer(false)}
+        visible={openQuestionDrawer}
+        closable={false}
+        bodyStyle={{ padding: 0, overflow: "hidden" }}
+      >
+        <Spin spinning={isFetching}>
+          <Question data={questionData} handleUpVote={handleUpVote} />
         </Spin>
       </Drawer>
     </>
