@@ -7,10 +7,14 @@ import { SocketContext } from "src/socket/context";
 import { useParams } from "react-router-dom";
 import { answerQuestion } from "src/socket/emit";
 
-const MultipleChoice = ({ data }) => {
+const MultipleChoice = ({ data, isPublic = false }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
   const [slideData, setSlideData] = React.useState(data);
   const [showStatistic, setShowStatistic] = React.useState(false);
+
+  const { socket } = useContext(SocketContext);
+  const { presentationId } = useParams();
+
   const onSubmit = () => {
     answerQuestion(socket, presentationId, data.index, activeAnswer);
     let temp = slideData;
@@ -18,8 +22,8 @@ const MultipleChoice = ({ data }) => {
     setSlideData(temp);
     setShowStatistic(true);
   };
-  const { socket } = useContext(SocketContext);
-  const { presentationId } = useParams();
+
+  const onPublicSubmit = () => {};
 
   useEffect(() => {
     setActiveAnswer(null);
@@ -69,7 +73,10 @@ const MultipleChoice = ({ data }) => {
               ))}
           </div>
           <div className="flex items-center justify-center mt-5">
-            <button onClick={onSubmit} className="button !py-2">
+            <button
+              onClick={isPublic ? onPublicSubmit : onSubmit}
+              className="button !py-2"
+            >
               <span className="text-[14px]">Submit</span>
             </button>
           </div>

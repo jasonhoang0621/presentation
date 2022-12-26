@@ -1,9 +1,12 @@
 import { WechatOutlined } from "@ant-design/icons";
-import { Drawer, Input, Spin } from "antd";
-import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Drawer, Input, notification, Spin } from "antd";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
+import { useDetailPresentation } from "src/api/presentation";
+import Heading from "src/components/Join/Heading";
+import MultipleChoice from "src/components/Join/MultiplceChoice";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { listenChat, listenPresentation } from "src/socket/listen";
@@ -18,23 +21,20 @@ const PublicJoin = () => {
   const containerRef = React.useRef(null);
   const [guestId, setGuestId] = useState(localStorage.getItem("guestId"));
   const [username, setUsername] = useState(localStorage.getItem("username"));
-  // const [index, setIndex] = useState(0);
-  const data = {
-    id: 1,
-    type: SlideType.MULTIPLE_CHOICE,
-    question: "What is your favorite color?",
-    answer: ["Red", "Blue", "Yellow", "Red", "Blue", "Green", "Yellow"],
-  };
-
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [noPresent, setNoPresent] = useState(false);
+  const [data, setData] = useState(null);
+  const { socket } = useContext(SocketContext);
   const [chatData, setChatData] = useState([]);
+  const [chatMessage, setChatMessage] = React.useState("");
+
+  const { data: presentationData } = useDetailPresentation(presentationId);
+
   const { data: chat, isFetching } = useGetListChat(
     presentationId,
     chatLength,
     chatLength > 20 ? 5 : 20
   );
-
-  const [activeAnswer, setActiveAnswer] = React.useState(null);
-  const { socket } = useContext(SocketContext);
 
   const handleScroll = () => {
     if (containerRef.current.scrollTop === 0) {
@@ -42,6 +42,31 @@ const PublicJoin = () => {
         setChatLength(chatData.length);
       }
     }
+  };
+
+  const handleSentMessage = (e) => {
+    // if (e.key === "Enter") {
+    //   setChatData([
+    //     ...chatData,
+    //     {
+    //       userId: guestId,
+    //       message: chatMessage,
+    //       user: [
+    //         {
+    //           name: username,
+    //         },
+    //       ],
+    //     },
+    //   ]);
+    //   editSendMessage(socket, presentationId, chatMessage);
+    //   setChatMessage("");
+    //   setTimeout(() => {
+    //     const chatBox = document.getElementById("chat-box");
+    //     if (chatBox) {
+    //       chatBox.scrollTop = chatBox.scrollHeight;
+    //     }
+    //   }, 500);
+    // }
   };
 
   useEffect(() => {
@@ -105,13 +130,44 @@ const PublicJoin = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log(token);
     if (token) {
       navigate(`/group/${groupId}/presentation/${presentationId}/join`, {
         replace: true,
       });
     }
   }, [groupId, presentationId, navigate]);
+
+  useEffect(() => {
+    if (presentationData) {
+      setData(presentationData);
+    }
+  }, [presentationData]);
+
+  useEffect(() => {
+    if (data) {
+      if (data?.data?.slideIndex === null) {
+        notification.error({
+          description: "Presentation not found",
+        });
+        setNoPresent(true);
+        return;
+      }
+      setSlideIndex(data?.data?.slideIndex);
+    }
+  }, [data]);
+
+  const renderSlide = useMemo(() => {
+    if (!data) return;
+    switch (data?.data?.slide[slideIndex]?.type) {
+      case SlideType.MULTIPLE_CHOICE:
+        return <MultipleChoice data={data?.data?.slide[slideIndex]} />;
+      case SlideType.HEADING:
+      case SlideType.PARAGRAPH:
+        return <Heading data={data?.data?.slide[slideIndex]} />;
+      default:
+        return <div className="text-center mt-5 text-2xl">Slide not found</div>;
+    }
+  }, [slideIndex, data]);
 
   if (!guestId) {
     return (
@@ -135,35 +191,25 @@ const PublicJoin = () => {
 
   return (
     <>
-      <div className="pt-[10vh] px-[15vw] bg-[#f0f2f5] h-screen">
-        <p className="text-center text-2xl mt-5">{data?.question}</p>
-        <div className="mt-10 flex flex-wrap">
-          {data?.answer.map((answer, index) => (
-            <div
-              key={index}
-              className={`app-input text-center w-[32%] mx-auto cursor-pointer ${
-                activeAnswer === index ? "bg-[#495e54] text-white" : "bg-white"
-              }`}
-              onClick={() => setActiveAnswer(index)}
-            >
-              {answer}
+      {noPresent ? (
+        <div className="h-screen flex items-center justify-center">
+          <p className="text-[40px]">Waiting for the host to present</p>
+        </div>
+      ) : (
+        <>
+          <div className="px-[15vw]" style={{ height: "calc(100vh - 64px)" }}>
+            {renderSlide}
+          </div>
+          <div
+            onClick={() => setOpenDrawer(true)}
+            className="fixed bottom-10 right-5 w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
+          >
+            <div className="flex items-center justify-center w-full h-full">
+              <WechatOutlined className="text-white text-[24px]" />
             </div>
-          ))}
-        </div>
-        <div className="flex justify-center mt-10">
-          <button className="button !py-2">
-            <span className="!text-[14px]">Submit</span>
-          </button>
-        </div>
-      </div>
-      <div
-        onClick={() => setOpenDrawer(true)}
-        className="fixed bottom-10 right-5 w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
-      >
-        <div className="flex items-center justify-center w-full h-full">
-          <WechatOutlined className="text-white text-[24px]" />
-        </div>
-      </div>
+          </div>
+        </>
+      )}
       <Drawer
         placement="right"
         width={400}
@@ -193,15 +239,13 @@ const PublicJoin = () => {
                 ))}
             </div>
             <div className="mt-auto px-4">
-              <p className="text-center text-[16px]">
-                <Link
-                  className="text-[#495E54] cursor-pointer hover:text-white mb-3 mt-1"
-                  to="/login"
-                >
-                  Login{" "}
-                </Link>
-                and join group to chat!
-              </p>
+              <Input
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                onKeyDown={(e) => handleSentMessage(e)}
+                className="app-input !m-0"
+                placeholder="Chat..."
+              />
             </div>
           </div>
         </Spin>

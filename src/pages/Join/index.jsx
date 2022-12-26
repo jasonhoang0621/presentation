@@ -11,8 +11,8 @@ import { SocketContext } from "src/socket/context";
 import { editSendMessage } from "src/socket/emit";
 import { listenChat, listenPresentation } from "src/socket/listen";
 import { offChat, offPresentation } from "src/socket/off";
-import Heading from "./Heading";
-import MultipleChoice from "./MultiplceChoice";
+import Heading from "../../components/Join/Heading";
+import MultipleChoice from "../../components/Join/MultiplceChoice";
 
 const Join = () => {
   const auth = useSelector((state) => state.auth);

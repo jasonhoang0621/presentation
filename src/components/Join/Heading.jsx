@@ -2,12 +2,14 @@ import React from "react";
 import { useEffect } from "react";
 import { Reaction } from "src/helpers/slide";
 
-const Heading = ({ data }) => {
+const Heading = ({ data, isPublic }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
   const [showStatistic, setShowStatistic] = React.useState(false);
   const onSubmit = () => {
     setShowStatistic(true);
   };
+
+  const onPublicSubmit = () => {};
 
   useEffect(() => {
     setActiveAnswer(null);
@@ -57,7 +59,10 @@ const Heading = ({ data }) => {
         </p>
       ) : (
         <div className="flex items-center justify-center mt-10">
-          <button onClick={onSubmit} className="button !py-2">
+          <button
+            onClick={isPublic ? onPublicSubmit : onSubmit}
+            className="button !py-2"
+          >
             <span className="text-[14px]">Submit</span>
           </button>
         </div>
