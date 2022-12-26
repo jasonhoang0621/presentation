@@ -16,6 +16,7 @@ import {
   useExitPresentation,
 } from "src/api/presentation";
 import Chat from "src/components/Present/Chat";
+import History from "src/components/Present/History";
 import Question from "src/components/Present/Question";
 import { Reaction, SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
@@ -33,6 +34,7 @@ const Present = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openChatDrawer, setOpenChatDrawer] = useState(false);
   const [openQuestionDrawer, setOpenQuestionDrawer] = useState(false);
+  const [historyDrawer, setHistoryDrawer] = useState(false);
   const { data } = useDetailPresentation(presentationId);
   const auth = useSelector((state) => state.auth);
   const [chatLength, setChatLength] = useState(0);
@@ -456,7 +458,7 @@ const Present = () => {
             </div>
           </div>
           <div
-            onClick={handleOpenChatDrawer}
+            onClick={() => setHistoryDrawer(true)}
             className="w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
           >
             <div className="flex items-center justify-center w-full h-full">
@@ -492,6 +494,18 @@ const Present = () => {
       >
         <Spin spinning={isFetching}>
           <Question data={questionData} handleUpVote={handleUpVote} />
+        </Spin>
+      </Drawer>
+      <Drawer
+        placement="right"
+        width={400}
+        onClose={() => setHistoryDrawer(false)}
+        visible={historyDrawer}
+        closable={false}
+        bodyStyle={{ padding: 0, overflow: "hidden" }}
+      >
+        <Spin spinning={isFetching}>
+          <History />
         </Spin>
       </Drawer>
     </>
