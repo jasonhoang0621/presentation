@@ -53,10 +53,12 @@ const Join = () => {
       ]);
       editSendMessage(socket, presentationId, chatMessage);
       setChatMessage("");
-      const chatBox = document.getElementById("chat-box");
-      if (chatBox) {
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
+      setTimeout(() => {
+        const chatBox = document.getElementById("chat-box");
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }, 500);
     }
   };
 
@@ -95,10 +97,12 @@ const Join = () => {
         onClick: handleClickToast,
       });
       setChatData([...chatData, data?.data]);
-      const chatBox = document.getElementById("chat-box");
-      if (chatBox) {
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
+      setTimeout(() => {
+        const chatBox = document.getElementById("chat-box");
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }, 500);
     });
     return () => {
       offChat(socket, presentationId);

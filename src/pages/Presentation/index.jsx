@@ -106,6 +106,14 @@ const Presentation = () => {
           >
             <p className="text-[16px]">Private Present</p>
           </div>
+          {user?.role === "co-owner" && (
+            <div
+              onClick={() => navigate("join")}
+              className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+            >
+              <p className="text-[16px]">Join Presentation</p>
+            </div>
+          )}
           <div
             onClick={() => navigate("edit")}
             className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
@@ -123,14 +131,12 @@ const Presentation = () => {
           </div>
         </>
       ) : (
-        <>
-          <div
-            onClick={() => navigate("join")}
-            className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
-          >
-            <p className="text-[16px]">Join Presentation</p>
-          </div>
-        </>
+        <div
+          onClick={() => navigate("join")}
+          className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
+        >
+          <p className="text-[16px]">Join Presentation</p>
+        </div>
       )}
     </div>
   );

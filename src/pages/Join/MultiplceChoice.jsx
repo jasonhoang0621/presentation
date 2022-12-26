@@ -9,13 +9,13 @@ import { answerQuestion } from "src/socket/emit";
 
 const MultipleChoice = ({ data }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
-  const [slideData, setSlideData] = React.useState(data)
+  const [slideData, setSlideData] = React.useState(data);
   const [showStatistic, setShowStatistic] = React.useState(false);
   const onSubmit = () => {
-    answerQuestion(socket, presentationId, data.index, activeAnswer)
-    let temp = slideData
-    temp.answer[activeAnswer].amount = temp?.answer[activeAnswer].amount + 1
-    setSlideData(temp)
+    answerQuestion(socket, presentationId, data.index, activeAnswer);
+    let temp = slideData;
+    temp.answer[activeAnswer].amount = temp?.answer[activeAnswer].amount + 1;
+    setSlideData(temp);
     setShowStatistic(true);
   };
   const { socket } = useContext(SocketContext);
@@ -26,19 +26,16 @@ const MultipleChoice = ({ data }) => {
     setShowStatistic(false);
   }, [data]);
 
-  
   useEffect(() => {
     if (!socket) return;
     listenAnswer(socket, presentationId, (response) => {
-      console.log(response);
-      setSlideData(response.slide[data.index])
+      setSlideData(response.slide[data.index]);
     });
-    
+
     return () => {
       offAnswer(socket, presentationId);
     };
-  }, [socket, presentationId]);
-
+  }, [socket, presentationId, data.index]);
 
   return (
     <div>

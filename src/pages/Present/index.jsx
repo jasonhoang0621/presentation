@@ -27,7 +27,7 @@ const Present = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
-  const { data, isLoading } = useDetailPresentation(presentationId);
+  const { data } = useDetailPresentation(presentationId);
   const auth = useSelector((state) => state.auth);
   const [chatLength, setChatLength] = useState(0);
   const [chatData, setChatData] = useState([]);
@@ -40,9 +40,7 @@ const Present = () => {
   );
   const containerRef = useRef(null);
   const [presentation, setPresentation] = useState(data);
-  useEffect(() => {
-    setPresentation(data);
-  }, [isLoading]);
+
   const handleChangeSlide = (index) => {
     if (!socket) return;
     if (index === data?.data?.slide.length) {
@@ -87,23 +85,30 @@ const Present = () => {
   };
 
   useEffect(() => {
+    if (!data) return;
+    setPresentation(data);
+  }, [data]);
+
+  useEffect(() => {
     if (!socket) return;
     listenPresentation(socket, presentationId, (data) => {
       console.log(data);
     });
     listenAnswer(socket, presentationId, (response) => {
       console.log(response);
-      setPresentation(response)
+      setPresentation(response);
     });
     listenChat(socket, presentationId, (data) => {
       toast(data?.data?.user[0]?.name + ": " + data?.data?.message, {
         onClick: handleClickToast,
       });
       setChatData([...chatData, data?.data]);
-      const chatBox = document.getElementById("chat-box");
-      if (chatBox) {
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
+      setTimeout(() => {
+        const chatBox = document.getElementById("chat-box");
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }, 500);
     });
     return () => {
       offChat(socket, presentationId);
@@ -145,10 +150,12 @@ const Present = () => {
       ]);
       editSendMessage(socket, presentationId, chatMessage);
       setChatMessage("");
-      const chatBox = document.getElementById("chat-box");
-      if (chatBox) {
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
+      setTimeout(() => {
+        const chatBox = document.getElementById("chat-box");
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }, 500);
     }
   };
 
@@ -190,7 +197,9 @@ const Present = () => {
         };
         const chartData = {
           labels: presentation
-            ? presentation.data.slide[currentSlide]?.answer.map((item) => item.value)
+            ? presentation.data.slide[currentSlide]?.answer.map(
+                (item) => item.value
+              )
             : [],
           datasets: [
             {
