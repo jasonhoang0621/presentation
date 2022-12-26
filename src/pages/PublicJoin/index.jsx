@@ -7,6 +7,7 @@ import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
 import Heading from "src/components/Join/Heading";
 import MultipleChoice from "src/components/Join/MultiplceChoice";
+import Chat from "src/components/Present/Chat";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { listenChat, listenPresentation } from "src/socket/listen";
@@ -26,7 +27,6 @@ const PublicJoin = () => {
   const [data, setData] = useState(null);
   const { socket } = useContext(SocketContext);
   const [chatData, setChatData] = useState([]);
-  const [chatMessage, setChatMessage] = React.useState("");
 
   const { data: presentationData } = useDetailPresentation(presentationId);
 
@@ -44,8 +44,7 @@ const PublicJoin = () => {
     }
   };
 
-  const handleSentMessage = (e) => {
-    // if (e.key === "Enter") {
+  const handleSentMessage = (chatMessage) => {
     //   setChatData([
     //     ...chatData,
     //     {
@@ -66,7 +65,6 @@ const PublicJoin = () => {
     //       chatBox.scrollTop = chatBox.scrollHeight;
     //     }
     //   }, 500);
-    // }
   };
 
   useEffect(() => {
@@ -219,35 +217,12 @@ const PublicJoin = () => {
         bodyStyle={{ padding: 0, overflow: "hidden" }}
       >
         <Spin spinning={isFetching}>
-          <div className="my-5 h-rc-rate-star-full">
-            <div
-              id="chat-box"
-              className="h-[90vh]  overflow-auto px-4 "
-              ref={containerRef}
-              onScroll={handleScroll}
-            >
-              {chatData &&
-                chatData.map((chat, index) => (
-                  <div key={index}>
-                    <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
-                      <strong className="text-white">
-                        {chat?.user[0]?.name}
-                      </strong>
-                      <p className="text-white break-all">{chat.message}</p>
-                    </div>
-                  </div>
-                ))}
-            </div>
-            <div className="mt-auto px-4">
-              <Input
-                value={chatMessage}
-                onChange={(e) => setChatMessage(e.target.value)}
-                onKeyDown={(e) => handleSentMessage(e)}
-                className="app-input !m-0"
-                placeholder="Chat..."
-              />
-            </div>
-          </div>
+          <Chat
+            chatData={chatData}
+            containerRef={containerRef}
+            handleScroll={handleScroll}
+            handleSentMessage={handleSentMessage}
+          />
         </Spin>
       </Drawer>
     </>

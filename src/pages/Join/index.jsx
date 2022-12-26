@@ -1,11 +1,12 @@
-import { WechatOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import { Drawer, Input, notification, Spin } from "antd";
+import { QuestionCircleOutlined, WechatOutlined } from "@ant-design/icons";
+import { Drawer, notification, Spin } from "antd";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
+import Chat from "src/components/Present/Chat";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { editSendMessage } from "src/socket/emit";
@@ -18,7 +19,6 @@ const Join = () => {
   const auth = useSelector((state) => state.auth);
   const { presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
-  const [chatMessage, setChatMessage] = React.useState("");
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
   const [slideIndex, setSlideIndex] = useState(0);
@@ -36,29 +36,26 @@ const Join = () => {
 
   const { socket } = useContext(SocketContext);
 
-  const handleSentMessage = (e) => {
-    if (e.key === "Enter") {
-      setChatData([
-        ...chatData,
-        {
-          userId: auth?.user?.id,
-          message: chatMessage,
-          user: [
-            {
-              name: auth?.user?.name,
-            },
-          ],
-        },
-      ]);
-      editSendMessage(socket, presentationId, chatMessage);
-      setChatMessage("");
-      setTimeout(() => {
-        const chatBox = document.getElementById("chat-box");
-        if (chatBox) {
-          chatBox.scrollTop = chatBox.scrollHeight;
-        }
-      }, 500);
-    }
+  const handleSentMessage = (chatMessage) => {
+    setChatData([
+      ...chatData,
+      {
+        userId: auth?.user?.id,
+        message: chatMessage,
+        user: [
+          {
+            name: auth?.user?.name,
+          },
+        ],
+      },
+    ]);
+    editSendMessage(socket, presentationId, chatMessage);
+    setTimeout(() => {
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }, 500);
   };
 
   const handleScroll = () => {
@@ -192,44 +189,12 @@ const Join = () => {
         bodyStyle={{ padding: 0, overflow: "hidden" }}
       >
         <Spin spinning={isFetching}>
-          <div className="my-5 h-rc-rate-star-full">
-            <div
-              id="chat-box"
-              className="h-[90vh]  overflow-auto px-4"
-              ref={containerRef}
-              onScroll={handleScroll}
-            >
-              {chatData &&
-                chatData.map((chat, index) => (
-                  <div key={index}>
-                    {chat.userId === auth?.user?.id ? (
-                      <div className="flex justify-end">
-                        <div className="mb-5 text-end p-2 border border-[#495e54] rounded-lg inline-block">
-                          <strong>{chat.user[0].name}</strong>
-                          <p className="text-left">{chat.message}</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
-                        <strong className="text-white">
-                          {chat.user[0].name}
-                        </strong>
-                        <p className="text-white break-all">{chat.message}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-            <div className="mt-auto px-4">
-              <Input
-                value={chatMessage}
-                onChange={(e) => setChatMessage(e.target.value)}
-                onKeyDown={(e) => handleSentMessage(e)}
-                className="app-input !m-0"
-                placeholder="Chat..."
-              />
-            </div>
-          </div>
+          <Chat
+            containerRef={containerRef}
+            chatData={chatData}
+            handleScroll={handleScroll}
+            handleSentMessage={handleSentMessage}
+          />
         </Spin>
       </Drawer>
     </>
