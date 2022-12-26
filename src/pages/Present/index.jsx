@@ -164,6 +164,15 @@ const Present = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleEndShow);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleEndShow);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const renderQuestionType = () => {
     const type = presentation?.data?.slide[currentSlide]?.type;
     switch (type) {

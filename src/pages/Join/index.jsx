@@ -1,4 +1,4 @@
-import { WechatOutlined } from "@ant-design/icons";
+import { WechatOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Drawer, Input, notification, Spin } from "antd";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -161,12 +161,24 @@ const Join = () => {
           <div className="px-[15vw]" style={{ height: "calc(100vh - 64px)" }}>
             {renderSlide}
           </div>
-          <div
-            onClick={() => setOpenDrawer(true)}
-            className="fixed bottom-10 right-5 w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
-          >
-            <div className="flex items-center justify-center w-full h-full">
-              <WechatOutlined className="text-white text-[24px]" />
+          <div className="fixed bottom-10 right-5 ">
+            <div className="flex items-center gap-x-2">
+              <div
+                onClick={() => setOpenDrawer(true)}
+                className="w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
+              >
+                <div className="flex items-center justify-center w-full h-full">
+                  <QuestionCircleOutlined className="text-white text-[24px]" />
+                </div>
+              </div>
+              <div
+                onClick={() => setOpenDrawer(true)}
+                className="w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
+              >
+                <div className="flex items-center justify-center w-full h-full">
+                  <WechatOutlined className="text-white text-[24px]" />
+                </div>
+              </div>
             </div>
           </div>
         </>
