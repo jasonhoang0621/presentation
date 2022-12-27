@@ -14,13 +14,18 @@ import { useGetListChat } from "src/api/chat";
 import {
   useDetailPresentation,
   useExitPresentation,
+  usePresentPresentation,
 } from "src/api/presentation";
 import Chat from "src/components/Present/Chat";
 import History from "src/components/Present/History";
 import Question from "src/components/Present/Question";
 import { Reaction, SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
-import { changeSlide, editSendMessage } from "src/socket/emit";
+import {
+  changeSlide,
+  editSendMessage,
+  emitChangePresentStatus,
+} from "src/socket/emit";
 import {
   listenAnswer,
   listenChat,
@@ -40,6 +45,8 @@ const Present = () => {
   const [chatLength, setChatLength] = useState(0);
   const [chatData, setChatData] = useState([]);
   const { mutateAsync } = useExitPresentation();
+  const { mutateAsync: startPresent } = usePresentPresentation();
+
   const queryClient = useQueryClient();
   const { data: chat, isFetching } = useGetListChat(
     presentationId,
@@ -115,7 +122,10 @@ const Present = () => {
   };
 
   const handleEndShow = async () => {
-    await mutateAsync({ presentationId: presentationId });
+    const res = await mutateAsync({ presentationId: presentationId });
+    if (!res?.errorCode) {
+      emitChangePresentStatus(socket, presentationId, false);
+    }
     queryClient.invalidateQueries(["group", groupId]);
   };
 
@@ -243,6 +253,16 @@ const Present = () => {
   };
 
   useEffect(() => {
+    const handleStartPresent = async () => {
+      const res = await startPresent({
+        presentationId: presentationId,
+      });
+      if (!res.errorCode) {
+        emitChangePresentStatus(socket, presentationId, true);
+      }
+    };
+    handleStartPresent();
+
     return () => handleEndShow();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

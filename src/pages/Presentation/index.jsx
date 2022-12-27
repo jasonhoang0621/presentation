@@ -1,17 +1,19 @@
+import { SettingOutlined } from "@ant-design/icons";
 import { Modal, notification, Popover } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDetailGroup } from "src/api/group";
 import {
   useDetailPresentation,
-  usePresentPresentation,
   useRemovePresentation,
 } from "src/api/presentation";
 import Slide from "src/components/Slide";
-import { SettingOutlined } from "@ant-design/icons";
 import { SlideType } from "src/helpers/slide";
+import { SocketContext } from "src/socket/context";
+import { listenPresentStatus } from "src/socket/listen";
+import { offPresentStatus } from "src/socket/off";
 
 const Presentation = () => {
   const auth = useSelector((state) => state.auth);
@@ -22,7 +24,6 @@ const Presentation = () => {
   const [detailModal, setDetailModal] = React.useState(false);
   const [detailData, setDetailData] = React.useState({});
   const [disablePresent, setDisablePresent] = React.useState(false);
-  const { mutateAsync } = usePresentPresentation();
   const [user, setUser] = useState({
     role: "member",
   });
@@ -31,6 +32,7 @@ const Presentation = () => {
 
   const { data } = useDetailPresentation(presentationId);
   const { data: groupDetailData = null } = useDetailGroup(groupId);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     if (groupDetailData) {
@@ -74,17 +76,29 @@ const Presentation = () => {
       });
       return;
     }
-    const res = await mutateAsync({ presentationId: data?.data?.id });
-    if (res?.errorCode) {
-      notification.error({
-        message: res?.data,
-      });
-      setDisablePresent(true);
-      return;
-    } else {
-      navigate(url);
-    }
+    navigate(url);
   };
+
+  useEffect(() => {
+    if (!socket) return;
+    listenPresentStatus(socket, presentationId, (data) => {
+      if (data?.status) {
+        console.log(data.status);
+        notification.info({
+          message: "This presentation is presenting",
+        });
+        setDisablePresent(true);
+        return;
+      }
+      setDisablePresent(false);
+      notification.info({
+        message: "This presentation has been stopped",
+      });
+    });
+    return () => {
+      offPresentStatus(socket, presentationId);
+    };
+  }, [socket, presentationId]);
 
   const actionContent = (
     <div className="p-0">

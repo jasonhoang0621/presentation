@@ -18,3 +18,7 @@ export const changeSlide = (socket, presentationId, index) => {
 export const answerQuestion = (socket, presentationId, index, answerIndex) => {
   socket?.emit("answer", { presentationId, index, answerIndex });
 };
+
+export const emitChangePresentStatus = (socket, presentationId, status) => {
+  socket?.emit("presentStatus", { presentationId, status });
+};
