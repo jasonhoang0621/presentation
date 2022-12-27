@@ -154,8 +154,7 @@ const Present = () => {
     listenPresentation(socket, presentationId, (data) => {
       console.log(data);
     });
-    listenAnswer(socket, presentationId, data?.slideIndex ?? 0, (response) => {
-      console.log(response);
+    listenAnswer(socket, presentationId, currentSlide, (response) => {
       setPresentation(response);
     });
     listenChat(socket, presentationId, (data) => {
@@ -173,10 +172,9 @@ const Present = () => {
     return () => {
       offChat(socket, presentationId);
       offPresentation(socket, presentationId);
-      offAnswer(socket, presentationId, data?.slideIndex ?? 0);
+      offAnswer(socket, presentationId, currentSlide);
     };
-  }, [socket, presentationId, chatData]);
-
+  }, [socket, presentationId, chatData, currentSlide]);
   const handleScroll = () => {
     if (containerRef.current.scrollTop === 0) {
       if (chatLength <= chatData.length) {
