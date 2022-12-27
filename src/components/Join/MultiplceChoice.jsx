@@ -17,9 +17,6 @@ const MultipleChoice = ({ data, isPublic = false }) => {
 
   const onSubmit = () => {
     answerQuestion(socket, presentationId, data.index, activeAnswer);
-    let temp = slideData;
-    temp.answer[activeAnswer].amount = temp?.answer[activeAnswer].amount + 1;
-    setSlideData(temp);
     setShowStatistic(true);
   };
 
@@ -29,15 +26,18 @@ const MultipleChoice = ({ data, isPublic = false }) => {
     setActiveAnswer(null);
     setShowStatistic(false);
   }, [data]);
+  console.log("data.index", data.index);
 
   useEffect(() => {
     if (!socket) return;
-    listenAnswer(socket, presentationId, (response) => {
-      setSlideData(response.slide[data.index]);
+    listenAnswer(socket, presentationId, data.index, (response) => {
+      console.log("response", response);
+      console.log(response.data.slide[data.index])
+      setSlideData(response.data.slide[data.index]);
     });
 
     return () => {
-      offAnswer(socket, presentationId);
+      offAnswer(socket, presentationId, data.index);
     };
   }, [socket, presentationId, data.index]);
 
@@ -47,7 +47,7 @@ const MultipleChoice = ({ data, isPublic = false }) => {
 
       {showStatistic ? (
         <div className="mt-5">
-          <Slide noQuestion noBorder data={data} isLabel={true} />
+          <Slide noQuestion noBorder data={slideData} isLabel={true} />
           <p className="text-xl text-center mt-5">
             Wait for the host to change the slide
           </p>
@@ -55,8 +55,8 @@ const MultipleChoice = ({ data, isPublic = false }) => {
       ) : (
         <>
           <div className="mt-10 flex flex-wrap">
-            {data &&
-              data?.answer.map((answer, index) => (
+            {slideData &&
+              slideData?.answer.map((answer, index) => (
                 <div
                   key={index}
                   className={`app-input text-center w-[32%] mx-auto cursor-pointer ${

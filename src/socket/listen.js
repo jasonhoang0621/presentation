@@ -16,10 +16,10 @@ export const listenChat = (socket, presentationId, cb) => {
   return true;
 };
 
-export const listenAnswer = (socket, presentationId, cb) => {
+export const listenAnswer = (socket, presentationId, index =0, cb) => {
   socket
-    .off(`answer-${presentationId}`)
-    .on(`answer-${presentationId}`, function (data) {
+    .off(`answer-${presentationId}-${index}`)
+    .on(`answer-${presentationId}-${index}`, function (data) {
       cb(data);
     });
   return true;
