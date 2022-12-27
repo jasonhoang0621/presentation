@@ -154,7 +154,7 @@ const Present = () => {
     listenPresentation(socket, presentationId, (data) => {
       console.log(data);
     });
-    listenAnswer(socket, presentationId, data.slideIndex, (response) => {
+    listenAnswer(socket, presentationId, data?.slideIndex ?? 0, (response) => {
       console.log(response);
       setPresentation(response);
     });
@@ -173,7 +173,7 @@ const Present = () => {
     return () => {
       offChat(socket, presentationId);
       offPresentation(socket, presentationId);
-      offAnswer(socket, presentationId, data.slideIndex);
+      offAnswer(socket, presentationId, data?.slideIndex ?? 0);
     };
   }, [socket, presentationId, chatData]);
 
