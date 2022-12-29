@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Reaction } from "src/helpers/slide";
+import { SocketContext } from "src/socket/context";
+import { answerQuestion } from "src/socket/emit";
+import { listenAnswer } from "src/socket/listen";
+import { offAnswer } from "src/socket/off";
 
 const Heading = ({ data, isPublic }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
+  const [slideData, setSlideData] = React.useState(data);
   const [showStatistic, setShowStatistic] = React.useState(false);
+  const { socket } = useContext(SocketContext);
+  const { presentationId } = useParams();
+
+
   const onSubmit = () => {
+    answerQuestion(socket, presentationId, data.index, activeAnswer);
     setShowStatistic(true);
   };
 
@@ -16,37 +27,50 @@ const Heading = ({ data, isPublic }) => {
     setShowStatistic(false);
   }, [data]);
 
+  useEffect(() => {
+    if (!socket) return;
+    listenAnswer(socket, presentationId, data.index, (response) => {
+      console.log("response", response);
+      console.log(response.data.slide[data.index])
+      setSlideData(response.data.slide[data.index]);
+    });
+
+    return () => {
+      offAnswer(socket, presentationId, data.index);
+    };
+  }, [socket, presentationId, data.index]);
+
   return (
     <div className={`flex flex-col items-center justify-center h-full`}>
-      <p className="break-all text-[40px]">{data?.question}</p>
-      <p className="break-all mt-2 text-[25px]">{data?.paragraph}</p>
+      <p className="break-all text-[40px]">{slideData?.question}</p>
+      <p className="break-all mt-2 text-[25px]">{slideData?.paragraph}</p>
       <div className="flex items-center justify-center mt-10">
-        {data.answer.map(({ type }) => {
+        {slideData.answer.map(({ type }, index) => {
           const Icon = Reaction.find((item) => item.type === type)?.Icon;
           return (
             <div
-              onClick={showStatistic ? () => {} : () => setActiveAnswer(type)}
-              key={type}
+              onClick={showStatistic ? () => {} : () => setActiveAnswer(index)}
+              key={index}
               className={`flex items-center justify-center w-[50px] h-[50px] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative ${
-                activeAnswer === type
+                activeAnswer === index
                   ? "bg-[#495e54] text-white"
                   : "bg-white text-[#495e54]"
               }`}
             >
               <Icon
                 className={`text-[20px] ${
-                  activeAnswer === type ? "text-white" : "text-[#495e54]"
+                  activeAnswer === index ? "text-white" : "text-[#495e54]"
                 }`}
               />
               {showStatistic && (
                 <div
                   className={`absolute -top-3 -right-3 rounded-full w-7 px-1 h-7 flex items-center justify-center drop-shadow-md text-[10px] ${
-                    activeAnswer === type
+                    activeAnswer === index
                       ? "bg-white text-[#495e54]"
                       : "bg-[#495e54] text-white"
                   }`}
                 >
-                  {data?.answer?.find((item) => item?.type === type)?.amount}
+                  {slideData?.answer?.find((item) => item?.type === type)?.amount}
                 </div>
               )}
             </div>
