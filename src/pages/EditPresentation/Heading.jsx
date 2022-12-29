@@ -5,16 +5,16 @@ import { Reaction } from "src/helpers/slide";
 
 const Heading = ({ data, setData }) => {
   const handleChooseReaction = (type) => {
-    if (data?.icon.some((item) => item?.type === type)) {
+    if (data?.answer.some((item) => item?.type === type)) {
       setData({
         ...data,
-        icon: data?.icon.filter((item) => item?.type !== type),
+        answer: data?.answer.filter((item) => item?.type !== type),
       });
     } else {
       setData({
         ...data,
-        icon: [
-          ...data?.icon,
+        answer: [
+          ...data?.answer,
           {
             type,
             amount: 0,
@@ -60,14 +60,14 @@ const Heading = ({ data, setData }) => {
             onClick={() => handleChooseReaction(type)}
             key={type}
             className={`flex items-center justify-center w-10 h-10 bg-white drop-shadow-md rounded-full mr-3 transition-all duration-200 ${
-              data?.icon.some((item) => item?.type === type)
+              data?.answer.some((item) => item?.type === type)
                 ? "bg-[#495e54] text-white"
                 : "bg-white text-gray-500"
             }}`}
           >
             <Icon
               className={`${
-                data?.icon.some((item) => item?.type === type)
+                data?.answer.some((item) => item?.type === type)
                   ? "text-white"
                   : "text-black"
               }`}

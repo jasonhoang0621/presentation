@@ -21,7 +21,7 @@ const Heading = ({ data, isPublic }) => {
       <p className="break-all text-[40px]">{data?.question}</p>
       <p className="break-all mt-2 text-[25px]">{data?.paragraph}</p>
       <div className="flex items-center justify-center mt-10">
-        {data.icon.map(({ type }) => {
+        {data.answer.map(({ type }) => {
           const Icon = Reaction.find((item) => item.type === type)?.Icon;
           return (
             <div
@@ -46,7 +46,7 @@ const Heading = ({ data, isPublic }) => {
                       : "bg-[#495e54] text-white"
                   }`}
                 >
-                  {data?.icon?.find((item) => item?.type === type)?.amount}
+                  {data?.answer?.find((item) => item?.type === type)?.amount}
                 </div>
               )}
             </div>

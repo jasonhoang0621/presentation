@@ -59,7 +59,7 @@ const MainSlide = ({ data }) => {
         <p className="break-all text-xl">{data?.question}</p>
         <p className="break-all mt-2">{data?.paragraph}</p>
         <div className="flex items-center justify-center mt-5">
-          {data.icon.map(({ type }) => {
+          {data.answer.map(({ type }) => {
             const Icon = Reaction.find((item) => item.type === type)?.Icon;
             return (
               <div
@@ -69,10 +69,10 @@ const MainSlide = ({ data }) => {
                 }
               >
                 <Icon className="text-white" />
-                {data?.icon?.find((item) => item?.type === type)?.amount >
+                {data?.answer?.find((item) => item?.type === type)?.amount >
                   0 && (
                   <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
-                    {data?.icon?.find((item) => item?.type === type)?.amount}
+                    {data?.answer?.find((item) => item?.type === type)?.amount}
                   </div>
                 )}
               </div>

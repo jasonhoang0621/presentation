@@ -344,7 +344,7 @@ const Present = () => {
               {presentation?.data?.slide[currentSlide]?.paragraph}
             </p>
             <div className="flex items-center justify-center mt-5">
-              {presentation?.data?.slide[currentSlide]?.icon.map(({ type }) => {
+              {presentation?.data?.slide[currentSlide]?.answer.map(({ type }) => {
                 const Icon = Reaction.find((item) => item.type === type)?.Icon;
                 return (
                   <div
@@ -354,12 +354,12 @@ const Present = () => {
                     }
                   >
                     <Icon className="text-white text-[20px]" />
-                    {presentation?.data?.slide[currentSlide]?.icon?.find(
+                    {presentation?.data?.slide[currentSlide]?.answer?.find(
                       (item) => item?.type === type
                     )?.amount > 0 && (
                       <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
                         {
-                          presentation?.data?.slide[currentSlide]?.icon?.find(
+                          presentation?.data?.slide[currentSlide]?.answer?.find(
                             (item) => item?.type === type
                           )?.amount
                         }
@@ -381,7 +381,7 @@ const Present = () => {
               {presentation?.data?.slide[currentSlide]?.paragraph}
             </p>
             <div className="flex items-center justify-center mt-5">
-              {presentation?.data?.slide[currentSlide]?.icon.map(({ type }) => {
+              {presentation?.data?.slide[currentSlide]?.answer.map(({ type }) => {
                 const Icon = Reaction.find((item) => item.type === type)?.Icon;
                 return (
                   <div
@@ -391,12 +391,12 @@ const Present = () => {
                     }
                   >
                     <Icon className="text-white text-[20px]" />
-                    {presentation?.data?.slide[currentSlide]?.icon?.find(
+                    {presentation?.data?.slide[currentSlide]?.answer?.find(
                       (item) => item?.type === type
                     )?.amount > 0 && (
                       <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
                         {
-                          presentation?.data?.slide[currentSlide]?.icon?.find(
+                          presentation?.data?.slide[currentSlide]?.answer?.find(
                             (item) => item?.type === type
                           )?.amount
                         }
