@@ -20,7 +20,11 @@ const MultipleChoice = ({ data, isPublic = false }) => {
     setShowStatistic(true);
   };
 
-  const onPublicSubmit = () => {};
+  const onPublicSubmit = () => {
+    const name = localStorage.getItem("name");
+    answerQuestion(socket, presentationId, data.index, activeAnswer);
+    setShowStatistic(true);
+  };
 
   useEffect(() => {
     setActiveAnswer(null);

@@ -15,8 +15,12 @@ export const changeSlide = (socket, presentationId, index) => {
   socket?.emit("present", { presentationId, index });
 };
 
-export const answerQuestion = (socket, presentationId, index, answerIndex) => {
-  socket?.emit("answer", { presentationId, index, answerIndex });
+export const answerQuestion = (socket, presentationId, index, answerIndex, name = null) => {
+  if (name === null) {
+    socket?.emit("answer", { presentationId, index, answerIndex });
+  } else {
+    socket?.emit("answer", { presentationId, index, answerIndex, name });
+  }
 };
 
 export const emitChangePresentStatus = (socket, presentationId, status) => {
