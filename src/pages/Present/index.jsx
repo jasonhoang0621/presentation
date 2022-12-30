@@ -516,7 +516,7 @@ const Present = () => {
         onClose={() => setOpenQuestionDrawer(false)}
         visible={openQuestionDrawer}
         closable={false}
-        bodyStyle={{ padding: 0, overflow: "hidden" }}
+        bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
           <Question data={questionData} handleUpVote={handleUpVote} />
@@ -528,7 +528,7 @@ const Present = () => {
         onClose={() => setHistoryDrawer(false)}
         visible={historyDrawer}
         closable={false}
-        bodyStyle={{ padding: 0, overflow: "hidden" }}
+        bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
           <History />

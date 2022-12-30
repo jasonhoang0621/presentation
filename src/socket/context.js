@@ -7,6 +7,8 @@ let socket = null;
 let socketToken = "";
 export const getSocket = async () => {
   const token = localStorage.getItem("token") || "";
+  const guestId = localStorage.getItem("guestId") || "";
+  const username = localStorage.getItem("username") || "";
   if (!token) return null;
   if (socket && token === socketToken) return socket;
   if (token) {
@@ -14,6 +16,14 @@ export const getSocket = async () => {
     socket = io(SOCKET_URL, {
       extraHeaders: {
         token,
+      },
+    });
+  }
+  if (guestId) {
+    socket = io(SOCKET_URL, {
+      extraHeaders: {
+        guestId,
+        username,
       },
     });
   }
