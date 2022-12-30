@@ -69,7 +69,7 @@ const Presentation = () => {
     setDeleteModal(false);
     navigate(`/group/${groupId}`);
   };
-  const handlePublicPresent = async (url = "present/public") => {
+  const handlePresent = async (url = "present") => {
     if (data?.data?.slide.length === 0) {
       notification.error({
         message: "Please add slide to present",
@@ -105,20 +105,12 @@ const Presentation = () => {
       {user?.role !== "member" ? (
         <>
           <div
-            onClick={() => handlePublicPresent()}
+            onClick={() => handlePresent()}
             className={`px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200 ${
               disablePresent ? "pointer-events-none text-gray-200" : ""
             }`}
           >
-            <p className="text-[16px]">Public Present</p>
-          </div>
-          <div
-            onClick={() => handlePublicPresent("present/private")}
-            className={`px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200 ${
-              disablePresent ? "pointer-events-none text-gray-200" : ""
-            }`}
-          >
-            <p className="text-[16px]">Private Present</p>
+            <p className="text-[16px]">Present</p>
           </div>
           {user?.role === "co-owner" && (
             <div

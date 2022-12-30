@@ -344,30 +344,35 @@ const Present = () => {
               {presentation?.data?.slide[currentSlide]?.paragraph}
             </p>
             <div className="flex items-center justify-center mt-5">
-              {presentation?.data?.slide[currentSlide]?.answer.map(({ type }) => {
-                const Icon = Reaction.find((item) => item.type === type)?.Icon;
-                return (
-                  <div
-                    key={type}
-                    className={
-                      "flex items-center justify-center w-12 h-12 bg-[#495e54] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
-                    }
-                  >
-                    <Icon className="text-white text-[20px]" />
-                    {presentation?.data?.slide[currentSlide]?.answer?.find(
-                      (item) => item?.type === type
-                    )?.amount > 0 && (
-                      <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
-                        {
-                          presentation?.data?.slide[currentSlide]?.answer?.find(
-                            (item) => item?.type === type
-                          )?.amount
-                        }
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+              {presentation?.data?.slide[currentSlide]?.answer.map(
+                ({ type }) => {
+                  const Icon = Reaction.find(
+                    (item) => item.type === type
+                  )?.Icon;
+                  return (
+                    <div
+                      key={type}
+                      className={
+                        "flex items-center justify-center w-12 h-12 bg-[#495e54] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
+                      }
+                    >
+                      <Icon className="text-white text-[20px]" />
+                      {presentation?.data?.slide[currentSlide]?.answer?.find(
+                        (item) => item?.type === type
+                      )?.amount > 0 && (
+                        <div className="absolute -top-1 -right-1 rounded-full w-5 h-5 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[12px]">
+                          {
+                            presentation?.data?.slide[
+                              currentSlide
+                            ]?.answer?.find((item) => item?.type === type)
+                              ?.amount
+                          }
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+              )}
             </div>
           </>
         );
@@ -381,30 +386,35 @@ const Present = () => {
               {presentation?.data?.slide[currentSlide]?.paragraph}
             </p>
             <div className="flex items-center justify-center mt-5">
-              {presentation?.data?.slide[currentSlide]?.answer.map(({ type }) => {
-                const Icon = Reaction.find((item) => item.type === type)?.Icon;
-                return (
-                  <div
-                    key={type}
-                    className={
-                      "flex items-center justify-center w-12 h-12 bg-[#495e54] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
-                    }
-                  >
-                    <Icon className="text-white text-[20px]" />
-                    {presentation?.data?.slide[currentSlide]?.answer?.find(
-                      (item) => item?.type === type
-                    )?.amount > 0 && (
-                      <div className="absolute -top-1 -right-1 rounded-full min-w-4 px-1 h-4 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
-                        {
-                          presentation?.data?.slide[currentSlide]?.answer?.find(
-                            (item) => item?.type === type
-                          )?.amount
-                        }
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+              {presentation?.data?.slide[currentSlide]?.answer.map(
+                ({ type }) => {
+                  const Icon = Reaction.find(
+                    (item) => item.type === type
+                  )?.Icon;
+                  return (
+                    <div
+                      key={type}
+                      className={
+                        "flex items-center justify-center w-12 h-12 bg-[#495e54] drop-shadow-md rounded-full mr-3 transition-all duration-200 relative"
+                      }
+                    >
+                      <Icon className="text-white text-[20px]" />
+                      {presentation?.data?.slide[currentSlide]?.answer?.find(
+                        (item) => item?.type === type
+                      )?.amount > 0 && (
+                        <div className="absolute -top-1 -right-1 rounded-full w-5 h-5 flex items-center justify-center bg-white text-[#495e54] drop-shadow-md text-[10px]">
+                          {
+                            presentation?.data?.slide[
+                              currentSlide
+                            ]?.answer?.find((item) => item?.type === type)
+                              ?.amount
+                          }
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+              )}
             </div>
           </>
         );
@@ -433,14 +443,12 @@ const Present = () => {
             </Select>
           </div>
           <div className="flex items-center">
-            {window.location.pathname.includes("public") && (
-              <button
-                onClick={handleShare}
-                className="button button-danger !py-2 !min-w-[120px]"
-              >
-                <span className="!text-[14px]">Share</span>
-              </button>
-            )}
+            <button
+              onClick={handleShare}
+              className="button button-danger !py-2 !min-w-[120px]"
+            >
+              <span className="!text-[14px]">Share</span>
+            </button>
             <button
               onClick={() => handleChangeSlide(currentSlide + 1)}
               className="button !py-2 !min-w-[120px]"

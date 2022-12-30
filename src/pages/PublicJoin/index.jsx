@@ -10,8 +10,12 @@ import MultipleChoice from "src/components/Join/MultiplceChoice";
 import Chat from "src/components/Present/Chat";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
-import { listenChat, listenPresentation } from "src/socket/listen";
-import { offChat, offPresentation } from "src/socket/off";
+import {
+  listenChat,
+  listenPresentation,
+  listenPresentStatus,
+} from "src/socket/listen";
+import { offChat, offPresentation, offPresentStatus } from "src/socket/off";
 import { v4 as uuidv4 } from "uuid";
 
 const PublicJoin = () => {
@@ -98,7 +102,6 @@ const PublicJoin = () => {
     listenPresentation(socket, presentationId, (data) => {
       console.log(data);
     });
-
     listenChat(socket, presentationId, (data) => {
       toast(data?.data?.user[0]?.name + ": " + data?.data?.message, {
         onClick: handleClickToast,
@@ -111,9 +114,25 @@ const PublicJoin = () => {
         }
       }, 500);
     });
+    console.log("listen");
+    listenPresentStatus(socket, presentationId, (data) => {
+      console.log(data);
+      if (data?.status) {
+        notification.info({
+          message: "This presentation is presenting",
+        });
+        setNoPresent(false);
+        return;
+      }
+      setNoPresent(true);
+      notification.info({
+        message: "This presentation has been stopped",
+      });
+    });
     return () => {
       offChat(socket, presentationId);
       offPresentation(socket, presentationId);
+      offPresentStatus(socket, presentationId);
     };
   }, [socket, presentationId, chatData]);
 

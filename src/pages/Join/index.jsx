@@ -10,7 +10,11 @@ import Chat from "src/components/Present/Chat";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { editSendMessage } from "src/socket/emit";
-import { listenChat, listenPresentation, listenPresentStatus } from "src/socket/listen";
+import {
+  listenChat,
+  listenPresentation,
+  listenPresentStatus,
+} from "src/socket/listen";
 import { offChat, offPresentation, offPresentStatus } from "src/socket/off";
 import Heading from "../../components/Join/Heading";
 import MultipleChoice from "../../components/Join/MultiplceChoice";
@@ -102,14 +106,14 @@ const Join = () => {
     });
     listenPresentStatus(socket, presentationId, (data) => {
       if (data?.status) {
-        console.log(data);
         notification.info({
           message: "This presentation is presenting",
         });
+        setNoPresent(false);
         return;
       }
-      
-      return notification.error({
+      setNoPresent(true);
+      notification.info({
         message: "This presentation has been stopped",
       });
     });

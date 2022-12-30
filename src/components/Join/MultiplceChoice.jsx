@@ -1,11 +1,10 @@
-import React, { useContext } from "react";
-import { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Slide from "src/components/Slide";
+import { SocketContext } from "src/socket/context";
+import { answerQuestion } from "src/socket/emit";
 import { listenAnswer } from "src/socket/listen";
 import { offAnswer } from "src/socket/off";
-import { SocketContext } from "src/socket/context";
-import { useParams } from "react-router-dom";
-import { answerQuestion } from "src/socket/emit";
 
 const MultipleChoice = ({ data, isPublic = false }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
@@ -36,7 +35,7 @@ const MultipleChoice = ({ data, isPublic = false }) => {
     if (!socket) return;
     listenAnswer(socket, presentationId, data.index, (response) => {
       console.log("response", response);
-      console.log(response.data.slide[data.index])
+      console.log(response.data.slide[data.index]);
       setSlideData(response.data.slide[data.index]);
     });
 
