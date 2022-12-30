@@ -18,6 +18,7 @@ export const getSocket = async () => {
         token,
       },
     });
+    return socket;
   }
   if (guestId) {
     socket = io(SOCKET_URL, {
@@ -26,8 +27,8 @@ export const getSocket = async () => {
         username,
       },
     });
+    return socket;
   }
-  return socket;
 };
 export const socketDestroy = () => {
   socket = null;

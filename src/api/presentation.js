@@ -16,13 +16,16 @@ export const useCreatePresentation = () => {
 };
 
 export const usePresentPresentation = () => {
-  return useMutation((payload) => axiosClient.patch("/present/presentation", payload));
+  return useMutation((payload) =>
+    axiosClient.patch("/present/presentation", payload)
+  );
 };
 
 export const useExitPresentation = () => {
-  return useMutation((payload) => axiosClient.patch("/exit/presentation", payload));
+  return useMutation((payload) =>
+    axiosClient.patch("/exit/presentation", payload)
+  );
 };
-
 
 export const useDetailPresentation = (id) => {
   return useQuery(["presentation", id], () =>
@@ -39,5 +42,11 @@ export const useRemovePresentation = (presentationId) => {
 export const useUpdatePresentation = (presentationId) => {
   return useMutation((payload) =>
     axiosClient.patch(`/presentation/${presentationId}`, payload)
+  );
+};
+
+export const useGetHistory = (presentationId) => {
+  return useQuery(["history", presentationId], () =>
+    axiosClient.get(`/history/${presentationId}`)
   );
 };

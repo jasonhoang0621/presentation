@@ -70,7 +70,10 @@ const History = () => {
               </span>
             </p>
             {item.data.map((record) => (
-              <p key={record.id} className="text-[15px] mt-2">
+              <p
+                key={record.id}
+                className="text-[15px] mt-2 hover:text-[17px] hover:font-semibold transition-all duration-200"
+              >
                 <span className="font-bold text-[#495e54]">{record.name} </span>
                 {record.action} at{" "}
                 <span className="font-bold text-[#495e54]">

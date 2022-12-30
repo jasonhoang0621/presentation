@@ -14,6 +14,7 @@ import { useGetListChat } from "src/api/chat";
 import {
   useDetailPresentation,
   useExitPresentation,
+  useGetHistory,
   usePresentPresentation,
 } from "src/api/presentation";
 import { useGetListQuestion } from "src/api/question";
@@ -47,14 +48,15 @@ const Present = () => {
   const [chatData, setChatData] = useState([]);
   const { mutateAsync } = useExitPresentation();
   const { mutateAsync: startPresent } = usePresentPresentation();
-
+  const { data: history } = useGetHistory();
+  console.log(history);
   //
   const [questionLength, setQuestionLength] = useState(0);
   const { data: questions } = useGetListQuestion(
     presentationId,
     questionLength,
     questionLength > 20 ? 5 : 20
-  )
+  );
   const queryClient = useQueryClient();
   const { data: chat, isFetching } = useGetListChat(
     presentationId,
