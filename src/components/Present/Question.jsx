@@ -233,7 +233,7 @@ const Question = ({ presentationId, role }) => {
                   >
                     <div>
                       <p className="text-[#495e54] font-bold">{record?.name}</p>
-                      <p className="text-[#495e54] text-sm">
+                      <p className="text-[#495e54] text-sm break-all">
                         {record?.content}
                       </p>
                     </div>
