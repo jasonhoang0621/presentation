@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
+import { useDetailGroup } from "src/api/group";
 import { useDetailPresentation } from "src/api/presentation";
 import Chat from "src/components/Present/Chat";
 import Question from "src/components/Present/Question";
@@ -22,7 +23,7 @@ import MultipleChoice from "../../components/Join/MultiplceChoice";
 
 const Join = () => {
   const auth = useSelector((state) => state.auth);
-  const { presentationId } = useParams();
+  const { presentationId, groupId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
@@ -30,6 +31,11 @@ const Join = () => {
   const [noPresent, setNoPresent] = useState(false);
   const [data, setData] = useState(null);
   const [openQuestionDrawer, setOpenQuestionDrawer] = useState(false);
+  const [user, setUser] = useState({
+    role: "member",
+  });
+
+  const { data: groupDetailData } = useDetailGroup(groupId);
 
   const { data: presentationData } = useDetailPresentation(presentationId);
 
@@ -154,6 +160,17 @@ const Join = () => {
     }
   }, [presentationData]);
 
+  useEffect(() => {
+    if (groupDetailData) {
+      const temp = groupDetailData.data.user.filter(
+        (item) => item.id === auth?.user?.id
+      );
+      setUser({
+        role: temp[0]?.role ?? "member",
+      });
+    }
+  }, [auth, groupDetailData]);
+
   const renderSlide = useMemo(() => {
     if (!data) return;
     switch (data?.data?.slide[slideIndex]?.type) {
@@ -181,7 +198,7 @@ const Join = () => {
           <div className="fixed bottom-10 right-5 ">
             <div className="flex items-center gap-x-2">
               <div
-                onClick={() => setOpenDrawer(true)}
+                onClick={() => setOpenQuestionDrawer(true)}
                 className="w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
               >
                 <div className="flex items-center justify-center w-full h-full">
@@ -226,7 +243,7 @@ const Join = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
-          <Question data={[]} />
+          <Question presentationId={presentationId} role={user?.role} />
         </Spin>
       </Drawer>
     </>

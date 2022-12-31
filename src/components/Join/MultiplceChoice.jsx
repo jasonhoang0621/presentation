@@ -57,12 +57,12 @@ const MultipleChoice = ({ data, isPublic = false }) => {
         </div>
       ) : (
         <>
-          <div className="mt-10 flex flex-wrap">
+          <div className="mt-10 flex flex-wrap gap-2">
             {slideData &&
               slideData?.answer.map((answer, index) => (
                 <div
                   key={index}
-                  className={`app-input text-center w-[32%] mx-auto cursor-pointer ${
+                  className={`app-input text-center w-[32%] cursor-pointer ${
                     activeAnswer === index
                       ? "bg-[#495e54] text-white"
                       : "bg-white"

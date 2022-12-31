@@ -53,11 +53,7 @@ const Present = () => {
     role: "member",
   });
 
-  const { data: groupDetailData } = useDetailGroup(
-    groupId,
-    localStorage.getItem("token") ? true : false
-  );
-  console.log(groupDetailData);
+  const { data: groupDetailData } = useDetailGroup(groupId);
 
   const queryClient = useQueryClient();
   const { data: chat, isFetching } = useGetListChat(

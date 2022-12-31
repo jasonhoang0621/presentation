@@ -107,7 +107,6 @@ const Question = ({ presentationId, role }) => {
   const handleAddQuestion = () => {
     if (!question) return;
     setQuestionData([
-      ...questionData,
       {
         id: questionData.length + 1,
         name: auth?.user?.name,
@@ -115,6 +114,7 @@ const Question = ({ presentationId, role }) => {
         upVote: [],
         answer: [],
       },
+      ...questionData,
     ]);
     setQuestion("");
     setOpenAddQuestion(false);
