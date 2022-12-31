@@ -16,6 +16,17 @@ export const listenChat = (socket, presentationId, cb) => {
   return true;
 };
 
+
+export const listenQuestion = (socket, presentationId, cb) => {
+  socket
+    .off(`question-${presentationId}`)
+    .on(`question-${presentationId}`, function (data) {
+      cb(data);
+    });
+  return true;
+};
+
+
 export const listenAnswer = (socket, presentationId, index = 0, cb) => {
   socket
     .off(`answer-${presentationId}-${index}`)

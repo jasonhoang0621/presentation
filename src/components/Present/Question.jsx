@@ -5,77 +5,82 @@ import {
 } from "@ant-design/icons";
 import { Input, Popover } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetListQuestion } from "src/api/question";
+import { SocketContext } from "src/socket/context";
+import { postQuestion } from "src/socket/emit";
+import { listenQuestion } from "src/socket/listen";
+import { offQuestion } from "src/socket/off";
 
 const Question = ({ presentationId, role }) => {
   const auth = useSelector((state) => state.auth);
   const [questionLength, setQuestionLength] = useState(0);
   const [openAddQuestion, setOpenAddQuestion] = useState(false);
-  // const [questionData, setQuestionData] = useState([]);
   const [question, setQuestion] = useState("");
   const [answeringQuestion, setAnsweringQuestion] = useState(null);
   const [answerContent, setAnswerContent] = useState("");
+
+  const { socket } = useContext(SocketContext);
 
   const { data } = useGetListQuestion(
     presentationId,
     questionLength,
     questionLength > 20 ? 5 : 20
   );
-
-  const [questionData, setQuestionData] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      question: "How to use React?",
-      upVote: ["123", "adcjnadjhcn ajd"],
-      answer: [
-        {
-          id: 1,
-          name: "John Doe 1",
-          content: "You can use React by using create-react-app",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      question: "How to use React?",
-      upVote: ["123", "adcjnadjhcn ajd"],
-      answer: [
-        {
-          id: 1,
-          name: "John Doe 1",
-          content: "You can use React by using create-react-app",
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "John Doe",
-      question:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates dolor ea perferendis mollitia. Deserunt odit accusantium id tempore similique iste, tempora veniam quaerat laborum numquam facere sunt deleniti. Tempora, dignissimos!Possimus, ut saepe eius nemo voluptas praesentium ad nisi. Esse qui itaque iusto harum, dolores autem similique voluptas, numquam est aliquid soluta suscipit ipsa minima nam adipisci neque. Error, aspernatur?",
-      upVote: ["123", "adcjnadjhcn ajd"],
-      answer: [
-        {
-          id: 1,
-          name: "John Doe 1",
-          content: "You can use React by using create-react-app",
-        },
-        {
-          id: 2,
-          name: "John Doe 1",
-          content: "You can use React by using create-react-app",
-        },
-        {
-          id: 3,
-          name: "John Doe 1",
-          content: "You can use React by using create-react-app",
-        },
-      ],
-    },
-  ]);
+  const [questionData, setQuestionData] = useState([]);
+  // const [questionData, setQuestionData] = useState([
+  //   {
+  //     id: 1,
+  //     name: "John Doe",
+  //     question: "How to use React?",
+  //     upVote: ["123", "adcjnadjhcn ajd"],
+  //     answer: [
+  //       {
+  //         id: 1,
+  //         name: "John Doe 1",
+  //         content: "You can use React by using create-react-app",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "John Doe",
+  //     question: "How to use React?",
+  //     upVote: ["123", "adcjnadjhcn ajd"],
+  //     answer: [
+  //       {
+  //         id: 1,
+  //         name: "John Doe 1",
+  //         content: "You can use React by using create-react-app",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "John Doe",
+  //     question:
+  //       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates dolor ea perferendis mollitia. Deserunt odit accusantium id tempore similique iste, tempora veniam quaerat laborum numquam facere sunt deleniti. Tempora, dignissimos!Possimus, ut saepe eius nemo voluptas praesentium ad nisi. Esse qui itaque iusto harum, dolores autem similique voluptas, numquam est aliquid soluta suscipit ipsa minima nam adipisci neque. Error, aspernatur?",
+  //     upVote: ["123", "adcjnadjhcn ajd"],
+  //     answer: [
+  //       {
+  //         id: 1,
+  //         name: "John Doe 1",
+  //         content: "You can use React by using create-react-app",
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "John Doe 1",
+  //         content: "You can use React by using create-react-app",
+  //       },
+  //       {
+  //         id: 3,
+  //         name: "John Doe 1",
+  //         content: "You can use React by using create-react-app",
+  //       },
+  //     ],
+  //   },
+  // ]);
 
   const handleUpVote = (questionId) => {
     const question = questionData.find((item) => item.id === questionId);
@@ -106,16 +111,7 @@ const Question = ({ presentationId, role }) => {
 
   const handleAddQuestion = () => {
     if (!question) return;
-    setQuestionData([
-      {
-        id: questionData.length + 1,
-        name: auth?.user?.name,
-        question,
-        upVote: [],
-        answer: [],
-      },
-      ...questionData,
-    ]);
+    postQuestion(socket, presentationId, question);
     setQuestion("");
     setOpenAddQuestion(false);
   };
@@ -142,12 +138,25 @@ const Question = ({ presentationId, role }) => {
     setAnsweringQuestion(null);
     setAnswerContent("");
   };
-
   useEffect(() => {
     if (!data) return;
     setQuestionData([...questionData, ...data.data]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  useEffect(() => {
+    if (!socket) return;
+    listenQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        setQuestionData([response.data, ...questionData]);
+        setQuestionLength(questionLength + 1);
+      }
+    });
+
+    return () => {
+      offQuestion(socket, presentationId);
+    };
+  }, [socket, presentationId, data]);
 
   return (
     <div className={`m-2 relative ${role === "member" ? "pt-10" : ""}`}>

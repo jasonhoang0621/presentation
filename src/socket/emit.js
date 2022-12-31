@@ -2,6 +2,10 @@ export const editSendMessage = (socket, presentationId, message) => {
   socket?.emit("chat", { presentationId, message });
 };
 
+export const postQuestion = (socket, presentationId, question) => {
+  socket?.emit("question", { presentationId, question });
+};
+
 export const emitPickAnswer = (socket, presentationId, index) => {
   socket?.emit("pickAnswer", { presentationId, index });
 };

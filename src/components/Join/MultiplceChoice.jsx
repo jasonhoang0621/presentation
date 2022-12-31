@@ -29,7 +29,6 @@ const MultipleChoice = ({ data, isPublic = false }) => {
     setActiveAnswer(null);
     setShowStatistic(false);
   }, [data]);
-  console.log("data.index", data.index);
 
   useEffect(() => {
     if (!socket) return;
