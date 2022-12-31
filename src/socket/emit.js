@@ -6,6 +6,10 @@ export const postQuestion = (socket, presentationId, question) => {
   socket?.emit("question", { presentationId, question });
 };
 
+export const updateQuestion = (socket, presentationId, questionId, question, length = 20) => {
+  socket?.emit("update-question", { presentationId, questionId, question, length });
+};
+
 export const emitPickAnswer = (socket, presentationId, index) => {
   socket?.emit("pickAnswer", { presentationId, index });
 };

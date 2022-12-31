@@ -26,6 +26,15 @@ export const listenQuestion = (socket, presentationId, cb) => {
   return true;
 };
 
+export const listenUpdateQuestion = (socket, presentationId, cb) => {
+  socket
+    .off(`update-question-${presentationId}`)
+    .on(`update-question-${presentationId}`, function (data) {
+      cb(data);
+    });
+  return true;
+};
+
 
 export const listenAnswer = (socket, presentationId, index = 0, cb) => {
   socket

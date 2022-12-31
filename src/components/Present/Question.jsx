@@ -9,9 +9,9 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetListQuestion } from "src/api/question";
 import { SocketContext } from "src/socket/context";
-import { postQuestion } from "src/socket/emit";
-import { listenQuestion } from "src/socket/listen";
-import { offQuestion } from "src/socket/off";
+import { postQuestion, updateQuestion } from "src/socket/emit";
+import { listenQuestion, listenUpdateQuestion } from "src/socket/listen";
+import { offQuestion, offUpdateQuestion } from "src/socket/off";
 
 const Question = ({ presentationId, role }) => {
   const auth = useSelector((state) => state.auth);
@@ -84,28 +84,35 @@ const Question = ({ presentationId, role }) => {
 
   const handleUpVote = (questionId) => {
     const question = questionData.find((item) => item.id === questionId);
+    let temp = null;
     if (question?.upVote?.includes(auth?.user?.id)) {
       const newQuestionData = questionData.map((item) => {
         if (item.id === questionId) {
+          temp = item;
+          temp.upVote = item.upVote.filter((item) => item !== auth?.user?.id);
           return {
-            ...item,
-            upVote: item.upVote.filter((item) => item !== auth?.user?.id),
+            ...temp,
           };
         }
         return item;
       });
       setQuestionData(newQuestionData);
+      delete temp._id
+      updateQuestion(socket, presentationId, questionId, temp, questionData.length);
       return;
     }
     const newQuestionData = questionData.map((item) => {
       if (item.id === questionId) {
+        temp = item;
+        temp.upVote = [...item.upVote, auth?.user?.id];
         return {
-          ...item,
-          upVote: [...item.upVote, auth?.user?.id],
+          ...temp,
         };
       }
       return item;
     });
+    delete temp._id;
+    updateQuestion(socket, presentationId, questionId, temp, questionData.length);
     setQuestionData(newQuestionData);
   };
 
@@ -152,9 +159,15 @@ const Question = ({ presentationId, role }) => {
         setQuestionLength(questionLength + 1);
       }
     });
+    listenUpdateQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        setQuestionData(response?.data);
+      }
+    });
 
     return () => {
       offQuestion(socket, presentationId);
+      offUpdateQuestion(socket, presentationId);
     };
   }, [socket, presentationId, data]);
 
