@@ -47,6 +47,6 @@ export const useUpdatePresentation = (presentationId) => {
 
 export const useGetHistory = (presentationId) => {
   return useQuery(["history", presentationId], () =>
-    axiosClient.get(`/history/${presentationId}`)
+    axiosClient.get(`/history/${presentationId}?skip=0`)
   );
 };

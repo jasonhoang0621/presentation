@@ -48,8 +48,7 @@ const Present = () => {
   const [chatData, setChatData] = useState([]);
   const { mutateAsync } = useExitPresentation();
   const { mutateAsync: startPresent } = usePresentPresentation();
-  const { data: history } = useGetHistory();
-  console.log(history);
+  const { data: historyData } = useGetHistory(presentationId);
   //
   const [questionLength, setQuestionLength] = useState(0);
   const { data: questions } = useGetListQuestion(
@@ -542,7 +541,7 @@ const Present = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
-          <History />
+          <History data={historyData} />
         </Spin>
       </Drawer>
     </>
