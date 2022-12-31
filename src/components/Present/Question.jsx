@@ -16,6 +16,7 @@ const Question = ({ presentationId, role }) => {
   // const [questionData, setQuestionData] = useState([]);
   const [question, setQuestion] = useState("");
   const [answeringQuestion, setAnsweringQuestion] = useState(null);
+  const [answerContent, setAnswerContent] = useState("");
 
   const { data } = useGetListQuestion(
     presentationId,
@@ -119,13 +120,34 @@ const Question = ({ presentationId, role }) => {
     setOpenAddQuestion(false);
   };
 
+  const handleAnswerQuestion = (questionId) => {
+    if (!answerContent) return;
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        return {
+          ...item,
+          answer: [
+            ...item.answer,
+            {
+              id: item.answer.length + 1,
+              name: auth?.user?.name,
+              content: answerContent,
+            },
+          ],
+        };
+      }
+      return item;
+    });
+    setQuestionData(newQuestionData);
+    setAnsweringQuestion(null);
+    setAnswerContent("");
+  };
+
   useEffect(() => {
     if (!data) return;
     setQuestionData([...questionData, ...data.data]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-
-  console.log(questionData);
 
   return (
     <div className={`m-2 relative ${role === "member" ? "pt-10" : ""}`}>
@@ -221,7 +243,7 @@ const Question = ({ presentationId, role }) => {
             <div
               className={`mt-3 overflow-hidden transition-all duration-500 ${
                 role !== "member" && answeringQuestion === index
-                  ? "h-[90px]"
+                  ? "h-[130px]"
                   : "h-[0px]"
               }`}
             >
@@ -229,7 +251,25 @@ const Question = ({ presentationId, role }) => {
               <Input
                 className="app-input mt-1"
                 placeholder="Type your answer"
+                value={answerContent}
+                onChange={(e) => setAnswerContent(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAnswerQuestion(item?.id);
+                  }
+                }}
               />
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAnswerQuestion(item?.id);
+                  }}
+                  className="button !py-1 !min-w-[100px]"
+                >
+                  <span className="text-[14px]">Post</span>
+                </button>
+              </div>
             </div>
           </div>
         ))}
