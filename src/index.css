@@ -175,3 +175,8 @@
 .presentation-table .ant-table-row:hover td {
   background-color: #495e5448 !important;
 }
+
+.app-popover .ant-popover-inner {
+  border-radius: 8px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+}

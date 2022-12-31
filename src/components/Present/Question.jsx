@@ -2,6 +2,8 @@ import {
   ArrowUpOutlined,
   PlusOutlined,
   QuestionOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import { Input, Popover } from "antd";
 import TextArea from "antd/lib/input/TextArea";
@@ -19,6 +21,7 @@ const Question = ({ presentationId, role }) => {
   const [openAddQuestion, setOpenAddQuestion] = useState(false);
   const [question, setQuestion] = useState("");
   const [answeringQuestion, setAnsweringQuestion] = useState(null);
+  const [confirmMark, setConfirmMark] = useState(null);
   const [answerContent, setAnswerContent] = useState("");
 
   const { socket } = useContext(SocketContext);
@@ -29,58 +32,6 @@ const Question = ({ presentationId, role }) => {
     questionLength > 20 ? 5 : 20
   );
   const [questionData, setQuestionData] = useState([]);
-  // const [questionData, setQuestionData] = useState([
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     question: "How to use React?",
-  //     upVote: ["123", "adcjnadjhcn ajd"],
-  //     answer: [
-  //       {
-  //         id: 1,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "John Doe",
-  //     question: "How to use React?",
-  //     upVote: ["123", "adcjnadjhcn ajd"],
-  //     answer: [
-  //       {
-  //         id: 1,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "John Doe",
-  //     question:
-  //       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates dolor ea perferendis mollitia. Deserunt odit accusantium id tempore similique iste, tempora veniam quaerat laborum numquam facere sunt deleniti. Tempora, dignissimos!Possimus, ut saepe eius nemo voluptas praesentium ad nisi. Esse qui itaque iusto harum, dolores autem similique voluptas, numquam est aliquid soluta suscipit ipsa minima nam adipisci neque. Error, aspernatur?",
-  //     upVote: ["123", "adcjnadjhcn ajd"],
-  //     answer: [
-  //       {
-  //         id: 1,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //       {
-  //         id: 3,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //     ],
-  //   },
-  // ]);
 
   const handleUpVote = (questionId) => {
     const question = questionData.find((item) => item.id === questionId);
@@ -97,8 +48,14 @@ const Question = ({ presentationId, role }) => {
         return item;
       });
       setQuestionData(newQuestionData);
-      delete temp._id
-      updateQuestion(socket, presentationId, questionId, temp, questionData.length);
+      delete temp._id;
+      updateQuestion(
+        socket,
+        presentationId,
+        questionId,
+        temp,
+        questionData.length
+      );
       return;
     }
     const newQuestionData = questionData.map((item) => {
@@ -112,7 +69,13 @@ const Question = ({ presentationId, role }) => {
       return item;
     });
     delete temp._id;
-    updateQuestion(socket, presentationId, questionId, temp, questionData.length);
+    updateQuestion(
+      socket,
+      presentationId,
+      questionId,
+      temp,
+      questionData.length
+    );
     setQuestionData(newQuestionData);
   };
 
@@ -145,6 +108,11 @@ const Question = ({ presentationId, role }) => {
     setAnsweringQuestion(null);
     setAnswerContent("");
   };
+
+  const handleMarkAsAnswered = (questionId) => {
+    setConfirmMark(null);
+  };
+
   useEffect(() => {
     if (!data) return;
     setQuestionData([...questionData, ...data.data]);
@@ -170,6 +138,8 @@ const Question = ({ presentationId, role }) => {
       offUpdateQuestion(socket, presentationId);
     };
   }, [socket, presentationId, data]);
+
+  console.log(questionData);
 
   return (
     <div className={`m-2 relative ${role === "member" ? "pt-10" : ""}`}>
@@ -207,17 +177,64 @@ const Question = ({ presentationId, role }) => {
       {questionData &&
         questionData.map((item, index) => (
           <div
-            onClick={() => setAnsweringQuestion(index)}
+            onClick={() => {
+              setAnsweringQuestion(index);
+              setAnswerContent("");
+            }}
             key={index}
             className="bg-white rounded-lg shadow-2xl border border-[#cdcdcdc] p-4 mb-4"
           >
+            {item?.isLock && (
+              <div className="flex justify-end font-semibold mb-2">
+                <p>Answered</p>
+              </div>
+            )}
             <div className="flex justify-between">
               <div className="flex mr-5">
-                <div className="w-10 h-10 rounded-full bg-[#495e54] flex items-center justify-center flex-none">
-                  <span className="text-white font-bold text-xl flex items-center justify-center">
-                    <QuestionOutlined />
-                  </span>
-                </div>
+                {!item?.isLock ? (
+                  <Popover
+                    placement="bottomLeft"
+                    trigger={["click"]}
+                    open={confirmMark === index}
+                    onVisibleChange={(visible) =>
+                      setConfirmMark(visible ? index : null)
+                    }
+                    overlayClassName="app-popover"
+                    content={
+                      <div>
+                        <p className="text-[16px]">
+                          Mark this question as answered?
+                        </p>
+                        <div className="flex justify-end mt-2 gap-x-2">
+                          <div
+                            onClick={() => setConfirmMark(null)}
+                            className="w-6 h-6 rounded-full bg-white border border-[#495e54] flex items-center justify-center hover:text-white hover:bg-[#495e54] transition-all duration-200 cursor-pointer"
+                          >
+                            <CloseOutlined />
+                          </div>
+                          <div
+                            onClick={() => handleMarkAsAnswered(item?.id)}
+                            className="w-6 h-6 rounded-full bg-white border border-[#495e54] flex items-center justify-center hover:text-white hover:bg-[#495e54] transition-all duration-200 cursor-pointer"
+                          >
+                            <CheckOutlined />
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  >
+                    <div className="w-10 h-10 rounded-full bg-[#495e54] flex items-center justify-center flex-none">
+                      <span className="text-white font-bold text-xl flex items-center justify-center">
+                        <QuestionOutlined />
+                      </span>
+                    </div>
+                  </Popover>
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-[#495e54] flex items-center justify-center flex-none">
+                    <span className="text-white font-bold text-xl flex items-center justify-center">
+                      <CheckOutlined />
+                    </span>
+                  </div>
+                )}
                 <div className="ml-4">
                   <p className="text-[#495e54] font-bold">{item?.name}</p>
                   <p className="text-[#495e54] text-sm">{item?.question}</p>
