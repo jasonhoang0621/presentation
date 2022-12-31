@@ -1,5 +1,4 @@
 import { Form, Input, notification, Spin } from "antd";
-import { useForm } from "antd/lib/form/Form";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { getGoogleLink, useLogin } from "src/api/user";
@@ -8,7 +7,7 @@ import GoogleIcon from "src/assets/images/google.png";
 import { login } from "src/redux/auth";
 
 const Login = () => {
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { mutateAsync, isLoading } = useLogin();

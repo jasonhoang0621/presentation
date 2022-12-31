@@ -1,12 +1,11 @@
 import { Form, Input, notification, Spin } from "antd";
-import { useForm } from "antd/lib/form/Form";
 import { Link, useNavigate } from "react-router-dom";
 import { getGoogleLink, useRegister } from "src/api/user";
 import FacebookIcon from "src/assets/images/facebook.png";
 import GoogleIcon from "src/assets/images/google.png";
 
 const Register = () => {
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const { mutateAsync, isLoading } = useRegister();
 

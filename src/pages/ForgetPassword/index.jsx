@@ -1,10 +1,9 @@
 import { Form, Input, notification, Spin } from "antd";
-import { useForm } from "antd/lib/form/Form";
 import { Link, useNavigate } from "react-router-dom";
 import { useForgotPassword } from "src/api/user";
 
 const ForgetPassword = () => {
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const { mutateAsync, isLoading } = useForgotPassword();
 

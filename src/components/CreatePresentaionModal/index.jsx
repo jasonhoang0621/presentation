@@ -1,12 +1,11 @@
 import { Form, Input, Modal, notification } from "antd";
-import { useForm } from "antd/lib/form/Form";
 import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { useCreatePresentation } from "src/api/presentation";
 
 const CreatePresentationModal = ({ visible, setVisible }) => {
   const { id } = useParams();
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const { mutateAsync } = useCreatePresentation();
   const queryClient = useQueryClient();
 

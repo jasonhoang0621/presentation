@@ -1,11 +1,10 @@
 import { Form, Input, Modal, notification } from "antd";
-import { useForm } from "antd/lib/form/Form";
 import React from "react";
 import { useQueryClient } from "react-query";
 import { useCreateGroup } from "src/api/group";
 
 const CreateGroupModal = ({ visible, setVisible }) => {
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const { mutateAsync } = useCreateGroup();
   const queryClient = useQueryClient();
 

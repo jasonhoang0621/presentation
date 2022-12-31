@@ -138,6 +138,7 @@ const Layout = ({ sider = false }) => {
             }`}
           >
             <Outlet />
+            <ProfileModal visible={profileModal} setVisible={setProfileModal} />
             <CreateGroupModal
               visible={createGroupModal}
               setVisible={setCreateGroupModal}
@@ -146,7 +147,6 @@ const Layout = ({ sider = false }) => {
               visible={changePasswordModal}
               setVisible={setChangePasswordModal}
             />
-            <ProfileModal visible={profileModal} setVisible={setProfileModal} />
           </Content>
         </LayoutAntd>
       </LayoutAntd>

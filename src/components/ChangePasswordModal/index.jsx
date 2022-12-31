@@ -1,9 +1,8 @@
 import { Form, Input, Modal, notification } from "antd";
-import { useForm } from "antd/lib/form/Form";
 import React from "react";
 import { useChangePassword } from "src/api/user";
 const ChangePasswordModal = ({ visible, setVisible }) => {
-  const [form] = useForm();
+  const [form] = Form.useForm();
   const { mutateAsync } = useChangePassword();
 
   const handleChangePassword = async () => {
