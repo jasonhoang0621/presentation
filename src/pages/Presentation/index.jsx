@@ -49,6 +49,7 @@ const Presentation = () => {
       setDisablePresent(false);
     }
   }, [auth, groupDetailData]);
+
   const { mutateAsync: deletePresentation } =
     useRemovePresentation(presentationId);
 

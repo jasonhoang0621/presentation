@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
 import Chat from "src/components/Present/Chat";
+import Question from "src/components/Present/Question";
 import { SlideType } from "src/helpers/slide";
 import { SocketContext } from "src/socket/context";
 import { editSendMessage } from "src/socket/emit";
@@ -28,6 +29,7 @@ const Join = () => {
   const [slideIndex, setSlideIndex] = useState(0);
   const [noPresent, setNoPresent] = useState(false);
   const [data, setData] = useState(null);
+  const [openQuestionDrawer, setOpenQuestionDrawer] = useState(false);
 
   const { data: presentationData } = useDetailPresentation(presentationId);
 
@@ -213,6 +215,18 @@ const Join = () => {
             handleScroll={handleScroll}
             handleSentMessage={handleSentMessage}
           />
+        </Spin>
+      </Drawer>
+      <Drawer
+        placement="right"
+        width={600}
+        onClose={() => setOpenQuestionDrawer(false)}
+        visible={openQuestionDrawer}
+        closable={false}
+        bodyStyle={{ padding: 0 }}
+      >
+        <Spin spinning={isFetching}>
+          <Question data={[]} />
         </Spin>
       </Drawer>
     </>

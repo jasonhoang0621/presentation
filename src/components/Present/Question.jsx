@@ -1,14 +1,172 @@
-import React from "react";
-import { QuestionOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import {
+  ArrowUpOutlined,
+  PlusOutlined,
+  QuestionOutlined,
+} from "@ant-design/icons";
+import { Input, Popover } from "antd";
+import TextArea from "antd/lib/input/TextArea";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-const Question = ({ data, handleUpVote, onAnswer }) => {
+import { useGetListQuestion } from "src/api/question";
+
+const Question = ({ presentationId, role }) => {
   const auth = useSelector((state) => state.auth);
+  const [questionLength, setQuestionLength] = useState(0);
+  const [openAddQuestion, setOpenAddQuestion] = useState(false);
+  // const [questionData, setQuestionData] = useState([]);
+  const [question, setQuestion] = useState("");
+  const [answeringQuestion, setAnsweringQuestion] = useState(null);
+
+  const { data } = useGetListQuestion(
+    presentationId,
+    questionLength,
+    questionLength > 20 ? 5 : 20
+  );
+
+  const [questionData, setQuestionData] = useState([
+    {
+      id: 1,
+      name: "John Doe",
+      question: "How to use React?",
+      upVote: ["123", "adcjnadjhcn ajd"],
+      answer: [
+        {
+          id: 1,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "John Doe",
+      question: "How to use React?",
+      upVote: ["123", "adcjnadjhcn ajd"],
+      answer: [
+        {
+          id: 1,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: "John Doe",
+      question:
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates dolor ea perferendis mollitia. Deserunt odit accusantium id tempore similique iste, tempora veniam quaerat laborum numquam facere sunt deleniti. Tempora, dignissimos!Possimus, ut saepe eius nemo voluptas praesentium ad nisi. Esse qui itaque iusto harum, dolores autem similique voluptas, numquam est aliquid soluta suscipit ipsa minima nam adipisci neque. Error, aspernatur?",
+      upVote: ["123", "adcjnadjhcn ajd"],
+      answer: [
+        {
+          id: 1,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+        {
+          id: 2,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+        {
+          id: 3,
+          name: "John Doe 1",
+          content: "You can use React by using create-react-app",
+        },
+      ],
+    },
+  ]);
+
+  const handleUpVote = (questionId) => {
+    const question = questionData.find((item) => item.id === questionId);
+    if (question?.upVote?.includes(auth?.user?.id)) {
+      const newQuestionData = questionData.map((item) => {
+        if (item.id === questionId) {
+          return {
+            ...item,
+            upVote: item.upVote.filter((item) => item !== auth?.user?.id),
+          };
+        }
+        return item;
+      });
+      setQuestionData(newQuestionData);
+      return;
+    }
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        return {
+          ...item,
+          upVote: [...item.upVote, auth?.user?.id],
+        };
+      }
+      return item;
+    });
+    setQuestionData(newQuestionData);
+  };
+
+  const handleAddQuestion = () => {
+    if (!question) return;
+    setQuestionData([
+      ...questionData,
+      {
+        id: questionData.length + 1,
+        name: auth?.user?.name,
+        question,
+        upVote: [],
+        answer: [],
+      },
+    ]);
+    setQuestion("");
+    setOpenAddQuestion(false);
+  };
+
+  useEffect(() => {
+    if (!data) return;
+    setQuestionData([...questionData, ...data.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  console.log(questionData);
 
   return (
-    <div className="m-2">
-      {data &&
-        data.map((item, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-lg p-4 mb-4">
+    <div className={`m-2 relative ${role === "member" ? "pt-10" : ""}`}>
+      {role === "member" && (
+        <Popover
+          visible={openAddQuestion}
+          onVisibleChange={(visible) => setOpenAddQuestion(visible)}
+          placement="bottomRight"
+          trigger={["click"]}
+          content={
+            <div className="w-[500px]">
+              <TextArea
+                className="app-input w-full"
+                placeholder="Add new question"
+                rows={3}
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={handleAddQuestion}
+                  className="button !py-1 !min-w-[100px]"
+                >
+                  <span className="text-[14px]">Post</span>
+                </button>
+              </div>
+            </div>
+          }
+        >
+          <div className="absolute top-0 right-4 hover:opacity-75 cursor-pointer">
+            <PlusOutlined className="text-2xl" />
+          </div>
+        </Popover>
+      )}
+      {questionData &&
+        questionData.map((item, index) => (
+          <div
+            onClick={() => setAnsweringQuestion(index)}
+            key={index}
+            className="bg-white rounded-lg shadow-2xl border border-[#cdcdcdc] p-4 mb-4"
+          >
             <div className="flex justify-between">
               <div className="flex mr-5">
                 <div className="w-10 h-10 rounded-full bg-[#495e54] flex items-center justify-center flex-none">
@@ -46,28 +204,33 @@ const Question = ({ data, handleUpVote, onAnswer }) => {
             <div className="mt-4">
               <p className="text-[#495e54] font-bold">Answers</p>
               {item?.answer &&
-                item.answer.map((item, index) => (
+                item.answer.map((record, i) => (
                   <div
-                    key={index}
-                    className="flex items-center mt-3 border-b 
-                  border-[#495e54] pb-2 border-dashed
-                  "
+                    key={i}
+                    className={`flex items-center mt-3 border-t pt-2 border-[#495e54] border-dashed`}
                   >
                     <div>
-                      <p className="text-[#495e54] font-bold">{item?.name}</p>
-                      <p className="text-[#495e54] text-sm">{item?.content}</p>
+                      <p className="text-[#495e54] font-bold">{record?.name}</p>
+                      <p className="text-[#495e54] text-sm">
+                        {record?.content}
+                      </p>
                     </div>
                   </div>
                 ))}
             </div>
-            {/* <div className="mt-4">
-            <button
-              onClick={() => onAnswer(item.id)}
-              className="bg-[#495e54] text-white px-4 py-2 rounded-lg"
+            <div
+              className={`mt-3 overflow-hidden transition-all duration-500 ${
+                role !== "member" && answeringQuestion === index
+                  ? "h-[90px]"
+                  : "h-[0px]"
+              }`}
             >
-              Answer
-            </button>
-          </div> */}
+              <p className="text-[#495e54] font-bold mt-4">Your Answer</p>
+              <Input
+                className="app-input mt-1"
+                placeholder="Type your answer"
+              />
+            </div>
           </div>
         ))}
     </div>

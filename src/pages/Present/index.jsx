@@ -11,13 +11,13 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetListChat } from "src/api/chat";
+import { useDetailGroup } from "src/api/group";
 import {
   useDetailPresentation,
   useExitPresentation,
   useGetHistory,
   usePresentPresentation,
 } from "src/api/presentation";
-import { useGetListQuestion } from "src/api/question";
 import Chat from "src/components/Present/Chat";
 import History from "src/components/Present/History";
 import Question from "src/components/Present/Question";
@@ -49,13 +49,16 @@ const Present = () => {
   const { mutateAsync } = useExitPresentation();
   const { mutateAsync: startPresent } = usePresentPresentation();
   const { data: historyData } = useGetHistory(presentationId);
-  //
-  const [questionLength, setQuestionLength] = useState(0);
-  const { data: questions } = useGetListQuestion(
-    presentationId,
-    questionLength,
-    questionLength > 20 ? 5 : 20
+  const [user, setUser] = useState({
+    role: "member",
+  });
+
+  const { data: groupDetailData } = useDetailGroup(
+    groupId,
+    localStorage.getItem("token") ? true : false
   );
+  console.log(groupDetailData);
+
   const queryClient = useQueryClient();
   const { data: chat, isFetching } = useGetListChat(
     presentationId,
@@ -64,59 +67,6 @@ const Present = () => {
   );
   const containerRef = useRef(null);
   const [presentation, setPresentation] = useState(data);
-  // const [questionData, setQuestionData] = useState([
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     question: "How to use React?",
-  //     upVote: ["123", "adcjnadjhcn ajd"],
-  //     answer: [
-  //       {
-  //         id: 1,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "John Doe",
-  //     question: "How to use React?",
-  //     upVote: ["123", "adcjnadjhcn ajd"],
-  //     answer: [
-  //       {
-  //         id: 1,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "John Doe",
-  //     question:
-  //       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates dolor ea perferendis mollitia. Deserunt odit accusantium id tempore similique iste, tempora veniam quaerat laborum numquam facere sunt deleniti. Tempora, dignissimos!Possimus, ut saepe eius nemo voluptas praesentium ad nisi. Esse qui itaque iusto harum, dolores autem similique voluptas, numquam est aliquid soluta suscipit ipsa minima nam adipisci neque. Error, aspernatur?",
-  //     upVote: ["123", "adcjnadjhcn ajd"],
-  //     answer: [
-  //       {
-  //         id: 1,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //       {
-  //         id: 3,
-  //         name: "John Doe 1",
-  //         content: "You can use React by using create-react-app",
-  //       },
-  //     ],
-  //   },
-  // ]);
-  const [questionData, setQuestionData] = useState(questions?.data ?? []);
 
   const handleChangeSlide = (index) => {
     if (!socket) return;
@@ -235,32 +185,16 @@ const Present = () => {
     setOpenChatDrawer(true);
   };
 
-  const handleUpVote = (questionId) => {
-    const question = questionData.find((item) => item.id === questionId);
-    if (question?.upVote?.includes(auth?.user?.id)) {
-      const newQuestionData = questionData.map((item) => {
-        if (item.id === questionId) {
-          return {
-            ...item,
-            upVote: item.upVote.filter((item) => item !== auth?.user?.id),
-          };
-        }
-        return item;
+  useEffect(() => {
+    if (groupDetailData) {
+      const temp = groupDetailData.data.user.filter(
+        (item) => item.id === auth?.user?.id
+      );
+      setUser({
+        role: temp[0]?.role ?? "member",
       });
-      setQuestionData(newQuestionData);
-      return;
     }
-    const newQuestionData = questionData.map((item) => {
-      if (item.id === questionId) {
-        return {
-          ...item,
-          upVote: [...item.upVote, auth?.user?.id],
-        };
-      }
-      return item;
-    });
-    setQuestionData(newQuestionData);
-  };
+  }, [auth, groupDetailData]);
 
   useEffect(() => {
     const handleStartPresent = async () => {
@@ -529,7 +463,7 @@ const Present = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
-          <Question data={questionData} handleUpVote={handleUpVote} />
+          <Question presentationId={presentationId} role={user.role} />
         </Spin>
       </Drawer>
       <Drawer
