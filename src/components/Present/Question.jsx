@@ -33,7 +33,8 @@ const Question = ({ presentationId, role }) => {
   );
   const [questionData, setQuestionData] = useState([]);
 
-  const handleUpVote = (questionId) => {
+  const handleUpVote = (e, questionId) => {
+    e.stopPropagation();
     const question = questionData.find((item) => item.id === questionId);
     let temp = null;
     if (question?.upVote?.includes(auth?.user?.id)) {
@@ -109,7 +110,8 @@ const Question = ({ presentationId, role }) => {
     setAnswerContent("");
   };
 
-  const handleMarkAsAnswered = (questionId) => {
+  const handleMarkAsAnswered = (e, questionId) => {
+    e.stopPropagation();
     setConfirmMark(null);
   };
 
@@ -195,7 +197,7 @@ const Question = ({ presentationId, role }) => {
                   <Popover
                     placement="bottomLeft"
                     trigger={["click"]}
-                    open={confirmMark === index}
+                    visible={confirmMark === index}
                     onVisibleChange={(visible) =>
                       setConfirmMark(visible ? index : null)
                     }
@@ -207,13 +209,16 @@ const Question = ({ presentationId, role }) => {
                         </p>
                         <div className="flex justify-end mt-2 gap-x-2">
                           <div
-                            onClick={() => setConfirmMark(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setConfirmMark(null);
+                            }}
                             className="w-6 h-6 rounded-full bg-white border border-[#495e54] flex items-center justify-center hover:text-white hover:bg-[#495e54] transition-all duration-200 cursor-pointer"
                           >
                             <CloseOutlined />
                           </div>
                           <div
-                            onClick={() => handleMarkAsAnswered(item?.id)}
+                            onClick={(e) => handleMarkAsAnswered(e, item?.id)}
                             className="w-6 h-6 rounded-full bg-white border border-[#495e54] flex items-center justify-center hover:text-white hover:bg-[#495e54] transition-all duration-200 cursor-pointer"
                           >
                             <CheckOutlined />
@@ -222,7 +227,10 @@ const Question = ({ presentationId, role }) => {
                       </div>
                     }
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#495e54] flex items-center justify-center flex-none">
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-10 h-10 rounded-full bg-[#495e54] flex items-center justify-center flex-none"
+                    >
                       <span className="text-white font-bold text-xl flex items-center justify-center">
                         <QuestionOutlined />
                       </span>
@@ -254,7 +262,7 @@ const Question = ({ presentationId, role }) => {
                         ? "text-white"
                         : "text-[#495e54]"
                     }`}
-                    onClick={() => handleUpVote(item?.id)}
+                    onClick={(e) => handleUpVote(e, item?.id)}
                   />
                 </div>
                 <p className="text-[#495e54] font-bold ml-2">
