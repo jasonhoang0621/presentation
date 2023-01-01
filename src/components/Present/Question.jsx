@@ -131,7 +131,17 @@ const Question = ({ presentationId, role }) => {
     });
     listenUpdateQuestion(socket, presentationId, (response) => {
       if (!response?.errorCode) {
-        setQuestionData(response?.data);
+        let newQuestionData = []
+        questionData.map(item => {
+          if (item.id == response.data.id) {
+            newQuestionData.push(response?.data)
+          } else {
+            newQuestionData.push(item)
+          }
+        })
+        console.log('questionData', questionData)
+        console.log('newQuestionData', newQuestionData)
+        setQuestionData(newQuestionData);
       }
     });
 
@@ -139,7 +149,7 @@ const Question = ({ presentationId, role }) => {
       offQuestion(socket, presentationId);
       offUpdateQuestion(socket, presentationId);
     };
-  }, [socket, presentationId, data]);
+  }, [socket, presentationId, questionData]);
 
   console.log(questionData);
 
