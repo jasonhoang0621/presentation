@@ -1,15 +1,16 @@
 import { WechatOutlined } from "@ant-design/icons";
 import { Drawer, Input, notification, Spin } from "antd";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { io } from "socket.io-client";
 import { useGetListChat } from "src/api/chat";
 import { useDetailPresentation } from "src/api/presentation";
 import Heading from "src/components/Join/Heading";
 import MultipleChoice from "src/components/Join/MultiplceChoice";
 import Chat from "src/components/Present/Chat";
 import { SlideType } from "src/helpers/slide";
-import { SocketContext } from "src/socket/context";
+import { SOCKET_URL } from "src/socket/context";
 import {
   listenChat,
   listenPresentation,
@@ -29,7 +30,7 @@ const PublicJoin = () => {
   const [slideIndex, setSlideIndex] = useState(0);
   const [noPresent, setNoPresent] = useState(false);
   const [data, setData] = useState(null);
-  const { socket } = useContext(SocketContext);
+  const [socket, setSocket] = useState(null);
   const [chatData, setChatData] = useState([]);
 
   const { data: presentationData } = useDetailPresentation(presentationId);
@@ -47,6 +48,19 @@ const PublicJoin = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (guestId) {
+      setSocket(
+        io(SOCKET_URL, {
+          extraHeaders: {
+            guestId,
+            username,
+          },
+        })
+      );
+    }
+  }, [guestId, username]);
 
   const handleSentMessage = (chatMessage) => {
     //   setChatData([
