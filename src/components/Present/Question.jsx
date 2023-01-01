@@ -113,6 +113,16 @@ const Question = ({ presentationId, role }) => {
   const handleMarkAsAnswered = (e, questionId) => {
     e.stopPropagation();
     setConfirmMark(null);
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        return {
+          ...item,
+          isLock: true,
+        };
+      }
+      return item;
+    });
+    setQuestionData(newQuestionData);
   };
 
   useEffect(() => {
@@ -131,16 +141,16 @@ const Question = ({ presentationId, role }) => {
     });
     listenUpdateQuestion(socket, presentationId, (response) => {
       if (!response?.errorCode) {
-        let newQuestionData = []
-        questionData.map(item => {
-          if (item.id == response.data.id) {
-            newQuestionData.push(response?.data)
+        let newQuestionData = [];
+        questionData.forEach((item) => {
+          if (item.id === response.data.id) {
+            newQuestionData.push(response?.data);
           } else {
-            newQuestionData.push(item)
+            newQuestionData.push(item);
           }
-        })
-        console.log('questionData', questionData)
-        console.log('newQuestionData', newQuestionData)
+        });
+        console.log("questionData", questionData);
+        console.log("newQuestionData", newQuestionData);
         setQuestionData(newQuestionData);
       }
     });
@@ -149,6 +159,7 @@ const Question = ({ presentationId, role }) => {
       offQuestion(socket, presentationId);
       offUpdateQuestion(socket, presentationId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, presentationId, questionData]);
 
   console.log(questionData);
@@ -189,12 +200,18 @@ const Question = ({ presentationId, role }) => {
       {questionData &&
         questionData.map((item, index) => (
           <div
-            onClick={() => {
-              setAnsweringQuestion(index);
-              setAnswerContent("");
-            }}
+            onClick={
+              item?.isLock
+                ? null
+                : () => {
+                    setAnsweringQuestion(index);
+                    setAnswerContent("");
+                  }
+            }
             key={index}
-            className="bg-white rounded-lg shadow-2xl border border-[#cdcdcdc] p-4 mb-4"
+            className={`rounded-lg shadow-2xl border border-[#cdcdcdc] p-4 mb-4 ${
+              item?.isLock ? "bg-[#495e5435]" : "bg-white"
+            }`}
           >
             {item?.isLock && (
               <div className="flex justify-end font-semibold mb-2">
