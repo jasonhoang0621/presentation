@@ -128,9 +128,7 @@ const PublicJoin = () => {
         }
       }, 500);
     });
-    console.log("listen");
     listenPresentStatus(socket, presentationId, (data) => {
-      console.log(data);
       if (data?.status) {
         notification.info({
           message: "This presentation is presenting",

@@ -23,11 +23,13 @@ export const changeSlide = (socket, presentationId, index) => {
   socket?.emit("present", { presentationId, index });
 };
 
-export const answerQuestion = (socket, presentationId, index, answerIndex, name = null) => {
+export const answerQuestion = (socket, presentationId, index, answerIndex, name = null, guestId = null) => {
+  console.log('name', name)
   if (name === null) {
     socket?.emit("answer", { presentationId, index, answerIndex });
   } else {
-    socket?.emit("answer", { presentationId, index, answerIndex, name });
+    console.log("ALO")
+    socket?.emit("answer", { presentationId, index, answerIndex, name, guestId });
   }
 };
 

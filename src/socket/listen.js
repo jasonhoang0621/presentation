@@ -16,7 +16,6 @@ export const listenChat = (socket, presentationId, cb) => {
   return true;
 };
 
-
 export const listenQuestion = (socket, presentationId, cb) => {
   socket
     .off(`question-${presentationId}`)

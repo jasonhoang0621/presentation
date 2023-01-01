@@ -20,8 +20,9 @@ const MultipleChoice = ({ data, isPublic = false }) => {
   };
 
   const onPublicSubmit = () => {
-    const name = localStorage.getItem("name");
-    answerQuestion(socket, presentationId, data.index, activeAnswer);
+    const username = localStorage.getItem("username");
+    const guestId = localStorage.getItem("guestId");
+    answerQuestion(socket, presentationId, data.index, activeAnswer, username, guestId);
     setShowStatistic(true);
   };
 
@@ -34,7 +35,6 @@ const MultipleChoice = ({ data, isPublic = false }) => {
     if (!socket) return;
     listenAnswer(socket, presentationId, data.index, (response) => {
       console.log("response", response);
-      console.log(response.data.slide[data.index]);
       setSlideData(response.data.slide[data.index]);
     });
 
@@ -42,7 +42,7 @@ const MultipleChoice = ({ data, isPublic = false }) => {
       offAnswer(socket, presentationId, data.index);
     };
   }, [socket, presentationId, data.index]);
-
+  console.log('isPublic', isPublic)
   return (
     <div>
       <p className="text-center text-[40px] mt-10">{data?.question}</p>
