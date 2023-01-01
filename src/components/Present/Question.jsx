@@ -54,8 +54,7 @@ const Question = ({ presentationId, role }) => {
         socket,
         presentationId,
         questionId,
-        temp,
-        questionData.length
+        temp
       );
       return;
     }
@@ -74,8 +73,7 @@ const Question = ({ presentationId, role }) => {
       socket,
       presentationId,
       questionId,
-      temp,
-      questionData.length
+      temp
     );
     setQuestionData(newQuestionData);
   };
@@ -89,22 +87,32 @@ const Question = ({ presentationId, role }) => {
 
   const handleAnswerQuestion = (questionId) => {
     if (!answerContent) return;
+    let temp = null
     const newQuestionData = questionData.map((item) => {
       if (item.id === questionId) {
+        temp = item
+        temp.answer = [
+          ...item.answer,
+          {
+            id: item.answer.length + 1,
+            name: auth?.user?.name,
+            content: answerContent,
+          },
+        ]
+        delete temp._id;
         return {
-          ...item,
-          answer: [
-            ...item.answer,
-            {
-              id: item.answer.length + 1,
-              name: auth?.user?.name,
-              content: answerContent,
-            },
-          ],
+          ...temp
         };
       }
       return item;
     });
+
+    updateQuestion(
+      socket,
+      presentationId,
+      questionId,
+      temp
+    );
     setQuestionData(newQuestionData);
     setAnsweringQuestion(null);
     setAnswerContent("");
@@ -113,15 +121,24 @@ const Question = ({ presentationId, role }) => {
   const handleMarkAsAnswered = (e, questionId) => {
     e.stopPropagation();
     setConfirmMark(null);
+    let temp = null
     const newQuestionData = questionData.map((item) => {
       if (item.id === questionId) {
+        temp = item
+        temp.isLock = true
+        delete temp._id;
         return {
-          ...item,
-          isLock: true,
+          ...temp
         };
       }
       return item;
     });
+    updateQuestion(
+      socket,
+      presentationId,
+      questionId,
+      temp
+    );
     setQuestionData(newQuestionData);
   };
 
@@ -149,8 +166,6 @@ const Question = ({ presentationId, role }) => {
             newQuestionData.push(item);
           }
         });
-        console.log("questionData", questionData);
-        console.log("newQuestionData", newQuestionData);
         setQuestionData(newQuestionData);
       }
     });
