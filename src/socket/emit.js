@@ -24,11 +24,9 @@ export const changeSlide = (socket, presentationId, index) => {
 };
 
 export const answerQuestion = (socket, presentationId, index, answerIndex, name = null, guestId = null) => {
-  console.log('name', name)
   if (name === null) {
     socket?.emit("answer", { presentationId, index, answerIndex });
   } else {
-    console.log("ALO")
     socket?.emit("answer", { presentationId, index, answerIndex, name, guestId });
   }
 };

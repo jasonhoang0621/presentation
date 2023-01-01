@@ -1,11 +1,35 @@
 import moment from "moment";
-import React from "react";
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { listenHistory } from "src/socket/listen";
+import { offHistory } from "src/socket/off";
 
-const History = ({ data }) => {
+const History = ({ data, socket = null }) => {
+  const [history, setHistory] = React.useState([])
+  const { presentationId } = useParams();
+  console.log('socket', socket)
+
+  useEffect(() => {
+    if (!socket) return;
+    listenHistory(socket, presentationId, (response) => {
+      if (!response.errorCode) {
+        setHistory([...response.data])
+      }
+    });
+
+    return () => {
+      offHistory(socket, presentationId);
+    };
+  }, [socket, presentationId, history]);
+  useEffect(() => {
+    if (!data) return;
+    setHistory([...history, ...data.data]);
+  },[data])
+
   return (
     <div className="m-2">
       {data &&
-        data.data.map((item, index) => (
+        history.map((item, index) => (
           <div key={index}>
             <p className="text-center border-b border-[#495e54] border-dashed mt-3 text-[16px]">
               <span className="font-bold text-[#495e54]">

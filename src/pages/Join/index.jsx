@@ -175,7 +175,7 @@ const Join = () => {
     if (!data) return;
     switch (data?.data?.slide[slideIndex]?.type) {
       case SlideType.MULTIPLE_CHOICE:
-        return <MultipleChoice data={data?.data?.slide[slideIndex]} />;
+        return <MultipleChoice data={data?.data?.slide[slideIndex]} socket={socket} />;
       case SlideType.HEADING:
       case SlideType.PARAGRAPH:
         return <Heading data={data?.data?.slide[slideIndex]} />;

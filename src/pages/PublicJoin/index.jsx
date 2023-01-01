@@ -193,6 +193,7 @@ const PublicJoin = () => {
           <MultipleChoice
             data={data?.data?.slide[slideIndex]}
             isPublic={true}
+            socket={socket}
           />
         );
       case SlideType.HEADING:

@@ -84,7 +84,6 @@ const Presentation = () => {
     if (!socket) return;
     listenPresentStatus(socket, presentationId, (data) => {
       if (data?.status) {
-        console.log(data.status);
         notification.info({
           message: "This presentation is presenting",
         });

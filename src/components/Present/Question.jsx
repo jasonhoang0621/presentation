@@ -177,8 +177,6 @@ const Question = ({ presentationId, role }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, presentationId, questionData]);
 
-  console.log(questionData);
-
   return (
     <div className={`m-2 relative ${role === "member" ? "pt-10" : ""}`}>
       {role === "member" && (

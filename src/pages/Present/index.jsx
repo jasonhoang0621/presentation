@@ -471,7 +471,7 @@ const Present = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
-          <History data={historyData} />
+          <History data={historyData} socket={socket} />
         </Spin>
       </Drawer>
     </>

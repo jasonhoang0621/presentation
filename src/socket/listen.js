@@ -52,3 +52,12 @@ export const listenPresentStatus = (socket, presentationId, cb) => {
     });
   return true;
 };
+
+export const listenHistory = (socket, presentationId, cb) => {
+  socket
+    .off(`history-${presentationId}`)
+    .on(`history-${presentationId}`, function (data) {
+      cb(data);
+    });
+  return true;
+};

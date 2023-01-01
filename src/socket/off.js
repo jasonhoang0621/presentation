@@ -18,9 +18,13 @@ export const offQuestion = (socket, presentationId) => {
   socket.off(`question-${presentationId}`);
   return true;
 };
+export const offHistory = (socket, presentationId) => {
+  socket.off(`history-${presentationId}`);
+  return true;
+};
 
 export const offUpdateQuestion = (socket, presentationId) => {
-  socket.off(`[update-question-${presentationId}`);
+  socket.off(`update-question-${presentationId}`);
   return true;
 };
 

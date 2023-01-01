@@ -30,7 +30,6 @@ const Heading = ({ data, isPublic }) => {
   useEffect(() => {
     if (!socket) return;
     listenAnswer(socket, presentationId, data.index, (response) => {
-      console.log(response.data.slide[data.index])
       setSlideData(response.data.slide[data.index]);
     });
 

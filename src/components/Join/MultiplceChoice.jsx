@@ -1,17 +1,15 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Slide from "src/components/Slide";
-import { SocketContext } from "src/socket/context";
 import { answerQuestion } from "src/socket/emit";
 import { listenAnswer } from "src/socket/listen";
 import { offAnswer } from "src/socket/off";
 
-const MultipleChoice = ({ data, isPublic = false }) => {
+const MultipleChoice = ({ data, isPublic = false, socket = null }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
   const [slideData, setSlideData] = React.useState(data);
   const [showStatistic, setShowStatistic] = React.useState(false);
 
-  const { socket } = useContext(SocketContext);
   const { presentationId } = useParams();
 
   const onSubmit = () => {
@@ -34,7 +32,6 @@ const MultipleChoice = ({ data, isPublic = false }) => {
   useEffect(() => {
     if (!socket) return;
     listenAnswer(socket, presentationId, data.index, (response) => {
-      console.log("response", response);
       setSlideData(response.data.slide[data.index]);
     });
 
@@ -42,7 +39,7 @@ const MultipleChoice = ({ data, isPublic = false }) => {
       offAnswer(socket, presentationId, data.index);
     };
   }, [socket, presentationId, data.index]);
-  console.log('isPublic', isPublic)
+
   return (
     <div>
       <p className="text-center text-[40px] mt-10">{data?.question}</p>
