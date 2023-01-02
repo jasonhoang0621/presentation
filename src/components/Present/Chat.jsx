@@ -17,16 +17,16 @@ const Chat = ({ containerRef, handleScroll, chatData, handleSentMessage }) => {
         {chatData &&
           chatData.map((chat, index) => (
             <div key={index}>
-              {chat.userId === auth?.user?.id ? (
+              {(chat.userId === auth?.user?.id) || (chat.userId === localStorage.getItem("guestId")) ? (
                 <div className="flex justify-end">
                   <div className="mb-5 text-end p-2 border border-[#495e54] rounded-lg inline-block">
-                    <strong>{chat.user[0].name}</strong>
+                    <strong>{chat.user.length == 1 ? chat.user[0].name : chat.guest[0].name}</strong>
                     <p className="text-left">{chat.message}</p>
                   </div>
                 </div>
               ) : (
                 <div className="mb-5 bg-[#495e54] p-2 rounded-lg inline-block">
-                  <strong className="text-white">{chat.user[0].name}</strong>
+                  <strong className="text-white">{chat.user.length == 1 ? chat.user[0].name : chat.guest[0].name}</strong>
                   <p className="text-white break-all">{chat.message}</p>
                 </div>
               )}

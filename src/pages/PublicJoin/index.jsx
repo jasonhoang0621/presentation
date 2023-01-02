@@ -11,6 +11,7 @@ import MultipleChoice from "src/components/Join/MultiplceChoice";
 import Chat from "src/components/Present/Chat";
 import { SlideType } from "src/helpers/slide";
 import { SOCKET_URL } from "src/socket/context";
+import { editSendMessage } from "src/socket/emit";
 import {
   listenChat,
   listenPresentation,
@@ -63,26 +64,27 @@ const PublicJoin = () => {
   }, [guestId, username]);
 
   const handleSentMessage = (chatMessage) => {
-    //   setChatData([
-    //     ...chatData,
-    //     {
-    //       userId: guestId,
-    //       message: chatMessage,
-    //       user: [
-    //         {
-    //           name: username,
-    //         },
-    //       ],
-    //     },
-    //   ]);
-    //   editSendMessage(socket, presentationId, chatMessage);
-    //   setChatMessage("");
-    //   setTimeout(() => {
-    //     const chatBox = document.getElementById("chat-box");
-    //     if (chatBox) {
-    //       chatBox.scrollTop = chatBox.scrollHeight;
-    //     }
-    //   }, 500);
+    const name = localStorage.getItem("username");
+    const guestId = localStorage.getItem("guestId");
+    setChatData([
+      ...chatData,
+      {
+        userId: guestId,
+        message: chatMessage,
+        user: [
+          {
+            name: name,
+          },
+        ],
+      },
+    ]);
+    editSendMessage(socket, presentationId, chatMessage, name, guestId);
+    setTimeout(() => {
+      const chatBox = document.getElementById("chat-box");
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }, 500);
   };
 
   useEffect(() => {

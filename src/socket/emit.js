@@ -1,5 +1,9 @@
-export const editSendMessage = (socket, presentationId, message) => {
-  socket?.emit("chat", { presentationId, message });
+export const editSendMessage = (socket, presentationId, message, name = null, guestId = null) => {
+  if (name) {
+    socket?.emit("chat", { presentationId, message, name, guestId });
+  } else {
+    socket?.emit("chat", { presentationId, message });
+  }
 };
 
 export const postQuestion = (socket, presentationId, question) => {
