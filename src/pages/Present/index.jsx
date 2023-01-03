@@ -84,7 +84,7 @@ const Present = () => {
 
   useEffect(() => {
     if (!chat) return;
-    setChatData([...chat?.data, ...chatData]);
+    setChatData((chatData) => [...chat.data, ...chatData]);
   }, [chat]);
 
   const handleClickToast = () => {
@@ -436,7 +436,7 @@ const Present = () => {
         onClose={() => setHistoryDrawer(false)}
         visible={historyDrawer}
         closable={false}
-        bodyStyle={{ padding: 0 }}
+        bodyStyle={{ padding: 0, margin: 0 }}
       >
         <Spin spinning={isFetching}>
           <History data={historyData} socket={socket} />

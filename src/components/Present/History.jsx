@@ -37,10 +37,7 @@ const History = ({ data, socket = null }) => {
               </span>
             </p>
             {item.answer.map((record) => (
-              <p
-                key={record.id}
-                className='text-[15px] mt-2 hover:text-[17px] hover:font-semibold transition-all duration-200'
-              >
+              <p key={record.id} className='text-[15px] mt-2  transition-all duration-200'>
                 <span className='font-bold text-[#495e54]'>
                   {moment(record.createdAt).format('HH:mm')}:{' '}
                 </span>
