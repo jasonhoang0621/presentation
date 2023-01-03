@@ -19,17 +19,19 @@ const Group = () => {
   });
 
   const { data } = useGetListPresentation(id);
-  const { data: groupDetailData = null, isLoading: loadingGroup } = useDetailGroup(id);
+  const { data: groupDetailData = null, isFetching: loadingGroup } = useDetailGroup(id);
 
   useEffect(() => {
-    if (groupDetailData) {
-      const temp = groupDetailData.data.user.filter((item) => item.id === auth?.user?.id);
-      setUser({
-        role: temp[0]?.role ?? 'member'
-      });
-      return;
+    if (!loadingGroup) {
+      if (groupDetailData) {
+        const temp = groupDetailData.data.user.filter((item) => item.id === auth?.user?.id);
+        setUser({
+          role: temp[0]?.role ?? 'member'
+        });
+        return;
+      }
+      navigate('/');
     }
-    navigate('/');
   }, [auth, groupDetailData, navigate]);
 
   const columns = [

@@ -1,5 +1,5 @@
 {
-  "extends": ["next/core-web-vitals", "prettier"],
+  "extends": ["prettier", "react"],
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": [
@@ -16,5 +16,9 @@
         "jsxSingleQuote": true
       }
     ]
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2020
   }
 }
