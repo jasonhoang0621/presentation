@@ -32,7 +32,7 @@ const Group = () => {
       }
       navigate('/');
     }
-  }, [auth, groupDetailData, navigate, id]);
+  }, [auth, groupDetailData, navigate, id, loadingGroup]);
 
   const columns = [
     {

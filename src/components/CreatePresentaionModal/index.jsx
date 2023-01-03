@@ -31,7 +31,7 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
   return (
     <Modal
       title='Create Presentation'
-      visible={visible}
+      open={visible}
       onCancel={() => setVisible(false)}
       footer={null}
       destroyOnClose

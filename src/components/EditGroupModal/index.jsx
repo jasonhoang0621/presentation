@@ -8,7 +8,7 @@ import { useAssignRole, useInviteUser, useRemoveUser } from 'src/api/group';
 import { useGetListUser } from 'src/api/user';
 import { SettingOutlined } from '@ant-design/icons';
 
-const EditGroupModal = ({ visible, setVisible, groupDetailData, loadingGroup, user }) => {
+const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
   const pararms = useParams();
   const auth = useSelector((state) => state.auth);
   const queryClient = useQueryClient();
@@ -260,19 +260,19 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, loadingGroup, us
     const res = await removeUserGroup({ userId: auth.user.id });
     if (res.errorCode) {
       return notification.error({
-        message: "Leave failed",
+        message: 'Leave failed',
         description: res.data,
-        duration: 1,
+        duration: 1
       });
     }
     notification.success({
-      message: "Leave successfully",
-      duration: 1,
+      message: 'Leave successfully',
+      duration: 1
     });
-    queryClient.invalidateQueries("group");
+    queryClient.invalidateQueries('group');
     setRemoveUser(null);
     setRemoveUserModal(false);
-    window.location.href = "/";
+    window.location.href = '/';
   };
 
   useEffect(() => {
@@ -295,7 +295,7 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, loadingGroup, us
   return (
     <Modal
       title='Edit Group'
-      visible={visible}
+      open={visible}
       onCancel={() => setVisible(false)}
       footer={null}
       destroyOnClose
