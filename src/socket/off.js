@@ -1,5 +1,5 @@
 export const offUserJoin = (socket) => {
-  socket?.off("userJoin", () => {});
+  socket?.off('userJoin', () => {});
   return true;
 };
 
@@ -27,7 +27,6 @@ export const offUpdateQuestion = (socket, presentationId) => {
   socket.off(`update-question-${presentationId}`);
   return true;
 };
-
 
 export const offAnswer = (socket, presentationId, index) => {
   socket.off(`answer-${presentationId}-${index}`);

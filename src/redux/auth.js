@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 export const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState: {},
   reducers: {
     login: (state, action) => {
@@ -11,10 +11,10 @@ export const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-    },
-  },
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+    }
+  }
 });
 
 export const { login, logout } = authSlice.actions;

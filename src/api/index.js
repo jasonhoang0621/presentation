@@ -1,16 +1,16 @@
-import axios from "axios";
+import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: 'http://localhost:3000/api',
   // baseURL: "https://presentation-server.onrender.com/api",
   headers: {
-    "Content-Type": "application/json",
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
 axiosClient.interceptors.request.use(async (config) => {
-  const token = localStorage.getItem("token");
-  config.headers.Authorization = `${token}` || "";
+  const token = localStorage.getItem('token');
+  config.headers.Authorization = `${token}` || '';
   return config;
 });
 axiosClient.interceptors.response.use(
@@ -22,26 +22,25 @@ axiosClient.interceptors.response.use(
   },
   async (error) => {
     if (error?.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/login';
     }
     const originalRequest = error.config;
     if (error?.response?.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const result = await axiosClient.post("/refreshToken", {
-        refreshToken: localStorage.getItem("refreshToken"),
+      const result = await axiosClient.post('/refreshToken', {
+        refreshToken: localStorage.getItem('refreshToken')
       });
       if (result?.errorCode) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/";
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/';
         return;
       }
-      localStorage.setItem("token", result?.data?.token);
-      localStorage.setItem("refreshToken", result?.data?.refreshToken);
-      axiosClient.defaults.headers.common["Authorization"] =
-        result?.data?.token;
+      localStorage.setItem('token', result?.data?.token);
+      localStorage.setItem('refreshToken', result?.data?.refreshToken);
+      axiosClient.defaults.headers.common['Authorization'] = result?.data?.token;
       return axiosClient(originalRequest);
     }
     if (error?.response?.status === 400) {

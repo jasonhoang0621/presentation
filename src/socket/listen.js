@@ -1,27 +1,21 @@
 export const listenPresentation = (socket, presentationId, cb) => {
-  socket
-    .off(`present-${presentationId}`)
-    .on(`present-${presentationId}`, function (data) {
-      cb(data);
-    });
+  socket.off(`present-${presentationId}`).on(`present-${presentationId}`, function (data) {
+    cb(data);
+  });
   return true;
 };
 
 export const listenChat = (socket, presentationId, cb) => {
-  socket
-    .off(`chat-${presentationId}`)
-    .on(`chat-${presentationId}`, function (data) {
-      cb(data);
-    });
+  socket.off(`chat-${presentationId}`).on(`chat-${presentationId}`, function (data) {
+    cb(data);
+  });
   return true;
 };
 
 export const listenQuestion = (socket, presentationId, cb) => {
-  socket
-    .off(`question-${presentationId}`)
-    .on(`question-${presentationId}`, function (data) {
-      cb(data);
-    });
+  socket.off(`question-${presentationId}`).on(`question-${presentationId}`, function (data) {
+    cb(data);
+  });
   return true;
 };
 
@@ -33,7 +27,6 @@ export const listenUpdateQuestion = (socket, presentationId, cb) => {
     });
   return true;
 };
-
 
 export const listenAnswer = (socket, presentationId, index = 0, cb) => {
   socket
@@ -54,10 +47,8 @@ export const listenPresentStatus = (socket, presentationId, cb) => {
 };
 
 export const listenHistory = (socket, presentationId, cb) => {
-  socket
-    .off(`history-${presentationId}`)
-    .on(`history-${presentationId}`, function (data) {
-      cb(data);
-    });
+  socket.off(`history-${presentationId}`).on(`history-${presentationId}`, function (data) {
+    cb(data);
+  });
   return true;
 };

@@ -1,24 +1,16 @@
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  CaretLeftOutlined,
-} from "@ant-design/icons";
-import { Layout as LayoutAntd, Menu, Spin } from "antd";
-import "./layout.css";
+import { MenuFoldOutlined, MenuUnfoldOutlined, CaretLeftOutlined } from '@ant-design/icons';
+import { Layout as LayoutAntd, Menu, Spin } from 'antd';
+import './layout.css';
 
-import {
-  BookOutlined,
-  UsergroupAddOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
-import { useIsFetching, useIsMutating, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useGetListGroup } from "src/api/group";
-import ChangePasswordModal from "../ChangePasswordModal";
-import CreateGroupModal from "../CreateGroupModal";
-import ProfileModal from "../ProfileModal";
+import { BookOutlined, UsergroupAddOutlined, UserOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { useIsFetching, useIsMutating, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useGetListGroup } from 'src/api/group';
+import ChangePasswordModal from '../ChangePasswordModal';
+import CreateGroupModal from '../CreateGroupModal';
+import ProfileModal from '../ProfileModal';
 const { Header, Sider, Content } = LayoutAntd;
 
 const Layout = ({ sider = false }) => {
@@ -38,20 +30,18 @@ const Layout = ({ sider = false }) => {
   const isMutating = useIsMutating();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     queryClient.clear();
-    navigate("/login");
+    navigate('/login');
   };
 
   useEffect(() => {
     const { pathname } = location;
 
-    let key = "";
+    let key = '';
     if (groupData) {
-      key = groupData.data.findIndex(
-        (router) => router.id === pathname.split("/")[2]
-      );
+      key = groupData.data.findIndex((router) => router.id === pathname.split('/')[2]);
     }
     setActiveKey(key);
   }, [location, groupData]);
@@ -61,12 +51,12 @@ const Layout = ({ sider = false }) => {
       <LayoutAntd>
         {sider && (
           <Sider trigger={null} collapsible collapsed={collapsed}>
-            <div className="logo h-[64px] flex items-center justify-center">
-              <p className="text-white font-semibold">MIDTERM</p>
+            <div className='logo h-[64px] flex items-center justify-center'>
+              <p className='text-white font-semibold'>MIDTERM</p>
             </div>
             <Menu
-              theme="dark"
-              mode="inline"
+              theme='dark'
+              mode='inline'
               activeKey={[activeKey]}
               items={
                 groupData &&
@@ -74,55 +64,52 @@ const Layout = ({ sider = false }) => {
                   label: item.name.toUpperCase(),
                   icon: <BookOutlined />,
                   key: item.id,
-                  onClick: () => navigate(`/group/${item.id}`),
+                  onClick: () => navigate(`/group/${item.id}`)
                 }))
               }
             />
           </Sider>
         )}
-        <LayoutAntd className="site-LayoutAntd">
+        <LayoutAntd className='site-LayoutAntd'>
           <Header
             className={`site-layout-background w-full flex items-center p-0 justify-between 
-            ${sider ? "px-[16px]" : "px-[24px]"}`}
+            ${sider ? 'px-[16px]' : 'px-[24px]'}`}
           >
             {sider
-              ? React.createElement(
-                  collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-                  {
-                    className: "trigger",
-                    onClick: () => setCollapsed(!collapsed),
-                  }
-                )
+              ? React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                  className: 'trigger',
+                  onClick: () => setCollapsed(!collapsed)
+                })
               : React.createElement(CaretLeftOutlined, {
-                  className: "trigger",
+                  className: 'trigger',
                   onClick: () => navigate(-1),
-                  style: { fontSize: "20px", color: "#fff" },
+                  style: { fontSize: '20px', color: '#fff' }
                 })}
-            <div className="flex items-center">
+            <div className='flex items-center'>
               <UsergroupAddOutlined
-                className="text-white text-[22px] cursor-pointer hover:opacity-60 mr-5"
+                className='text-white text-[22px] cursor-pointer hover:opacity-60 mr-5'
                 onClick={() => setCreateGroupModal(true)}
               />
-              <div className="mb-2 relative">
-                <div className="user-icon-header">
-                  <UserOutlined className="text-white text-[20px] cursor-pointer hover:opacity-60" />
-                  <ul className="hidden absolute right-0 top-[100%] bg-white z-10 min-w-[170px] shadow-2xl p-0 m-0 list-none user-icon-header-dropdown transition-all">
+              <div className='mb-2 relative'>
+                <div className='user-icon-header'>
+                  <UserOutlined className='text-white text-[20px] cursor-pointer hover:opacity-60' />
+                  <ul className='hidden absolute right-0 top-[100%] bg-white z-10 min-w-[170px] shadow-2xl p-0 m-0 list-none user-icon-header-dropdown transition-all'>
                     <li
-                      className="text-[14px] leading-1 pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white"
+                      className='text-[14px] leading-1 pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white'
                       onClick={() => setProfileModal(true)}
                     >
                       Profile
                     </li>
                     {!auth.user?.loginService && (
                       <li
-                        className="text-[14px] pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white"
+                        className='text-[14px] pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white'
                         onClick={() => setChangePasswordModal(true)}
                       >
                         Change password
                       </li>
                     )}
                     <li
-                      className="text-[14px] pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white"
+                      className='text-[14px] pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white'
                       onClick={handleLogout}
                     >
                       Logout
@@ -133,16 +120,11 @@ const Layout = ({ sider = false }) => {
             </div>
           </Header>
           <Content
-            className={`site-layout-background min-h-[280px] ${
-              sider ? " mx-[16px] p-[24px]" : ""
-            }`}
+            className={`site-layout-background min-h-[280px] ${sider ? ' mx-[16px] p-[24px]' : ''}`}
           >
             <Outlet />
             <ProfileModal visible={profileModal} setVisible={setProfileModal} />
-            <CreateGroupModal
-              visible={createGroupModal}
-              setVisible={setCreateGroupModal}
-            />
+            <CreateGroupModal visible={createGroupModal} setVisible={setCreateGroupModal} />
             <ChangePasswordModal
               visible={changePasswordModal}
               setVisible={setChangePasswordModal}

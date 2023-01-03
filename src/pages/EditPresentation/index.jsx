@@ -1,17 +1,14 @@
-import { FileAddOutlined } from "@ant-design/icons";
-import { Col, notification, Popover, Row } from "antd";
-import React from "react";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import {
-  useDetailPresentation,
-  useUpdatePresentation,
-} from "src/api/presentation";
-import { SlideType } from "src/helpers/slide";
-import Heading from "./Heading";
-import MainSlide from "./MainSlide";
-import MultipleChoice from "./MultipleChoice";
-import SmallSlide from "./SmallSlide";
+import { FileAddOutlined } from '@ant-design/icons';
+import { Col, notification, Popover, Row } from 'antd';
+import React from 'react';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useDetailPresentation, useUpdatePresentation } from 'src/api/presentation';
+import { SlideType } from 'src/helpers/slide';
+import Heading from './Heading';
+import MainSlide from './MainSlide';
+import MultipleChoice from './MultipleChoice';
+import SmallSlide from './SmallSlide';
 
 const EditPresentation = () => {
   const { presentationId } = useParams();
@@ -32,11 +29,11 @@ const EditPresentation = () => {
             ...data.slide,
             {
               type: SlideType.MULTIPLE_CHOICE,
-              question: "",
+              question: '',
               answer: [],
-              index: data.slide.length,
-            },
-          ],
+              index: data.slide.length
+            }
+          ]
         });
         break;
       case SlideType.HEADING:
@@ -46,12 +43,12 @@ const EditPresentation = () => {
             ...data.slide,
             {
               type: SlideType.HEADING,
-              question: "",
-              paragraph: "",
+              question: '',
+              paragraph: '',
               answer: [],
-              index: data.slide.length,
-            },
-          ],
+              index: data.slide.length
+            }
+          ]
         });
         break;
       case SlideType.PARAGRAPH:
@@ -61,12 +58,12 @@ const EditPresentation = () => {
             ...data.slide,
             {
               type: SlideType.HEADING,
-              question: "",
-              paragraph: "",
+              question: '',
+              paragraph: '',
               answer: [],
-              index: data.slide.length,
-            },
-          ],
+              index: data.slide.length
+            }
+          ]
         });
         break;
       default:
@@ -77,7 +74,7 @@ const EditPresentation = () => {
   const handleDeleteSlide = (deleteSlide) => {
     setData({
       ...data,
-      slide: data?.slide.filter((item) => item.index !== deleteSlide),
+      slide: data?.slide.filter((item) => item.index !== deleteSlide)
     });
   };
 
@@ -86,14 +83,14 @@ const EditPresentation = () => {
       if (item.index === activeSlide?.index) {
         return {
           ...item,
-          ...value,
+          ...value
         };
       }
       return item;
     });
     setData({
       ...data,
-      slide: newSlide,
+      slide: newSlide
     });
     setActiveSlide(newSlide[activeSlide.index]);
   };
@@ -103,12 +100,12 @@ const EditPresentation = () => {
     const res = await mutateAsync(data);
     if (res?.errorCode) {
       notification.error({
-        message: res?.data || "Save failed",
+        message: res?.data || 'Save failed'
       });
       return;
     }
     notification.success({
-      message: "Save success",
+      message: 'Save success'
     });
   };
 
@@ -126,9 +123,7 @@ const EditPresentation = () => {
   const renderEditQuestionTab = () => {
     switch (activeSlide?.type) {
       case SlideType.MULTIPLE_CHOICE:
-        return (
-          <MultipleChoice data={activeSlide} setData={handleEditQuestion} />
-        );
+        return <MultipleChoice data={activeSlide} setData={handleEditQuestion} />;
       case SlideType.HEADING:
         return <Heading data={activeSlide} setData={handleEditQuestion} />;
       case SlideType.PARAGRAPH:
@@ -142,19 +137,19 @@ const EditPresentation = () => {
     <div>
       <p
         onClick={() => handleAddNewSlide(SlideType.MULTIPLE_CHOICE)}
-        className="py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
+        className='py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]'
       >
         Multiple Choice
       </p>
       <p
         onClick={() => handleAddNewSlide(SlideType.HEADING)}
-        className="py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
+        className='py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]'
       >
         Heading
       </p>
       <p
         onClick={() => handleAddNewSlide(SlideType.PARAGRAPH)}
-        className="py-2 px-5 border-b border-dashed hover:bg-slate-100 cursor-pointer text-[16px]"
+        className='py-2 px-5 border-b border-dashed hover:bg-slate-100 cursor-pointer text-[16px]'
       >
         Paragraph
       </p>
@@ -163,9 +158,9 @@ const EditPresentation = () => {
 
   return (
     <div>
-      <Row gutter={[20, 20]} className="edit-presentation">
+      <Row gutter={[20, 20]} className='edit-presentation'>
         <Col span={4}>
-          <div className="bg-white h-screen w-full pt-1.5 overflow-auto hide-scrollbar">
+          <div className='bg-white h-screen w-full pt-1.5 overflow-auto hide-scrollbar'>
             {data &&
               data?.slide.map((item, index) => (
                 <div key={index}>
@@ -178,37 +173,34 @@ const EditPresentation = () => {
                   />
                 </div>
               ))}
-            <div className="flex justify-center mt-3">
+            <div className='flex justify-center mt-3'>
               <Popover
                 visible={showAddPopover}
-                overlayClassName="add-popover"
+                overlayClassName='add-popover'
                 content={addSlideMenu}
-                trigger="click"
-                placement="bottomLeft"
+                trigger='click'
+                placement='bottomLeft'
               >
                 <div
                   onClick={() => setShowAddPopover(true)}
-                  className="w-8 h-8 rounded-full bg-[#495e54] flex items-center justify-center hover:opacity-60 cursor-pointer"
+                  className='w-8 h-8 rounded-full bg-[#495e54] flex items-center justify-center hover:opacity-60 cursor-pointer'
                 >
-                  <FileAddOutlined className="text-white" />
+                  <FileAddOutlined className='text-white' />
                 </div>
               </Popover>
             </div>
           </div>
         </Col>
         <Col span={12}>
-          <div className="bg-white shadow-lg w-full h-[450px] rounded-[8px] p-5 my-5">
+          <div className='bg-white shadow-lg w-full h-[450px] rounded-[8px] p-5 my-5'>
             {activeSlide && <MainSlide data={activeSlide} />}
           </div>
         </Col>
         <Col span={8}>
-          <div className="bg-white h-full px-5 py-1">
-            <div className="flex justify-end">
-              <button
-                onClick={handleSave}
-                className="button !py-2 !min-w-[120px]"
-              >
-                <span className="!text-[12px]">Save</span>
+          <div className='bg-white h-full px-5 py-1'>
+            <div className='flex justify-end'>
+              <button onClick={handleSave} className='button !py-2 !min-w-[120px]'>
+                <span className='!text-[12px]'>Save</span>
               </button>
             </div>
             {activeSlide && renderEditQuestionTab()}

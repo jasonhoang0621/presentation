@@ -33,8 +33,7 @@ section.ant-layout.ant-layout-has-sider {
 }
 
 .ant-layout-sider-children .logo img {
-  filter: invert(99%) sepia(1%) saturate(2%) hue-rotate(88deg) brightness(105%)
-    contrast(100%);
+  filter: invert(99%) sepia(1%) saturate(2%) hue-rotate(88deg) brightness(105%) contrast(100%);
 }
 .ant-layout .ant-layout-sider {
   background-color: #495e54;
@@ -53,7 +52,7 @@ section.ant-layout.ant-layout-has-sider {
 }
 
 .user-icon-header .user-icon-header-dropdown::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -20px;
   right: 0;

@@ -1,7 +1,7 @@
-import { notification } from "antd";
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAcceptInvite } from "src/api/group";
+import { notification } from 'antd';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAcceptInvite } from 'src/api/group';
 
 const JoinGroupRedirect = () => {
   const { id } = useParams();
@@ -10,18 +10,18 @@ const JoinGroupRedirect = () => {
   const { mutateAsync: joinGroup } = useAcceptInvite(id);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     const handleAccept = async () => {
       if (token) {
         const result = await joinGroup();
         if (result?.errorCode) {
           notification.error({
-            message: result?.data,
+            message: result?.data
           });
           navigate(`/`);
         } else {
           notification.success({
-            message: "Join group successfully",
+            message: 'Join group successfully'
           });
           navigate(`/group/${result?.data?.id}`);
         }

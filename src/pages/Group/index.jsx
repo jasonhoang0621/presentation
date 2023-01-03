@@ -1,106 +1,102 @@
-import { Table } from "antd";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDetailGroup } from "src/api/group";
-import { useGetListPresentation } from "src/api/presentation";
-import CreatePresentationModal from "src/components/CreatePresentaionModal";
-import EditGroupModal from "src/components/EditGroupModal";
+import { Table } from 'antd';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDetailGroup } from 'src/api/group';
+import { useGetListPresentation } from 'src/api/presentation';
+import CreatePresentationModal from 'src/components/CreatePresentaionModal';
+import EditGroupModal from 'src/components/EditGroupModal';
 
 const Group = () => {
   const auth = useSelector((state) => state.auth);
   const { id } = useParams();
   const navigate = useNavigate();
   const [editGroupModal, setEditGroupModal] = React.useState(false);
-  const [createPresentationModal, setCreatePresentationModal] =
-    React.useState(false);
+  const [createPresentationModal, setCreatePresentationModal] = React.useState(false);
   const [user, setUser] = useState({
-    role: "member",
+    role: 'member'
   });
 
   const { data } = useGetListPresentation(id);
-  const { data: groupDetailData = null, isLoading: loadingGroup } =
-    useDetailGroup(id);
+  const { data: groupDetailData = null, isLoading: loadingGroup } = useDetailGroup(id);
 
   useEffect(() => {
     if (groupDetailData) {
-      const temp = groupDetailData.data.user.filter(
-        (item) => item.id === auth?.user?.id
-      );
+      const temp = groupDetailData.data.user.filter((item) => item.id === auth?.user?.id);
       setUser({
-        role: temp[0]?.role ?? "member",
+        role: temp[0]?.role ?? 'member'
       });
       return;
     }
-    navigate("/");
+    navigate('/');
   }, [auth, groupDetailData, navigate]);
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: "30%",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      width: '30%'
     },
     {
-      title: "Number of slide",
-      dataIndex: "slide",
-      key: "slide",
+      title: 'Number of slide',
+      dataIndex: 'slide',
+      key: 'slide',
       render: (slide) => (
-        <div className="text-center">
+        <div className='text-center'>
           <span>{slide.length}</span>
         </div>
       ),
-      width: "20%",
+      width: '20%'
     },
     {
-      title: "Created date",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      title: 'Created date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       render: (createdAt) => (
-        <div className="text-center">
-          <span>{moment(createdAt).format("DD/MM/YYYY HH:mm")}</span>
+        <div className='text-center'>
+          <span>{moment(createdAt).format('DD/MM/YYYY HH:mm')}</span>
         </div>
       ),
-      width: "25%",
+      width: '25%'
     },
     {
-      title: "Last update",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
+      title: 'Last update',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       render: (updatedAt) => (
-        <div className="text-center">
-          <span>{moment(updatedAt).format("DD/MM/YYYY HH:mm")}</span>
+        <div className='text-center'>
+          <span>{moment(updatedAt).format('DD/MM/YYYY HH:mm')}</span>
         </div>
       ),
-      width: "25%",
-    },
+      width: '25%'
+    }
   ];
 
   return (
     <div>
-      <div className="flex items-center justify-end mb-3">
+      <div className='flex items-center justify-end mb-3'>
         <>
           <button
-            className="button button-danger !py-2 !min-w-[120px]"
+            className='button button-danger !py-2 !min-w-[120px]'
             onClick={() => setEditGroupModal(true)}
           >
-            <span className="!text-[12px]">
-              {user?.role === "owner" ? "Edit Group" : "View Group"}
+            <span className='!text-[12px]'>
+              {user?.role === 'owner' ? 'Edit Group' : 'View Group'}
             </span>
           </button>
-          {user?.role === "owner" && (
+          {user?.role === 'owner' && (
             <button
-              className="button !py-2 !min-w-[200px]"
+              className='button !py-2 !min-w-[200px]'
               onClick={() => setCreatePresentationModal(true)}
             >
-              <span className="!text-[12px]">Create Presentation</span>
+              <span className='!text-[12px]'>Create Presentation</span>
             </button>
           )}
         </>
       </div>
-      <div className="w-full">
+      <div className='w-full'>
         <Table
           rowKey={(record) => record._id}
           columns={columns}
@@ -108,11 +104,11 @@ const Group = () => {
           pagination={false}
           onRow={(record, _rowIndex) => {
             return {
-              onClick: () => navigate(`/group/${id}/presentation/${record.id}`),
+              onClick: () => navigate(`/group/${id}/presentation/${record.id}`)
             };
           }}
-          className="presentation-table"
-          rowClassName="cursor-pointer"
+          className='presentation-table'
+          rowClassName='cursor-pointer'
         />
       </div>
       <EditGroupModal

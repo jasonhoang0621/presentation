@@ -1,43 +1,43 @@
-import EditPresentation from "src/pages/EditPresentation";
-import Group from "src/pages/Group";
-import Join from "src/pages/Join";
-import Present from "src/pages/Present";
-import Presentation from "src/pages/Presentation";
+import EditPresentation from 'src/pages/EditPresentation';
+import Group from 'src/pages/Group';
+import Join from 'src/pages/Join';
+import Present from 'src/pages/Present';
+import Presentation from 'src/pages/Presentation';
 
 const LayoutRouters = [
   {
-    name: "group",
-    path: "/group/:id",
+    name: 'group',
+    path: '/group/:id',
     element: Group,
-    layout: true,
+    layout: true
   },
   {
-    name: "presentation",
-    path: "/group/:groupId/presentation/:presentationId",
+    name: 'presentation',
+    path: '/group/:groupId/presentation/:presentationId',
     element: Presentation,
-    layout: true,
-  },
+    layout: true
+  }
 ];
 
 const NoLayoutRouters = [
   {
-    name: "editPresentation",
-    path: "/group/:groupId/presentation/:presentationId/edit",
+    name: 'editPresentation',
+    path: '/group/:groupId/presentation/:presentationId/edit',
     element: EditPresentation,
-    layout: false,
+    layout: false
   },
   {
-    name: "presentPublic",
-    path: "/group/:groupId/presentation/:presentationId/present",
+    name: 'presentPublic',
+    path: '/group/:groupId/presentation/:presentationId/present',
     element: Present,
-    layout: false,
+    layout: false
   },
   {
-    name: "userJoin",
-    path: "/group/:groupId/presentation/:presentationId/join",
+    name: 'userJoin',
+    path: '/group/:groupId/presentation/:presentationId/join',
     element: Join,
-    layout: false,
-  },
+    layout: false
+  }
 ];
 
 export { LayoutRouters, NoLayoutRouters };

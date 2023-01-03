@@ -1,26 +1,22 @@
-import { QuestionCircleOutlined, WechatOutlined } from "@ant-design/icons";
-import { Drawer, notification, Spin } from "antd";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import { useGetListChat } from "src/api/chat";
-import { useDetailGroup } from "src/api/group";
-import { useDetailPresentation } from "src/api/presentation";
-import Chat from "src/components/Present/Chat";
-import Question from "src/components/Present/Question";
-import { SlideType } from "src/helpers/slide";
-import { SocketContext } from "src/socket/context";
-import { editSendMessage } from "src/socket/emit";
-import {
-  listenChat,
-  listenPresentation,
-  listenPresentStatus,
-} from "src/socket/listen";
-import { offChat, offPresentation, offPresentStatus } from "src/socket/off";
-import Heading from "../../components/Join/Heading";
-import MultipleChoice from "../../components/Join/MultiplceChoice";
+import { QuestionCircleOutlined, WechatOutlined } from '@ant-design/icons';
+import { Drawer, notification, Spin } from 'antd';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useGetListChat } from 'src/api/chat';
+import { useDetailGroup } from 'src/api/group';
+import { useDetailPresentation } from 'src/api/presentation';
+import Chat from 'src/components/Present/Chat';
+import Question from 'src/components/Present/Question';
+import { SlideType } from 'src/helpers/slide';
+import { SocketContext } from 'src/socket/context';
+import { editSendMessage } from 'src/socket/emit';
+import { listenChat, listenPresentation, listenPresentStatus } from 'src/socket/listen';
+import { offChat, offPresentation, offPresentStatus } from 'src/socket/off';
+import Heading from '../../components/Join/Heading';
+import MultipleChoice from '../../components/Join/MultiplceChoice';
 
 const Join = () => {
   const auth = useSelector((state) => state.auth);
@@ -33,7 +29,7 @@ const Join = () => {
   const [data, setData] = useState(null);
   const [openQuestionDrawer, setOpenQuestionDrawer] = useState(false);
   const [user, setUser] = useState({
-    role: "member",
+    role: 'member'
   });
 
   const queryClient = useQueryClient();
@@ -59,14 +55,14 @@ const Join = () => {
         message: chatMessage,
         user: [
           {
-            name: auth?.user?.name,
-          },
-        ],
-      },
+            name: auth?.user?.name
+          }
+        ]
+      }
     ]);
     editSendMessage(socket, presentationId, chatMessage);
     setTimeout(() => {
-      const chatBox = document.getElementById("chat-box");
+      const chatBox = document.getElementById('chat-box');
       if (chatBox) {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
@@ -90,7 +86,7 @@ const Join = () => {
   const handleClickToast = () => {
     setOpenDrawer(true);
     setTimeout(() => {
-      const chatBox = document.getElementById("chat-box");
+      const chatBox = document.getElementById('chat-box');
       if (chatBox) {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
@@ -104,12 +100,12 @@ const Join = () => {
     });
 
     listenChat(socket, presentationId, (data) => {
-      toast(data?.data?.user[0].name + ": " + data?.data?.message, {
-        onClick: handleClickToast,
+      toast(data?.data?.user[0].name + ': ' + data?.data?.message, {
+        onClick: handleClickToast
       });
       setChatData([...chatData, data?.data]);
       setTimeout(() => {
-        const chatBox = document.getElementById("chat-box");
+        const chatBox = document.getElementById('chat-box');
         if (chatBox) {
           chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -118,15 +114,15 @@ const Join = () => {
     listenPresentStatus(socket, presentationId, (data) => {
       if (data?.status) {
         notification.info({
-          message: "This presentation is presenting",
+          message: 'This presentation is presenting'
         });
-        queryClient.invalidateQueries(["presentation", presentationId]);
+        queryClient.invalidateQueries(['presentation', presentationId]);
         setNoPresent(false);
         return;
       }
       setNoPresent(true);
       notification.info({
-        message: "This presentation has been stopped",
+        message: 'This presentation has been stopped'
       });
     });
     return () => {
@@ -138,7 +134,7 @@ const Join = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      const chatBox = document.getElementById("chat-box");
+      const chatBox = document.getElementById('chat-box');
       if (chatBox) {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
@@ -149,7 +145,7 @@ const Join = () => {
     if (data) {
       if (data?.data?.slideIndex === null) {
         notification.error({
-          description: "Presentation not found",
+          description: 'Presentation not found'
         });
         setNoPresent(true);
         return;
@@ -166,11 +162,9 @@ const Join = () => {
 
   useEffect(() => {
     if (groupDetailData) {
-      const temp = groupDetailData.data.user.filter(
-        (item) => item.id === auth?.user?.id
-      );
+      const temp = groupDetailData.data.user.filter((item) => item.id === auth?.user?.id);
       setUser({
-        role: temp[0]?.role ?? "member",
+        role: temp[0]?.role ?? 'member'
       });
     }
   }, [auth, groupDetailData]);
@@ -179,47 +173,42 @@ const Join = () => {
     if (!data) return;
     switch (data?.data?.slide[slideIndex]?.type) {
       case SlideType.MULTIPLE_CHOICE:
-        return (
-          <MultipleChoice
-            data={data?.data?.slide[slideIndex]}
-            socket={socket}
-          />
-        );
+        return <MultipleChoice data={data?.data?.slide[slideIndex]} socket={socket} />;
       case SlideType.HEADING:
       case SlideType.PARAGRAPH:
         return <Heading data={data?.data?.slide[slideIndex]} />;
       default:
-        return <div className="text-center mt-5 text-2xl">Slide not found</div>;
+        return <div className='text-center mt-5 text-2xl'>Slide not found</div>;
     }
   }, [slideIndex, data, socket]);
 
   return (
     <>
       {noPresent ? (
-        <div className="h-screen flex items-center justify-center">
-          <p className="text-[40px]">Waiting for the host to present</p>
+        <div className='h-screen flex items-center justify-center'>
+          <p className='text-[40px]'>Waiting for the host to present</p>
         </div>
       ) : (
         <>
-          <div className="px-[15vw]" style={{ height: "calc(100vh - 64px)" }}>
+          <div className='px-[15vw]' style={{ height: 'calc(100vh - 64px)' }}>
             {renderSlide}
           </div>
-          <div className="fixed bottom-10 right-5 ">
-            <div className="flex items-center gap-x-2">
+          <div className='fixed bottom-10 right-5 '>
+            <div className='flex items-center gap-x-2'>
               <div
                 onClick={() => setOpenQuestionDrawer(true)}
-                className="w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
+                className='w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80'
               >
-                <div className="flex items-center justify-center w-full h-full">
-                  <QuestionCircleOutlined className="text-white text-[24px]" />
+                <div className='flex items-center justify-center w-full h-full'>
+                  <QuestionCircleOutlined className='text-white text-[24px]' />
                 </div>
               </div>
               <div
                 onClick={() => setOpenDrawer(true)}
-                className="w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80"
+                className='w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80'
               >
-                <div className="flex items-center justify-center w-full h-full">
-                  <WechatOutlined className="text-white text-[24px]" />
+                <div className='flex items-center justify-center w-full h-full'>
+                  <WechatOutlined className='text-white text-[24px]' />
                 </div>
               </div>
             </div>
@@ -227,12 +216,12 @@ const Join = () => {
         </>
       )}
       <Drawer
-        placement="right"
+        placement='right'
         width={400}
         onClose={() => setOpenDrawer(false)}
         visible={openDrawer}
         closable={false}
-        bodyStyle={{ padding: 0, overflow: "hidden" }}
+        bodyStyle={{ padding: 0, overflow: 'hidden' }}
       >
         <Spin spinning={isFetching}>
           <Chat
@@ -244,7 +233,7 @@ const Join = () => {
         </Spin>
       </Drawer>
       <Drawer
-        placement="right"
+        placement='right'
         width={600}
         onClose={() => setOpenQuestionDrawer(false)}
         visible={openQuestionDrawer}
