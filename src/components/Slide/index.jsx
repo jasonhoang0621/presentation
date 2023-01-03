@@ -42,7 +42,7 @@ const Slide = ({
       labels: data?.answer ? data.answer.map((item) => item.value) : [],
       datasets: [
         {
-          label: "Dataset 1",
+          label: "Amount",
           data: data?.answer ? data.answer.map((item) => item.amount) : [],
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },

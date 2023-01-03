@@ -267,7 +267,7 @@ const Present = () => {
         };
         return (
           <>
-            <p className="break-all text-xl">
+            <p className="break-all text-4xl mb-2">
               {presentation?.data?.slide[currentSlide]?.question}
             </p>
             <Bar options={options} data={chartData} />

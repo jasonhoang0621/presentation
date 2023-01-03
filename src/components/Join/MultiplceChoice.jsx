@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
+import { Bar } from "react-chartjs-2";
 import { useParams } from "react-router-dom";
-import Slide from "src/components/Slide";
 import { answerQuestion } from "src/socket/emit";
 import { listenAnswer } from "src/socket/listen";
 import { offAnswer } from "src/socket/off";
@@ -20,7 +20,14 @@ const MultipleChoice = ({ data, isPublic = false, socket = null }) => {
   const onPublicSubmit = () => {
     const username = localStorage.getItem("username");
     const guestId = localStorage.getItem("guestId");
-    answerQuestion(socket, presentationId, data.index, activeAnswer, username, guestId);
+    answerQuestion(
+      socket,
+      presentationId,
+      data.index,
+      activeAnswer,
+      username,
+      guestId
+    );
     setShowStatistic(true);
   };
 
@@ -40,13 +47,51 @@ const MultipleChoice = ({ data, isPublic = false, socket = null }) => {
     };
   }, [socket, presentationId, data.index]);
 
+  const options = {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: slideData?.name,
+      },
+    },
+    tooltips: {
+      display: false,
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+  };
+  const chartData = {
+    labels: slideData ? slideData?.answer.map((item) => item.value) : [],
+    datasets: [
+      {
+        data: slideData ? slideData?.answer.map((item) => item.amount) : [],
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+    scaleShowLabels: false,
+  };
+
   return (
     <div>
       <p className="text-center text-[40px] mt-10">{data?.question}</p>
 
       {showStatistic ? (
         <div className="mt-5">
-          <Slide noQuestion noBorder data={slideData} isLabel={true} />
+          <Bar options={options} data={chartData} />
           <p className="text-xl text-center mt-5">
             Wait for the host to change the slide
           </p>
