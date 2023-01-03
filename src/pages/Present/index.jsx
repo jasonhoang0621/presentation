@@ -85,7 +85,6 @@ const Present = () => {
   useEffect(() => {
     if (!chat) return;
     setChatData([...chat?.data, ...chatData]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chat]);
 
   const handleClickToast = () => {

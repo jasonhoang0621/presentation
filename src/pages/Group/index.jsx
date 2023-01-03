@@ -32,7 +32,7 @@ const Group = () => {
       }
       navigate('/');
     }
-  }, [auth, groupDetailData, navigate]);
+  }, [auth, groupDetailData, navigate, id]);
 
   const columns = [
     {
@@ -104,7 +104,7 @@ const Group = () => {
           columns={columns}
           dataSource={data?.data}
           pagination={false}
-          onRow={(record, _rowIndex) => {
+          onRow={(record) => {
             return {
               onClick: () => navigate(`/group/${id}/presentation/${record.id}`)
             };
