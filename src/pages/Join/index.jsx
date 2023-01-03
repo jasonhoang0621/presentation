@@ -1,6 +1,7 @@
 import { QuestionCircleOutlined, WechatOutlined } from "@ant-design/icons";
 import { Drawer, notification, Spin } from "antd";
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -34,6 +35,8 @@ const Join = () => {
   const [user, setUser] = useState({
     role: "member",
   });
+
+  const queryClient = useQueryClient();
 
   const { data: groupDetailData } = useDetailGroup(groupId);
 
@@ -117,6 +120,7 @@ const Join = () => {
         notification.info({
           message: "This presentation is presenting",
         });
+        queryClient.invalidateQueries(["presentation", presentationId]);
         setNoPresent(false);
         return;
       }
@@ -130,7 +134,7 @@ const Join = () => {
       offPresentation(socket, presentationId);
       offPresentStatus(socket, presentationId);
     };
-  }, [socket, presentationId, chatData]);
+  }, [socket, presentationId, chatData, queryClient]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -175,14 +179,19 @@ const Join = () => {
     if (!data) return;
     switch (data?.data?.slide[slideIndex]?.type) {
       case SlideType.MULTIPLE_CHOICE:
-        return <MultipleChoice data={data?.data?.slide[slideIndex]} socket={socket} />;
+        return (
+          <MultipleChoice
+            data={data?.data?.slide[slideIndex]}
+            socket={socket}
+          />
+        );
       case SlideType.HEADING:
       case SlideType.PARAGRAPH:
         return <Heading data={data?.data?.slide[slideIndex]} />;
       default:
         return <div className="text-center mt-5 text-2xl">Slide not found</div>;
     }
-  }, [slideIndex, data]);
+  }, [slideIndex, data, socket]);
 
   return (
     <>

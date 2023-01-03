@@ -21,7 +21,7 @@ const JoinGroupRedirect = () => {
           navigate(`/`);
         } else {
           notification.success({
-            message: result?.data,
+            message: "Join group successfully",
           });
           navigate(`/group/${result?.data?.id}`);
         }

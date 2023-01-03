@@ -14,7 +14,6 @@ const Heading = ({ data, isPublic }) => {
   const { socket } = useContext(SocketContext);
   const { presentationId } = useParams();
 
-
   const onSubmit = () => {
     answerQuestion(socket, presentationId, data.index, activeAnswer);
     setShowStatistic(true);
@@ -37,6 +36,11 @@ const Heading = ({ data, isPublic }) => {
       offAnswer(socket, presentationId, data.index);
     };
   }, [socket, presentationId, data.index]);
+
+  useEffect(() => {
+    if (!data) return;
+    setSlideData(data);
+  }, [data]);
 
   return (
     <div className={`flex flex-col items-center justify-center h-full`}>
@@ -68,7 +72,10 @@ const Heading = ({ data, isPublic }) => {
                       : "bg-[#495e54] text-white"
                   }`}
                 >
-                  {slideData?.answer?.find((item) => item?.type === type)?.amount}
+                  {
+                    slideData?.answer?.find((item) => item?.type === type)
+                      ?.amount
+                  }
                 </div>
               )}
             </div>

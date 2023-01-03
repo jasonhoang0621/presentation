@@ -23,7 +23,7 @@ const EditMultipleChoiceAnswer = ({ value, onChange }) => {
       {value &&
         value.map((item, index) => {
           return (
-            <div key={index} className="flex items-center gap-x-2">
+            <div key={index} className="flex items-center gap-x-2 mb-2">
               <Input
                 type="text"
                 value={item.value}

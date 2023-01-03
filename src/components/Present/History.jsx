@@ -5,15 +5,15 @@ import { listenHistory } from "src/socket/listen";
 import { offHistory } from "src/socket/off";
 
 const History = ({ data, socket = null }) => {
-  const [history, setHistory] = React.useState([])
+  const [history, setHistory] = React.useState([]);
   const { presentationId } = useParams();
-  console.log('socket', socket)
+  console.log("socket", socket);
 
   useEffect(() => {
     if (!socket) return;
     listenHistory(socket, presentationId, (response) => {
       if (!response.errorCode) {
-        setHistory([...response.data])
+        setHistory([...response.data]);
       }
     });
 
@@ -24,7 +24,7 @@ const History = ({ data, socket = null }) => {
   useEffect(() => {
     if (!data) return;
     setHistory([...history, ...data.data]);
-  },[data])
+  }, [data, history]);
 
   return (
     <div className="m-2">

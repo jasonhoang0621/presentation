@@ -26,6 +26,7 @@ const EditGroupModal = ({
   const [assignUser, setAssignUser] = React.useState(null);
   const [removeUser, setRemoveUser] = React.useState(null);
   const [leaveGroupModal, setLeaveGroupModal] = React.useState(false);
+  const [deleteGroupModal, setDeleteGroup] = React.useState(false);
   const [showPopover, setShowPopover] = React.useState(false);
   const [shareLink, setShareLink] = React.useState("");
   const [listInviteByEmail, setListInviteByEmail] = React.useState([]);
@@ -167,7 +168,7 @@ const EditGroupModal = ({
       {user?.role === "owner" && (
         <div
           onClick={() => {
-            leaveGroupModal(true);
+            setDeleteGroup(true);
             setShowPopover(false);
           }}
           className="px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200"
@@ -234,7 +235,6 @@ const EditGroupModal = ({
     }
     notification.success({
       message: "Remove successfully",
-      description: "Remove successfully",
       duration: 1,
     });
     queryClient.invalidateQueries("group");
@@ -253,7 +253,6 @@ const EditGroupModal = ({
     }
     notification.success({
       message: "Assign role successfully",
-      description: "Assign role successfully",
       duration: 1,
     });
     queryClient.invalidateQueries("group");
@@ -383,6 +382,39 @@ const EditGroupModal = ({
                 onClick={handleLeaveGroup}
               >
                 <span className="!text-[12px]">Leave</span>
+              </button>
+            </div>
+          </div>
+        </Modal>
+        <Modal
+          title={"Remove User"}
+          visible={deleteGroupModal}
+          onCancel={() => setDeleteGroup(false)}
+          footer={null}
+          destroyOnClose
+        >
+          <div>
+            <div className="">
+              <p className="text-lg">
+                Are you sure you want to delete this group?
+              </p>
+            </div>
+            <div className="flex items-center justify-end mt-4">
+              <button
+                className="button button-danger mr-2 !py-[8px] !min-w-[120px]"
+                onClick={() => {
+                  setRemoveUserModal(false);
+                  setAssignUser(null);
+                  setRemoveUser(null);
+                }}
+              >
+                <span className="!text-[12px]">Cancel</span>
+              </button>
+              <button
+                className="button button-secondary !py-[8px] !min-w-[120px]"
+                onClick={handleLeaveGroup}
+              >
+                <span className="!text-[12px]">Delete</span>
               </button>
             </div>
           </div>

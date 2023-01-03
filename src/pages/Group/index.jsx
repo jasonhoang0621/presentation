@@ -31,8 +31,10 @@ const Group = () => {
       setUser({
         role: temp[0]?.role ?? "member",
       });
+      return;
     }
-  }, [loadingGroup, auth, groupDetailData]);
+    navigate("/");
+  }, [auth, groupDetailData, navigate]);
 
   const columns = [
     {

@@ -204,7 +204,7 @@ const PublicJoin = () => {
       default:
         return <div className="text-center mt-5 text-2xl">Slide not found</div>;
     }
-  }, [slideIndex, data]);
+  }, [slideIndex, data, socket]);
 
   if (!guestId) {
     return (
