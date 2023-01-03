@@ -157,8 +157,8 @@ const Question = ({ presentationId, role }) => {
     <div className={`m-2 relative ${role === 'member' ? 'pt-10' : ''}`}>
       {role === 'member' && (
         <Popover
-          visible={openAddQuestion}
-          onVisibleChange={(visible) => setOpenAddQuestion(visible)}
+          open={openAddQuestion}
+          onOpenChange={(visible) => setOpenAddQuestion(visible)}
           placement='bottomRight'
           trigger={['click']}
           content={
@@ -210,8 +210,8 @@ const Question = ({ presentationId, role }) => {
                   <Popover
                     placement='bottomLeft'
                     trigger={['click']}
-                    visible={confirmMark === index}
-                    onVisibleChange={(visible) => setConfirmMark(visible ? index : null)}
+                    open={confirmMark === index}
+                    onOpenChange={(visible) => setConfirmMark(visible ? index : null)}
                     overlayClassName='app-popover'
                     content={
                       <div>

@@ -10,6 +10,9 @@ export const useGetListGroup = () => {
 export const useCreateGroup = () => {
   return useMutation((payload) => axiosClient.post('/group', payload));
 };
+export const useDeleteGroup = (id) => {
+  return useMutation(() => axiosClient.patch(`/group/destroy/${id}`));
+};
 
 export const useDetailGroup = (id, enabled = true) => {
   return useQuery(['group', id], () => axiosClient.get(`/group/${id}`), {

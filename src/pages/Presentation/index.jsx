@@ -150,8 +150,8 @@ const Presentation = () => {
           placement='bottomRight'
           trigger='click'
           overlayClassName='add-popover'
-          visible={showPopover}
-          onVisibleChange={(visible) => setShowPopover(visible)}
+          open={showPopover}
+          onOpenChange={(visible) => setShowPopover(visible)}
         >
           <div
             className='w-8 h-8 drop-shadow-lg bg-white rounded-full flex items-center justify-center cursor-pointer

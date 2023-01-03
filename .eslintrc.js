@@ -11,9 +11,9 @@ module.exports = {
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module'
+    sourceType: 'module',
+    requireConfigFile: false
   },
   plugins: ['react', 'react-hooks'],
-  rules: {},
   parser: '@babel/eslint-parser'
 };

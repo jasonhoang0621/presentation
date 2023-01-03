@@ -3,8 +3,8 @@ import { Input, Modal, notification, Popover, Select, Table, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { useAssignRole, useInviteUser, useRemoveUser } from 'src/api/group';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAssignRole, useDeleteGroup, useInviteUser, useRemoveUser } from 'src/api/group';
 import { useGetListUser } from 'src/api/user';
 import { SettingOutlined } from '@ant-design/icons';
 
@@ -12,6 +12,7 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
   const pararms = useParams();
   const auth = useSelector((state) => state.auth);
   const queryClient = useQueryClient();
+  const navigation = useNavigate();
 
   const [removeUserModal, setRemoveUserModal] = React.useState(false);
   const [assignUserModal, setAssignUserModal] = React.useState(false);
@@ -32,6 +33,7 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
 
   const { mutateAsync: removeUserGroup } = useRemoveUser(pararms.id);
   const { mutateAsync: assignMember } = useAssignRole(pararms.id);
+  const { mutateAsync: deleteGroup } = useDeleteGroup(pararms.id);
 
   const showRemoveButton = (record) => {
     if (user.role === 'owner') {
@@ -272,7 +274,25 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
     queryClient.invalidateQueries('group');
     setRemoveUser(null);
     setRemoveUserModal(false);
-    window.location.href = '/';
+    navigation('/');
+  };
+
+  const handleDeleteGroup = async () => {
+    const res = await deleteGroup();
+    if (res.errorCode) {
+      return notification.error({
+        message: 'Delete failed',
+        description: res.data,
+        duration: 1
+      });
+    }
+    notification.success({
+      message: 'Delete group successfully',
+      duration: 1
+    });
+    queryClient.invalidateQueries('group');
+    setDeleteGroup(false);
+    navigation('/');
   };
 
   useEffect(() => {
@@ -308,8 +328,8 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
             placement='bottomRight'
             trigger='click'
             overlayClassName='add-popover'
-            visible={showPopover}
-            onVisibleChange={(visible) => setShowPopover(visible)}
+            open={showPopover}
+            onOpenChange={(visible) => setShowPopover(visible)}
           >
             <div
               className='w-8 h-8 drop-shadow-lg bg-white rounded-full flex items-center justify-center cursor-pointer
@@ -403,16 +423,14 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
               <button
                 className='button button-danger mr-2 !py-[8px] !min-w-[120px]'
                 onClick={() => {
-                  setRemoveUserModal(false);
-                  setAssignUser(null);
-                  setRemoveUser(null);
+                  setDeleteGroup(false);
                 }}
               >
                 <span className='!text-[12px]'>Cancel</span>
               </button>
               <button
                 className='button button-secondary !py-[8px] !min-w-[120px]'
-                onClick={handleLeaveGroup}
+                onClick={handleDeleteGroup}
               >
                 <span className='!text-[12px]'>Delete</span>
               </button>
