@@ -23,8 +23,8 @@ const History = ({ data, socket = null }) => {
   }, [socket, presentationId, history]);
   useEffect(() => {
     if (!data) return;
-    setHistory([...history, ...data.data]);
-  }, [data, history]);
+    setHistory((history) => [...history, ...data.data]);
+  }, [data]);
 
   return (
     <div className="m-2">

@@ -116,7 +116,7 @@ const PublicJoin = () => {
   useEffect(() => {
     if (!socket) return;
     listenPresentation(socket, presentationId, (data) => {
-      console.log(data);
+      setSlideIndex(data?.data?.index);
     });
     listenChat(socket, presentationId, (data) => {
       toast(data?.data?.user[0]?.name + ": " + data?.data?.message, {
@@ -200,7 +200,13 @@ const PublicJoin = () => {
         );
       case SlideType.HEADING:
       case SlideType.PARAGRAPH:
-        return <Heading data={data?.data?.slide[slideIndex]} isPublic={true} />;
+        return (
+          <Heading
+            data={data?.data?.slide[slideIndex]}
+            isPublic={true}
+            socket={socket}
+          />
+        );
       default:
         return <div className="text-center mt-5 text-2xl">Slide not found</div>;
     }
