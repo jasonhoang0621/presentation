@@ -256,7 +256,24 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, loadingGroup, us
     setInviteModal(false);
   };
 
-  const handleLeaveGroup = async () => {};
+  const handleLeaveGroup = async () => {
+    const res = await removeUserGroup({ userId: auth.user.id });
+    if (res.errorCode) {
+      return notification.error({
+        message: "Leave failed",
+        description: res.data,
+        duration: 1,
+      });
+    }
+    notification.success({
+      message: "Leave successfully",
+      duration: 1,
+    });
+    queryClient.invalidateQueries("group");
+    setRemoveUser(null);
+    setRemoveUserModal(false);
+    window.location.href = "/";
+  };
 
   useEffect(() => {
     const getLinkInvite = async () => {
