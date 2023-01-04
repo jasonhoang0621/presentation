@@ -13,7 +13,12 @@ const History = ({ data, socket = null }) => {
     if (!socket) return;
     listenHistory(socket, presentationId, (response) => {
       if (!response.errorCode) {
-        setHistory([...response.data]);
+        let tempHistory = [...response.data];
+        tempHistory.map((item) => {
+          const temp = item.answer.reverse();
+          item.answer = temp;
+        });
+        setHistory([...tempHistory]);
       }
     });
 
@@ -23,7 +28,12 @@ const History = ({ data, socket = null }) => {
   }, [socket, presentationId, history]);
   useEffect(() => {
     if (!data) return;
-    setHistory((history) => [...history, ...data.data]);
+    let tempHistory = [...data.data];
+    tempHistory.map((item) => {
+      const temp = item.answer.reverse();
+      item.answer = temp;
+    });
+    setHistory((history) => [...history, ...tempHistory]);
   }, [data]);
 
   return (

@@ -176,7 +176,7 @@ const Join = () => {
         return <MultipleChoice data={data?.data?.slide[slideIndex]} socket={socket} />;
       case SlideType.HEADING:
       case SlideType.PARAGRAPH:
-        return <Heading data={data?.data?.slide[slideIndex]} />;
+        return <Heading data={data?.data?.slide[slideIndex]} socket={socket} />;
       default:
         return <div className='text-center mt-5 text-2xl'>Slide not found</div>;
     }
