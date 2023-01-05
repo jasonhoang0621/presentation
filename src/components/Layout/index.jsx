@@ -52,7 +52,7 @@ const Layout = ({ sider = false }) => {
         {sider && (
           <Sider trigger={null} collapsible collapsed={collapsed}>
             <div className='logo h-[64px] flex items-center justify-center'>
-              <p className='text-white font-semibold'>MIDTERM</p>
+              <p className='text-white font-semibold'>FINSENT</p>
             </div>
             <Menu
               theme='dark'

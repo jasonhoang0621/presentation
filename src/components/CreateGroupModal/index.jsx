@@ -1,11 +1,11 @@
-import { Form, Input, Modal, notification } from 'antd';
+import { Form, Input, Modal, notification, Spin } from 'antd';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useCreateGroup } from 'src/api/group';
 
 const CreateGroupModal = ({ visible, setVisible }) => {
   const [form] = Form.useForm();
-  const { mutateAsync } = useCreateGroup();
+  const { mutateAsync, isLoading } = useCreateGroup();
   const queryClient = useQueryClient();
 
   const handleCreateGroup = async () => {
@@ -33,16 +33,18 @@ const CreateGroupModal = ({ visible, setVisible }) => {
       footer={null}
       destroyOnClose
     >
-      <Form form={form} layout='vertical'>
-        <Form.Item name='name' rules={[{ required: true, message: 'Please input slide name!' }]}>
-          <Input className='app-input' placeholder='Slide name' />
-        </Form.Item>
-        <div className='flex justify-center'>
-          <button type='primary' htmltype='submit' className='button' onClick={handleCreateGroup}>
-            <span>Create</span>
-          </button>
-        </div>
-      </Form>
+      <Spin spinning={isLoading}>
+        <Form form={form} layout='vertical'>
+          <Form.Item name='name' rules={[{ required: true, message: 'Please input slide name!' }]}>
+            <Input className='app-input' placeholder='Slide name' />
+          </Form.Item>
+          <div className='flex justify-center'>
+            <button type='primary' htmltype='submit' className='button' onClick={handleCreateGroup}>
+              <span>Create</span>
+            </button>
+          </div>
+        </Form>
+      </Spin>
     </Modal>
   );
 };

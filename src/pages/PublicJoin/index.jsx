@@ -85,7 +85,7 @@ const PublicJoin = () => {
 
   useEffect(() => {
     if (!chat) return;
-    setChatData([...chat?.data, ...chatData]);
+    setChatData((chatData) => [...chat.data, ...chatData]);
   }, [chat]);
 
   const handleClickToast = () => {

@@ -100,6 +100,7 @@ const Present = () => {
   useEffect(() => {
     if (!data) return;
     setPresentation(data);
+    setCurrentSlide(data?.data?.slideIndex || 0);
   }, [data]);
 
   useEffect(() => {

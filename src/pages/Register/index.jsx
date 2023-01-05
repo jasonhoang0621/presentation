@@ -14,10 +14,15 @@ const Register = () => {
     if (res.errorCode) {
       notification.error({
         message: 'Login failed',
-        description: res.data.message || 'Login failed',
+        description: res.data || 'Login failed',
         duration: 1
       });
     } else {
+      notification.error({
+        message: 'Success',
+        description: 'Please verify your email',
+        duration: 1
+      });
       navigate('/login');
     }
   };

@@ -1,9 +1,9 @@
-import { Form, Input, Modal, notification } from 'antd';
+import { Form, Input, Modal, notification, Spin } from 'antd';
 import React from 'react';
 import { useChangePassword } from 'src/api/user';
 const ChangePasswordModal = ({ visible, setVisible }) => {
   const [form] = Form.useForm();
-  const { mutateAsync } = useChangePassword();
+  const { mutateAsync, isLoading } = useChangePassword();
 
   const handleChangePassword = async () => {
     if (form.getFieldValue('password') === form.getFieldValue('newPassword')) {
@@ -25,11 +25,13 @@ const ChangePasswordModal = ({ visible, setVisible }) => {
         description: res.data,
         duration: 1
       });
+      form.resetFields();
     } else {
       notification.success({
         message: 'Change password successfully',
         duration: 1
       });
+      form.resetFields();
       setVisible(false);
     }
   };
@@ -41,16 +43,18 @@ const ChangePasswordModal = ({ visible, setVisible }) => {
       footer={null}
       title='Change Password'
     >
-      <Form form={form} layout='vertical'>
-        <Form.Item name='password'>
-          <Input.Password className='app-input' placeholder='Current password' />
-        </Form.Item>
-        <Form.Item name='newPassword'>
-          <Input.Password className='app-input' placeholder='New password' />
-        </Form.Item>
-        <Form.Item name='rePassword'>
-          <Input.Password className='app-input' placeholder='Retype password' />
-        </Form.Item>
+      <Spin spinning={isLoading}>
+        <Form form={form} layout='vertical'>
+          <Form.Item name='password'>
+            <Input.Password className='app-input' placeholder='Current password' />
+          </Form.Item>
+          <Form.Item name='newPassword'>
+            <Input.Password className='app-input' placeholder='New password' />
+          </Form.Item>
+          <Form.Item name='rePassword'>
+            <Input.Password className='app-input' placeholder='Retype password' />
+          </Form.Item>
+        </Form>
         <div className='flex items-center justify-end mt-4'>
           <button className='button button-danger mr-2' onClick={() => setVisible(false)}>
             <span className='!text-[12px]'>Cancel</span>
@@ -59,7 +63,7 @@ const ChangePasswordModal = ({ visible, setVisible }) => {
             <span className='!text-[12px]'>Change</span>
           </button>
         </div>
-      </Form>
+      </Spin>
     </Modal>
   );
 };
