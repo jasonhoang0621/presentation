@@ -133,7 +133,7 @@ const PublicJoin = () => {
         notification.info({
           message: 'This presentation is presenting'
         });
-        queryClient.invalidateQueries(['presentation', presentationId]);
+        // queryClient.invalidateQueries(['presentation', presentationId]);
         setNoPresent(false);
         return;
       }

@@ -101,6 +101,8 @@ const Present = () => {
     if (!data) return;
     setPresentation(data);
     setCurrentSlide(data?.data?.slideIndex || 0);
+    setTimeout(() => [changeSlide(socket, presentationId, data?.data?.slideIndex || 0)], 200);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
