@@ -28,6 +28,7 @@ const ProfileModal = ({ visible, setVisible }) => {
         duration: 1
       });
       queryClient.invalidateQueries('group');
+      queryClient.invalidateQueries('profile');
       setVisible(false);
     }
   };

@@ -13,12 +13,12 @@ const Register = () => {
     const res = await mutateAsync(form.getFieldsValue());
     if (res.errorCode) {
       notification.error({
-        message: 'Login failed',
+        message: 'Register failed',
         description: res.data || 'Login failed',
         duration: 1
       });
     } else {
-      notification.error({
+      notification.success({
         message: 'Success',
         description: 'Please verify your email',
         duration: 1

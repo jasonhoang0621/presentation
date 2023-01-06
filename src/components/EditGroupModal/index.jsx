@@ -459,7 +459,6 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
               defaultValue={assignUser?.role}
               onChange={(value) => setRole(value)}
             >
-              <Select.Option value='owner'>Owner</Select.Option>
               <Select.Option value='co-owner'>Co-owner</Select.Option>
               <Select.Option value='member'>Member</Select.Option>
             </Select>

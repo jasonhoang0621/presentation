@@ -24,11 +24,13 @@ const Group = () => {
   useEffect(() => {
     if (!loadingGroup) {
       if (groupDetailData) {
-        const temp = groupDetailData.data.user.filter((item) => item.id === auth?.user?.id);
-        setUser({
-          role: temp[0]?.role ?? 'member'
-        });
-        return;
+        const temp = groupDetailData.data.user.filter((item) => item?.id === auth?.user?.id);
+        if (temp && temp.length > 0) {
+          setUser({
+            role: temp[0]?.role ?? 'member'
+          });
+          return;
+        }
       }
       navigate('/');
     }

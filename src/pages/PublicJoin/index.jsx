@@ -1,6 +1,7 @@
 import { WechatOutlined } from '@ant-design/icons';
 import { Drawer, Input, notification, Spin } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
@@ -37,6 +38,8 @@ const PublicJoin = () => {
     chatLength,
     chatLength > 20 ? 5 : 20
   );
+
+  const queryClient = useQueryClient();
 
   const handleScroll = () => {
     if (containerRef.current.scrollTop === 0) {
@@ -130,6 +133,7 @@ const PublicJoin = () => {
         notification.info({
           message: 'This presentation is presenting'
         });
+        queryClient.invalidateQueries(['presentation', presentationId]);
         setNoPresent(false);
         return;
       }
@@ -143,7 +147,7 @@ const PublicJoin = () => {
       offPresentation(socket, presentationId);
       offPresentStatus(socket, presentationId);
     };
-  }, [socket, presentationId, chatData]);
+  }, [socket, presentationId, chatData, queryClient]);
 
   useEffect(() => {
     setTimeout(() => {
