@@ -121,7 +121,6 @@ const Question = ({ presentationId, role }) => {
   useEffect(() => {
     if (!data) return;
     setQuestionData([...questionData, ...data.data]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {

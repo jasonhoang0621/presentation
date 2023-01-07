@@ -35,7 +35,10 @@ const CreateGroupModal = ({ visible, setVisible }) => {
     >
       <Spin spinning={isLoading}>
         <Form form={form} layout='vertical'>
-          <Form.Item name='name' rules={[{ required: true, message: 'Please input slide name!' }]}>
+          <Form.Item
+            name='name'
+            rules={[{ required: true, message: `Please input group's name!` }]}
+          >
             <Input className='app-input' placeholder='Slide name' />
           </Form.Item>
           <div className='flex justify-center'>

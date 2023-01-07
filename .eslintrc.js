@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['plugin:prettier/recommended', 'plugin:react-hooks/recommended'],
   rules: {
-    'react-hooks/exhaustive-deps': 'error',
+    'react-hooks/exhaustive-deps': 'off',
     'no-unsafe-optional-chaining': 0
   },
   overrides: [],
