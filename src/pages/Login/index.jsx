@@ -1,4 +1,5 @@
 import { Form, Input, notification, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { getGoogleLink, useLogin } from 'src/api/user';
@@ -11,7 +12,6 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { mutateAsync, isLoading } = useLogin();
-
   const handleLogin = async () => {
     const res = await mutateAsync(form.getFieldsValue());
     if (res.errorCode) {

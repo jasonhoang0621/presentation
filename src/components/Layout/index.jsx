@@ -11,9 +11,14 @@ import { useGetListGroup } from 'src/api/group';
 import ChangePasswordModal from '../ChangePasswordModal';
 import CreateGroupModal from '../CreateGroupModal';
 import ProfileModal from '../ProfileModal';
+import VNFlag from 'src/assets/images/vn.png';
+import ENFlag from 'src/assets/images/en.png';
+import { useTranslation } from 'react-i18next';
+
 const { Header, Sider, Content } = LayoutAntd;
 
 const Layout = ({ sider = false }) => {
+  const { t, i18n } = useTranslation();
   const auth = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,6 +41,11 @@ const Layout = ({ sider = false }) => {
     queryClient.clear();
     navigate('/login');
   };
+
+  const handleChangeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
+  console.log(i18n.languages);
 
   useEffect(() => {
     const { pathname } = location;
@@ -99,7 +109,7 @@ const Layout = ({ sider = false }) => {
                       className='text-[14px] leading-1 pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white'
                       onClick={() => setProfileModal(true)}
                     >
-                      Profile
+                      {t('Profile')}
                     </li>
                     {!auth.user?.loginService && (
                       <li
@@ -118,6 +128,12 @@ const Layout = ({ sider = false }) => {
                   </ul>
                 </div>
               </div>
+              <img
+                src={i18n.language === 'en' ? ENFlag : VNFlag}
+                alt='vn'
+                className='w-[25px] h-[15px] cursor-pointer ml-5'
+                onClick={() => handleChangeLanguage(i18n.language === 'en' ? 'vi' : 'en')}
+              />
             </div>
           </Header>
           <Content
