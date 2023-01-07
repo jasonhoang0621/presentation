@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import Authenticate from 'src/auth';
 import GoogleRedirect from 'src/components/GoogleRedirect';
 import JoinGroupRedirect from 'src/components/JoinGroupRedirect';
+import RedirectByEmail from 'src/components/RedirectJoinByEmail';
 import ForgetPassword from 'src/pages/ForgetPassword';
 import Login from 'src/pages/Login';
 import PublicJoin from 'src/pages/PublicJoin';
@@ -57,6 +58,7 @@ const Root = () => {
             <Route path='/register' element={<Register />} />
             <Route path='/login/google' element={<GoogleRedirect />} />
             <Route path='/invite/:id' element={<JoinGroupRedirect />} />
+            <Route path='/redirect/:userId' element={<RedirectByEmail />} />
             <Route
               path='/group/:groupId/presentation/:presentationId/join/public'
               element={<PublicJoin />}

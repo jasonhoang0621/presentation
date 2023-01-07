@@ -24,6 +24,7 @@ axiosClient.interceptors.response.use(
     if (error?.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userId');
       window.location.href = '/login';
     }
     const originalRequest = error.config;
@@ -35,11 +36,13 @@ axiosClient.interceptors.response.use(
       if (result?.errorCode) {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/';
+        localStorage.removeItem('userId');
+        window.location.href = '/login';
         return;
       }
       localStorage.setItem('token', result?.data?.token);
       localStorage.setItem('refreshToken', result?.data?.refreshToken);
+      localStorage.setItem('userId', result?.data?.id);
       axiosClient.defaults.headers.common['Authorization'] = result?.data?.token;
       return axiosClient(originalRequest);
     }

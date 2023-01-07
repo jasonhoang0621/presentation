@@ -12,6 +12,7 @@ const Authenticate = ({ children }) => {
       dispatch(login(data?.data));
       localStorage.setItem('token', data?.data?.token);
       localStorage.setItem('refreshToken', data?.data?.refreshToken);
+      localStorage.setItem('userId', data?.data?.id);
     }
   }, [data, dispatch]);
   return children;

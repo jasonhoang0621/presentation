@@ -22,6 +22,7 @@ const GoogleRedirect = () => {
         } else {
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('refreshToken', res.data.refreshToken);
+          localStorage.setItem('userId', res.data.id);
           navigate('/');
         }
       };

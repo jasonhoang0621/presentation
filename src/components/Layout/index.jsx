@@ -32,6 +32,7 @@ const Layout = ({ sider = false }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
     queryClient.clear();
     navigate('/login');
   };
