@@ -78,7 +78,7 @@ const Present = () => {
       `${window.location.origin}/group/${groupId}/presentation/${presentationId}/join/public`
     );
     notification.success({
-      message: 'Link copied to clipboard'
+      message: t('Link Copied')
     });
   };
 

@@ -7,7 +7,6 @@ import { offHistory } from 'src/socket/off';
 const History = ({ data, socket = null }) => {
   const [history, setHistory] = React.useState([]);
   const { presentationId } = useParams();
-  console.log('socket', socket);
 
   useEffect(() => {
     if (!socket) return;

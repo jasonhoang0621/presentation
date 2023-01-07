@@ -1,10 +1,11 @@
 import { Input } from 'antd';
 import EditMultipleChoiceAnswer from 'src/components/EditMultipleChoiceAnswer';
-
+import { useTranslation } from 'react-i18next';
 const MultipleChoice = ({ data, setData }) => {
+  const { t, i18n } = useTranslation();
   return (
     <div>
-      <p className='font-semibold text-[16px] mb-1'>Your Question:</p>
+      <p className='font-semibold text-[16px] mb-1'>{t('Your Question:')}</p>
       <Input
         value={data?.question}
         onChange={(e) =>
@@ -14,10 +15,10 @@ const MultipleChoice = ({ data, setData }) => {
           })
         }
         className='app-input'
-        placeholder='Enter question here'
+        placeholder={t('Enter question here')}
         maxLength={150}
       />
-      <p className='font-semibold text-[16px] mt-3'>Answers:</p>
+      <p className='font-semibold text-[16px] mt-3'>{t('Answers:')}</p>
       <EditMultipleChoiceAnswer
         value={data?.answer}
         onChange={(value) => {

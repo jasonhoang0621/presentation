@@ -9,13 +9,14 @@ import Heading from './Heading';
 import MainSlide from './MainSlide';
 import MultipleChoice from './MultipleChoice';
 import SmallSlide from './SmallSlide';
-
+import { useTranslation } from 'react-i18next';
 const EditPresentation = () => {
   const { presentationId } = useParams();
   const [showAddPopover, setShowAddPopover] = React.useState(false);
   const [data, setData] = React.useState(null);
   const { data: rawData } = useDetailPresentation(presentationId);
   const { mutateAsync } = useUpdatePresentation(presentationId);
+  const { t, i18n } = useTranslation();
 
   const [activeSlide, setActiveSlide] = React.useState(data ? data[0] : null);
 
@@ -100,12 +101,12 @@ const EditPresentation = () => {
     const res = await mutateAsync(data);
     if (res?.errorCode) {
       notification.error({
-        message: res?.data || 'Save failed'
+        message: res?.data || t('Save failed')
       });
       return;
     }
     notification.success({
-      message: 'Save success'
+      message: t('Save successfully')
     });
   };
 
@@ -139,19 +140,19 @@ const EditPresentation = () => {
         onClick={() => handleAddNewSlide(SlideType.MULTIPLE_CHOICE)}
         className='py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]'
       >
-        Multiple Choice
+        {t('Multiple Choice')}
       </p>
       <p
         onClick={() => handleAddNewSlide(SlideType.HEADING)}
         className='py-2 px-5 border-b border-[#cecece] border-dashed hover:bg-slate-100 cursor-pointer text-[16px]'
       >
-        Heading
+        {t('Heading')}
       </p>
       <p
         onClick={() => handleAddNewSlide(SlideType.PARAGRAPH)}
         className='py-2 px-5 border-b border-dashed hover:bg-slate-100 cursor-pointer text-[16px]'
       >
-        Paragraph
+        {t('Paragraph')}
       </p>
     </div>
   );
@@ -200,7 +201,7 @@ const EditPresentation = () => {
           <div className='bg-white h-full px-5 py-1'>
             <div className='flex justify-end'>
               <button onClick={handleSave} className='button !py-2 !min-w-[120px]'>
-                <span className='!text-[12px]'>Save</span>
+                <span className='!text-[12px]'>{t('Save')}</span>
               </button>
             </div>
             {activeSlide && renderEditQuestionTab()}

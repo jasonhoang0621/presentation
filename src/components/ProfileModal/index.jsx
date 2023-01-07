@@ -5,8 +5,9 @@ import { notification } from 'antd';
 import { useQueryClient } from 'react-query';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
+import { useTranslation } from 'react-i18next';
 const ProfileModal = ({ visible, setVisible }) => {
+  const { t, i18n } = useTranslation();
   const auth = useSelector((state) => state.auth);
   const [form] = Form.useForm();
   const { mutateAsync, isLoading } = useEditProfile();
@@ -18,13 +19,13 @@ const ProfileModal = ({ visible, setVisible }) => {
     const res = await mutateAsync(formData);
     if (res.errorCode) {
       notification.error({
-        message: 'Edit failed',
+        message: t('Edit failed'),
         description: res.data,
         duration: 1
       });
     } else {
       notification.success({
-        message: 'Edit profile successfully',
+        message: t('Edit successfully'),
         duration: 1
       });
       queryClient.invalidateQueries('group');
@@ -44,26 +45,31 @@ const ProfileModal = ({ visible, setVisible }) => {
 
   return (
     <div>
-      <Modal visible={visible} onCancel={() => setVisible(false)} footer={null} title='Profile'>
+      <Modal
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        footer={null}
+        title={t('Profile')}
+      >
         <Spin spinning={isLoading}>
           <Form form={form} layout='vertical'>
             <Form.Item name='email'>
               <Input
                 className='app-input bg-gray-300 !cursor-not-allowed'
-                placeholder='Email'
+                placeholder={t('Email')}
                 readOnly
               />
             </Form.Item>
             <Form.Item name='name'>
-              <Input className='app-input' placeholder='Name' />
+              <Input className='app-input' placeholder={t('Name')} />
             </Form.Item>
           </Form>
           <div className='flex items-center justify-end mt-4'>
             <button className='button button-danger mr-2' onClick={() => setVisible(false)}>
-              <span className='!text-[12px]'>Cancel</span>
+              <span className='!text-[12px]'>{t('Cancel')}</span>
             </button>
             <button className='button button-secondary' onClick={handleChangeProfile}>
-              <span className='!text-[12px]'>Change</span>
+              <span className='!text-[12px]'>{t('Change')}</span>
             </button>
           </div>
         </Spin>

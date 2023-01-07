@@ -16,8 +16,10 @@ import { editSendMessage } from 'src/socket/emit';
 import { listenChat, listenPresentation, listenPresentStatus } from 'src/socket/listen';
 import { offChat, offPresentation, offPresentStatus } from 'src/socket/off';
 import { v4 as uuidv4 } from 'uuid';
-
+import { useTranslation } from 'react-i18next';
 const PublicJoin = () => {
+  const { t, i18n } = useTranslation();
+
   const navigate = useNavigate();
   const { groupId, presentationId } = useParams();
   const [openDrawer, setOpenDrawer] = React.useState(false);
@@ -131,7 +133,7 @@ const PublicJoin = () => {
     listenPresentStatus(socket, presentationId, (data) => {
       if (data?.status) {
         notification.info({
-          message: 'This presentation is presenting'
+          message: t('This presentation is presenting')
         });
         // queryClient.invalidateQueries(['presentation', presentationId]);
         setNoPresent(false);
@@ -139,7 +141,7 @@ const PublicJoin = () => {
       }
       setNoPresent(true);
       notification.info({
-        message: 'This presentation has been stopped'
+        message: t('This presentation has been stopped')
       });
     });
     return () => {
@@ -177,7 +179,7 @@ const PublicJoin = () => {
     if (data) {
       if (data?.data?.slideIndex === null) {
         notification.error({
-          description: 'Presentation not found'
+          description: t('Presentation not found')
         });
         setNoPresent(true);
         return;
@@ -197,7 +199,7 @@ const PublicJoin = () => {
       case SlideType.PARAGRAPH:
         return <Heading data={data?.data?.slide[slideIndex]} isPublic={true} socket={socket} />;
       default:
-        return <div className='text-center mt-5 text-2xl'>Slide not found</div>;
+        return <div className='text-center mt-5 text-2xl'>{t('Slide not found')}</div>;
     }
   }, [slideIndex, data, socket]);
 
@@ -205,7 +207,7 @@ const PublicJoin = () => {
     return (
       <div className='flex items-center justify-center h-screen'>
         <div className='w-[50vw]'>
-          <p className='pl-1'>Enter your name:</p>
+          <p className='pl-1'>{t('Enter your name:')}</p>
           <Input
             className='app-input'
             value={username}
@@ -213,7 +215,7 @@ const PublicJoin = () => {
           />
           <div onClick={handleSubmitName} className='flex justify-center'>
             <button className='button !py-2 mt-2'>
-              <span className='text-[14px]'>Join</span>
+              <span className='text-[14px]'>{t('Join')}</span>
             </button>
           </div>
         </div>
@@ -225,7 +227,7 @@ const PublicJoin = () => {
     <>
       {noPresent ? (
         <div className='h-screen flex items-center justify-center'>
-          <p className='text-[40px]'>Waiting for the host to present</p>
+          <p className='text-[40px]'>{t('Waiting for the host to present')}</p>
         </div>
       ) : (
         <>

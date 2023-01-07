@@ -2,22 +2,24 @@ import { Form, Input, Modal, notification, Spin } from 'antd';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useCreateGroup } from 'src/api/group';
+import { useTranslation } from 'react-i18next';
 
 const CreateGroupModal = ({ visible, setVisible }) => {
   const [form] = Form.useForm();
   const { mutateAsync, isLoading } = useCreateGroup();
   const queryClient = useQueryClient();
+  const { t, i18n } = useTranslation();
 
   const handleCreateGroup = async () => {
     const formData = form.getFieldsValue();
     const result = await mutateAsync(formData);
     if (result.errorCode) {
       notification.error({
-        message: result.data || 'Create group failed'
+        message: result.data || t('Create group failed')
       });
     } else {
       notification.success({
-        message: 'Create group successfully'
+        message: t('Create group successfully')
       });
       queryClient.invalidateQueries('group');
       setVisible(false);
@@ -27,7 +29,7 @@ const CreateGroupModal = ({ visible, setVisible }) => {
 
   return (
     <Modal
-      title='Create group'
+      title={t('Create group')}
       visible={visible}
       onCancel={() => setVisible(false)}
       footer={null}
@@ -37,13 +39,13 @@ const CreateGroupModal = ({ visible, setVisible }) => {
         <Form form={form} layout='vertical'>
           <Form.Item
             name='name'
-            rules={[{ required: true, message: `Please input group's name!` }]}
+            rules={[{ required: true, message: t('Please input group name!') }]}
           >
-            <Input className='app-input' placeholder='Slide name' />
+            <Input className='app-input' placeholder={t('Group name')} />
           </Form.Item>
           <div className='flex justify-center'>
             <button type='primary' htmltype='submit' className='button' onClick={handleCreateGroup}>
-              <span>Create</span>
+              <span>{t('Create')}</span>
             </button>
           </div>
         </Form>

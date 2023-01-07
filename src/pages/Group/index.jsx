@@ -7,7 +7,7 @@ import { useDetailGroup } from 'src/api/group';
 import { useGetListPresentation } from 'src/api/presentation';
 import CreatePresentationModal from 'src/components/CreatePresentaionModal';
 import EditGroupModal from 'src/components/EditGroupModal';
-
+import { useTranslation } from 'react-i18next';
 const Group = () => {
   const auth = useSelector((state) => state.auth);
   const { id } = useParams();
@@ -17,6 +17,7 @@ const Group = () => {
   const [user, setUser] = useState({
     role: 'member'
   });
+  const { t, i18n } = useTranslation();
 
   const { data } = useGetListPresentation(id);
   const { data: groupDetailData = null, isFetching: loadingGroup } = useDetailGroup(id);
@@ -38,13 +39,13 @@ const Group = () => {
 
   const columns = [
     {
-      title: 'Name',
+      title: t('Name'),
       dataIndex: 'name',
       key: 'name',
       width: '30%'
     },
     {
-      title: 'Number of slide',
+      title: t('Number of slides'),
       dataIndex: 'slide',
       key: 'slide',
       render: (slide) => (
@@ -55,7 +56,7 @@ const Group = () => {
       width: '20%'
     },
     {
-      title: 'Created date',
+      title: t('Created date'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (createdAt) => (
@@ -66,7 +67,7 @@ const Group = () => {
       width: '25%'
     },
     {
-      title: 'Last update',
+      title: t('Last update'),
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (updatedAt) => (
@@ -87,7 +88,7 @@ const Group = () => {
             onClick={() => setEditGroupModal(true)}
           >
             <span className='!text-[12px]'>
-              {user?.role === 'owner' ? 'Edit Group' : 'View Group'}
+              {user?.role === 'owner' ? t(`Edit Group`) : t('View Group')}
             </span>
           </button>
           {user?.role === 'owner' && (
@@ -95,7 +96,7 @@ const Group = () => {
               className='button !py-2 !min-w-[200px]'
               onClick={() => setCreatePresentationModal(true)}
             >
-              <span className='!text-[12px]'>Create Presentation</span>
+              <span className='!text-[12px]'>{t('Create Presentation')}</span>
             </button>
           )}
         </>

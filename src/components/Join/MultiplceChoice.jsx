@@ -4,11 +4,12 @@ import { useParams } from 'react-router-dom';
 import { answerQuestion } from 'src/socket/emit';
 import { listenAnswer } from 'src/socket/listen';
 import { offAnswer } from 'src/socket/off';
-
+import { useTranslation } from 'react-i18next';
 const MultipleChoice = ({ data, isPublic = false, socket = null }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
   const [slideData, setSlideData] = React.useState(data);
   const [showStatistic, setShowStatistic] = React.useState(false);
+  const { t, i18n } = useTranslation();
 
   const { presentationId } = useParams();
 
@@ -85,7 +86,7 @@ const MultipleChoice = ({ data, isPublic = false, socket = null }) => {
       {showStatistic ? (
         <div className='mt-5'>
           <Bar options={options} data={chartData} />
-          <p className='text-xl text-center mt-10'>Wait for the host to change the slide</p>
+          <p className='text-xl text-center mt-10'>{t('Wait for the host to change the slide')}</p>
         </div>
       ) : (
         <>
@@ -105,7 +106,7 @@ const MultipleChoice = ({ data, isPublic = false, socket = null }) => {
           </div>
           <div className='flex items-center justify-center mt-5'>
             <button onClick={isPublic ? onPublicSubmit : onSubmit} className='button !py-2'>
-              <span className='text-[14px]'>Submit</span>
+              <span className='text-[14px]'>{t('Submit')}</span>
             </button>
           </div>
         </>

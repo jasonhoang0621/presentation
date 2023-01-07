@@ -116,14 +116,14 @@ const Layout = ({ sider = false }) => {
                         className='text-[14px] pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white'
                         onClick={() => setChangePasswordModal(true)}
                       >
-                        Change password
+                        {t('change_password')}
                       </li>
                     )}
                     <li
                       className='text-[14px] pl-5 cursor-pointer transition-all duration-200 hover:bg-[#44523f] hover:text-white'
                       onClick={handleLogout}
                     >
-                      Logout
+                      {t('Logout')}
                     </li>
                   </ul>
                 </div>

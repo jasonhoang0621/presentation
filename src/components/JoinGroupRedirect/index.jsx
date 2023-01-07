@@ -2,9 +2,11 @@ import { notification } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAcceptInvite } from 'src/api/group';
-
+import { useTranslation } from 'react-i18next';
 const JoinGroupRedirect = () => {
   const { id } = useParams();
+  const { t, i18n } = useTranslation();
+
   const navigate = useNavigate();
 
   const { mutateAsync: joinGroup } = useAcceptInvite(id);

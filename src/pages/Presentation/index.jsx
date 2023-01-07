@@ -11,7 +11,7 @@ import { SlideType } from 'src/helpers/slide';
 import { SocketContext } from 'src/socket/context';
 import { listenPresentStatus } from 'src/socket/listen';
 import { offPresentStatus } from 'src/socket/off';
-
+import { useTranslation } from 'react-i18next';
 const Presentation = () => {
   const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -24,6 +24,7 @@ const Presentation = () => {
   const [user, setUser] = useState({
     role: 'member'
   });
+  const { t, i18n } = useTranslation();
 
   const queryClient = useQueryClient();
 
@@ -58,7 +59,7 @@ const Presentation = () => {
       return;
     }
     notification.success({
-      message: 'Delete presentation successfully'
+      message: t('Delete presentation successfully')
     });
     queryClient.invalidateQueries('presentation');
     setDeleteModal(false);
@@ -67,7 +68,7 @@ const Presentation = () => {
   const handlePresent = async (url = 'present') => {
     if (data?.data?.slide.length === 0) {
       notification.error({
-        message: 'Please add slide to present'
+        message: t('Please add slide to present')
       });
       return;
     }
@@ -79,14 +80,14 @@ const Presentation = () => {
     listenPresentStatus(socket, presentationId, (data) => {
       if (data?.status) {
         notification.info({
-          message: 'This presentation is presenting'
+          message: t('This presentation is presenting')
         });
         setDisablePresent(true);
         return;
       }
       setDisablePresent(false);
       notification.info({
-        message: 'This presentation has been stopped'
+        message: t('This presentation has been stopped')
       });
     });
     return () => {
@@ -104,21 +105,21 @@ const Presentation = () => {
               disablePresent ? 'pointer-events-none text-gray-200' : ''
             }`}
           >
-            <p className='text-[16px]'>Present</p>
+            <p className='text-[16px]'>{t('Present')}</p>
           </div>
           {user?.role === 'co-owner' && (
             <div
               onClick={() => navigate('join')}
               className='px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200'
             >
-              <p className='text-[16px]'>Join Presentation</p>
+              <p className='text-[16px]'>{t('Join Presentation')}</p>
             </div>
           )}
           <div
             onClick={() => navigate('edit')}
             className='px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200'
           >
-            <p className='text-[16px]'>Edit</p>
+            <p className='text-[16px]'>{t('Edit')}</p>
           </div>
           <div
             onClick={() => {
@@ -127,7 +128,7 @@ const Presentation = () => {
             }}
             className='px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200'
           >
-            <p className='text-[16px]'>Delete</p>
+            <p className='text-[16px]'>{t('Delete')}</p>
           </div>
         </>
       ) : (
@@ -135,7 +136,7 @@ const Presentation = () => {
           onClick={() => navigate('join')}
           className='px-7 py-3 bg-[#FFF] hover:bg-[#495e54] hover:text-white cursor-pointer transition-all duration-200'
         >
-          <p className='text-[16px]'>Join Presentation</p>
+          <p className='text-[16px]'>{t('Join Presentation')}</p>
         </div>
       )}
     </div>
@@ -199,16 +200,18 @@ const Presentation = () => {
         onCancel={() => setDeleteModal(false)}
         footer={null}
       >
-        <p className='text-[18px] mt-0'>Are you sure you want to delete this Presentation?</p>
+        <p className='text-[18px] mt-0'>
+          {t('Are you sure you want to delete this Presentation?')}
+        </p>
         <div className='flex justify-end mt-7'>
           <button
             className='button button-danger !py-2 !min-w-[120px]'
             onClick={() => setDeleteModal(false)}
           >
-            <span className='!text-[12px]'>Cancel</span>
+            <span className='!text-[12px]'>{t('Cancel')}</span>
           </button>
           <button className='button !py-2 !min-w-[120px]' onClick={handleDeletePresentation}>
-            <span className='!text-[12px]'>Delete</span>
+            <span className='!text-[12px]'>{t('Delete')}</span>
           </button>
         </div>
       </Modal>

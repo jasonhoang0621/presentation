@@ -4,12 +4,13 @@ import { Reaction } from 'src/helpers/slide';
 import { answerQuestion } from 'src/socket/emit';
 import { listenAnswer } from 'src/socket/listen';
 import { offAnswer } from 'src/socket/off';
-
+import { useTranslation } from 'react-i18next';
 const Heading = ({ data, isPublic, socket = null }) => {
   const [activeAnswer, setActiveAnswer] = React.useState(null);
   const [slideData, setSlideData] = React.useState(data);
   const [showStatistic, setShowStatistic] = React.useState(false);
   const { presentationId } = useParams();
+  const { t, i18n } = useTranslation();
 
   const onSubmit = () => {
     answerQuestion(socket, presentationId, data.index, activeAnswer);
@@ -78,11 +79,11 @@ const Heading = ({ data, isPublic, socket = null }) => {
         })}
       </div>
       {showStatistic ? (
-        <p className='text-xl text-center mt-10'>Wait for the host to change the slide</p>
+        <p className='text-xl text-center mt-10'>{t('Wait for the host to change the slide')}</p>
       ) : (
         <div className='flex items-center justify-center mt-10'>
           <button onClick={isPublic ? onPublicSubmit : onSubmit} className='button !py-2'>
-            <span className='text-[14px]'>Submit</span>
+            <span className='text-[14px]'>{t('Submit')}</span>
           </button>
         </div>
       )}

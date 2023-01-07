@@ -1,7 +1,8 @@
 import { Bar } from 'react-chartjs-2';
 import { Reaction, SlideType } from 'src/helpers/slide';
-
+import { useTranslation } from 'react-i18next';
 const Slide = ({ data, onClick, noBorder = false, noQuestion = false, isLabel = false }) => {
+  const { t, i18n } = useTranslation();
   if (data?.type === SlideType.MULTIPLE_CHOICE) {
     const options = {
       responsive: true,
@@ -36,7 +37,7 @@ const Slide = ({ data, onClick, noBorder = false, noQuestion = false, isLabel = 
       labels: data?.answer ? data.answer.map((item) => item.value) : [],
       datasets: [
         {
-          label: 'Amount',
+          label: t('Amount'),
           data: data?.answer ? data.answer.map((item) => item.amount) : [],
           backgroundColor: 'rgba(255, 99, 132, 0.5)'
         }

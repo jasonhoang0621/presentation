@@ -14,7 +14,7 @@ import { SocketContext } from 'src/socket/context';
 import { postQuestion, updateQuestion } from 'src/socket/emit';
 import { listenQuestion, listenUpdateQuestion } from 'src/socket/listen';
 import { offQuestion, offUpdateQuestion } from 'src/socket/off';
-
+import { useTranslation } from 'react-i18next';
 const Question = ({ presentationId, role }) => {
   const auth = useSelector((state) => state.auth);
   const [questionLength, setQuestionLength] = useState(0);
@@ -28,6 +28,7 @@ const Question = ({ presentationId, role }) => {
 
   const { data } = useGetListQuestion(presentationId, questionLength, questionLength > 20 ? 5 : 20);
   const [questionData, setQuestionData] = useState([]);
+  const { t, i18n } = useTranslation();
 
   const handleUpVote = (e, questionId) => {
     e.stopPropagation();
@@ -164,14 +165,14 @@ const Question = ({ presentationId, role }) => {
             <div className='w-[500px]'>
               <TextArea
                 className='app-input w-full'
-                placeholder='Add new question'
+                placeholder={t('Add new question')}
                 rows={3}
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
               />
               <div className='flex justify-end mt-2'>
                 <button onClick={handleAddQuestion} className='button !py-1 !min-w-[100px]'>
-                  <span className='text-[14px]'>Post</span>
+                  <span className='text-[14px]'>{t('Post')}</span>
                 </button>
               </div>
             </div>
@@ -275,7 +276,7 @@ const Question = ({ presentationId, role }) => {
               </div>
             </div>
             <div className='mt-4'>
-              <p className='text-[#495e54] font-bold'>Answers</p>
+              <p className='text-[#495e54] font-bold'>{t('Answers')}</p>
               {item?.answer &&
                 item.answer.map((record, i) => (
                   <div
@@ -294,10 +295,10 @@ const Question = ({ presentationId, role }) => {
                 role !== 'member' && answeringQuestion === index ? 'h-[130px]' : 'h-[0px]'
               }`}
             >
-              <p className='text-[#495e54] font-bold mt-4'>Your Answer</p>
+              <p className='text-[#495e54] font-bold mt-4'>{t('Your Answer')}</p>
               <Input
                 className='app-input mt-1'
-                placeholder='Type your answer'
+                placeholder={t('Type your answer')}
                 value={answerContent}
                 onChange={(e) => setAnswerContent(e.target.value)}
                 onKeyDown={(e) => {
@@ -314,7 +315,7 @@ const Question = ({ presentationId, role }) => {
                   }}
                   className='button !py-1 !min-w-[100px]'
                 >
-                  <span className='text-[14px]'>Post</span>
+                  <span className='text-[14px]'>{t('Post')}</span>
                 </button>
               </div>
             </div>

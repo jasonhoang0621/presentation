@@ -2,8 +2,9 @@ import { Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React from 'react';
 import { Reaction } from 'src/helpers/slide';
-
+import { useTranslation } from 'react-i18next';
 const Heading = ({ data, setData }) => {
+  const { t, i18n } = useTranslation();
   const handleChooseReaction = (type) => {
     if (data?.answer.some((item) => item?.type === type)) {
       setData({
@@ -26,7 +27,7 @@ const Heading = ({ data, setData }) => {
 
   return (
     <div>
-      <p className='font-semibold text-[16px] mb-1'>Your Question:</p>
+      <p className='font-semibold text-[16px] mb-1'>{t('Your Question:')}</p>
       <Input
         value={data?.question}
         onChange={(e) =>
@@ -36,10 +37,10 @@ const Heading = ({ data, setData }) => {
           })
         }
         className='app-input'
-        placeholder='Enter question here'
+        placeholder={t('Enter question here')}
         maxLength={150}
       />
-      <p className='font-semibold text-[16px] mb-1 mt-3'>Paragraph:</p>
+      <p className='font-semibold text-[16px] mb-1 mt-3'>{t('Paragraph:')}</p>
       <TextArea
         value={data?.paragraph}
         onChange={(e) =>
@@ -49,11 +50,11 @@ const Heading = ({ data, setData }) => {
           })
         }
         className='app-input !min-h-[150px] !max-h-[400px]'
-        placeholder='Enter question here'
+        placeholder={t('Enter question here')}
         maxLength={1000}
       />
       <p className='text-right'>{data?.paragraph?.length}/1000</p>
-      <p className='font-semibold text-[16px] mb-1 mt-3'>Reaction:</p>
+      <p className='font-semibold text-[16px] mb-1 mt-3'>{t('Reaction:')}</p>
       <div className='flex items-center mt-2'>
         {Reaction.map(({ type, Icon }) => (
           <div

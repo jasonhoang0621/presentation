@@ -1,26 +1,28 @@
 import { Form, Input, Modal, notification } from 'antd';
+import { t } from 'i18next';
 import { useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { useCreatePresentation } from 'src/api/presentation';
-
+import { useTranslation } from 'react-i18next';
 const CreatePresentationModal = ({ visible, setVisible }) => {
   const { id } = useParams();
   const [form] = Form.useForm();
   const { mutateAsync } = useCreatePresentation();
   const queryClient = useQueryClient();
+  const { t, i18n } = useTranslation();
 
   const handleCreatePresentation = async () => {
-    if (!id) return notification.error({ message: 'Group id is required' });
+    if (!id) return notification.error({ message: t('Group id is required') });
     const formData = form.getFieldsValue();
     formData.groupId = id;
     const result = await mutateAsync(formData);
     if (result.errorCode) {
       notification.error({
-        message: result.data || 'Create group failed'
+        message: result.data || t('Create group failed')
       });
     } else {
       notification.success({
-        message: 'Create group successfully'
+        message: t('Create group successfully')
       });
       queryClient.invalidateQueries(['presentation', id]);
       setVisible(false);
@@ -30,7 +32,7 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
 
   return (
     <Modal
-      title='Create Presentation'
+      title={t('Create Presentation')}
       open={visible}
       onCancel={() => setVisible(false)}
       footer={null}
@@ -39,9 +41,9 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
       <Form form={form} layout='vertical'>
         <Form.Item
           name='name'
-          rules={[{ required: true, message: 'Please input presetation name!' }]}
+          rules={[{ required: true, message: t('Please input presetation name!') }]}
         >
-          <Input className='app-input' placeholder='Presentation name' />
+          <Input className='app-input' placeholder={t('Presentation name')} />
         </Form.Item>
         <div className='flex justify-center'>
           <button
@@ -50,7 +52,7 @@ const CreatePresentationModal = ({ visible, setVisible }) => {
             className='button'
             onClick={handleCreatePresentation}
           >
-            <span>Create</span>
+            <span>{t('Create')}</span>
           </button>
         </div>
       </Form>

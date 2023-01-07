@@ -1,11 +1,11 @@
 import React from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
-
+import { useTranslation } from 'react-i18next';
 const SmallSlide = ({ index, data, handleDeleteSlide, activeSlide, setActiveSlide }) => {
   const [confirmDeleteModal, setConfirmDeleteModal] = React.useState(false);
   const [deleteSlide, setDeleteSlide] = React.useState(null);
-
+  const { t } = useTranslation();
   return (
     <>
       <div
@@ -31,20 +31,20 @@ const SmallSlide = ({ index, data, handleDeleteSlide, activeSlide, setActiveSlid
       <Modal
         visible={confirmDeleteModal}
         onCancel={() => setConfirmDeleteModal(false)}
-        title='Confirm delete'
+        title={t('Confirm delete')}
         footer={null}
         centered
       >
         <div className='text-center'>
           <p className='text-[#495e54] text-xl font-semibold'>
-            Are you sure you want to delete this Slide?
+            {t('Are you sure you want to delete this Slide?')}
           </p>
           <div className='flex items-center justify-end mt-4'>
             <button
               className='button button-danger mr-2 !py-[8px] !min-w-[120px]'
               onClick={() => setConfirmDeleteModal(false)}
             >
-              <span className='!text-[12px]'>Cancel</span>
+              <span className='!text-[12px]'>{t('Cancel')}</span>
             </button>
             <button
               className='button button-secondary !py-[8px] !min-w-[120px]'
@@ -53,7 +53,7 @@ const SmallSlide = ({ index, data, handleDeleteSlide, activeSlide, setActiveSlid
                 setConfirmDeleteModal(false);
               }}
             >
-              <span className='!text-[12px]'>Remove</span>
+              <span className='!text-[12px]'>{t('Remove')}</span>
             </button>
           </div>
         </div>

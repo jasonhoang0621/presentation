@@ -17,7 +17,7 @@ import { listenChat, listenPresentation, listenPresentStatus } from 'src/socket/
 import { offChat, offPresentation, offPresentStatus } from 'src/socket/off';
 import Heading from '../../components/Join/Heading';
 import MultipleChoice from '../../components/Join/MultiplceChoice';
-
+import { useTranslation } from 'react-i18next';
 const Join = () => {
   const auth = useSelector((state) => state.auth);
   const { presentationId, groupId } = useParams();
@@ -31,6 +31,7 @@ const Join = () => {
   const [user, setUser] = useState({
     role: 'member'
   });
+  const { t, i18n } = useTranslation();
 
   const queryClient = useQueryClient();
 
@@ -114,7 +115,7 @@ const Join = () => {
     listenPresentStatus(socket, presentationId, (data) => {
       if (data?.status) {
         notification.info({
-          message: 'This presentation is presenting'
+          message: t('This presentation is presenting')
         });
         queryClient.invalidateQueries(['presentation', presentationId]);
         setNoPresent(false);
@@ -122,7 +123,7 @@ const Join = () => {
       }
       setNoPresent(true);
       notification.info({
-        message: 'This presentation has been stopped'
+        message: t('This presentation has been stopped')
       });
     });
     return () => {
@@ -145,7 +146,7 @@ const Join = () => {
     if (data) {
       if (data?.data?.slideIndex === null) {
         notification.error({
-          description: 'Presentation not found'
+          description: t('Presentation not found')
         });
         setNoPresent(true);
         return;
@@ -178,7 +179,7 @@ const Join = () => {
       case SlideType.PARAGRAPH:
         return <Heading data={data?.data?.slide[slideIndex]} socket={socket} />;
       default:
-        return <div className='text-center mt-5 text-2xl'>Slide not found</div>;
+        return <div className='text-center mt-5 text-2xl'>{t('Slide not found')}</div>;
     }
   }, [slideIndex, data, socket]);
 
@@ -186,7 +187,7 @@ const Join = () => {
     <>
       {noPresent ? (
         <div className='h-screen flex items-center justify-center'>
-          <p className='text-[40px]'>Waiting for the host to present</p>
+          <p className='text-[40px]'>{t('Waiting for the host to present')}</p>
         </div>
       ) : (
         <>
