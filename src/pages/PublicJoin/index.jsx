@@ -442,6 +442,7 @@ const PublicJoin = () => {
             handleAnswerQuestion={handleAnswerQuestion}
             handleAddQuestion={handleAddQuestion}
             handleMarkAsAnswered={handleMarkAsAnswered}
+            role={'guest'}
           />
         </Spin>
       </Drawer>

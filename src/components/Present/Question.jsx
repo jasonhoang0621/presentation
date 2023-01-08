@@ -192,7 +192,9 @@ const Question = ({
               </div>
               <div
                 className={`mt-3 overflow-hidden transition-all duration-500 ${
-                  role !== 'member' && answeringQuestion === index ? 'h-[130px]' : 'h-[0px]'
+                  role !== 'member' && role !== 'guest' && answeringQuestion === index
+                    ? 'h-[130px]'
+                    : 'h-[0px]'
                 }`}
               >
                 <p className='text-[#495e54] font-bold mt-4'>{t('Your Answer')}</p>
