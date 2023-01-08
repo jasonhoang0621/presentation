@@ -117,7 +117,10 @@ const Question = ({
                               <CloseOutlined />
                             </div>
                             <div
-                              onClick={(e) => handleMarkAsAnswered(e, item?.id)}
+                              onClick={(e) => {
+                                handleMarkAsAnswered(e, item?.id);
+                                setConfirmMark(null);
+                              }}
                               className='w-6 h-6 rounded-full bg-white border border-[#495e54] flex items-center justify-center hover:text-white hover:bg-[#495e54] transition-all duration-200 cursor-pointer'
                             >
                               <CheckOutlined />

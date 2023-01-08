@@ -190,7 +190,6 @@ const PublicJoin = () => {
 
   const handleMarkAsAnswered = (e, questionId) => {
     e.stopPropagation();
-    setConfirmMark(null);
     let temp = null;
     const newQuestionData = questionData.map((item) => {
       if (item.id === questionId) {
