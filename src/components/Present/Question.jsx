@@ -23,6 +23,9 @@ const Question = ({ presentationId, role }) => {
   const [answeringQuestion, setAnsweringQuestion] = useState(null);
   const [confirmMark, setConfirmMark] = useState(null);
   const [answerContent, setAnswerContent] = useState('');
+  const token = localStorage.getItem('token');
+  const guestId = localStorage.getItem('guestId');
+  const username = localStorage.getItem('username');
 
   const { socket } = useContext(SocketContext);
 
@@ -155,7 +158,7 @@ const Question = ({ presentationId, role }) => {
 
   return (
     <div className={`m-2 relative ${role === 'member' ? 'pt-10' : ''}`}>
-      {role === 'member' && (
+      {(role === 'member' || (!token && guestId)) && (
         <Popover
           open={openAddQuestion}
           onOpenChange={(visible) => setOpenAddQuestion(visible)}
@@ -187,7 +190,7 @@ const Question = ({ presentationId, role }) => {
         questionData.map((item, index) => (
           <div
             onClick={
-              item?.isLock
+              (item?.isLock && role !== 'member') || (!token && guestId)
                 ? null
                 : () => {
                     setAnsweringQuestion(index);
@@ -206,7 +209,7 @@ const Question = ({ presentationId, role }) => {
             )}
             <div className='flex justify-between'>
               <div className='flex mr-5'>
-                {!item?.isLock ? (
+                {!item?.isLock && role !== 'member' && !guestId ? (
                   <Popover
                     placement='bottomLeft'
                     trigger={['click']}
