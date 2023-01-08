@@ -145,7 +145,7 @@ const Join = () => {
     postQuestion(socket, presentationId, question, guestId, username);
   };
 
-  const handleMarkAsAnswered = (e, questionId, setConfirmMark) => {
+  const handleMarkAsAnswered = (e, questionId) => {
     e.stopPropagation();
     let temp = null;
     const newQuestionData = questionData.map((item) => {
