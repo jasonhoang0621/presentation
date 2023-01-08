@@ -145,7 +145,7 @@ const Join = () => {
     postQuestion(socket, presentationId, question, guestId, username);
   };
 
-  const handleMarkAsAnswered = (e, questionId) => {
+  const handleMarkAsAnswered = (e, questionId, setConfirmMark) => {
     e.stopPropagation();
     let temp = null;
     const newQuestionData = questionData.map((item) => {
@@ -441,6 +441,7 @@ const Join = () => {
             handleAnswerQuestion={handleAnswerQuestion}
             handleAddQuestion={handleAddQuestion}
             handleMarkAsAnswered={handleMarkAsAnswered}
+            role={user?.role}
           />
         </Spin>
       </Drawer>
