@@ -2,6 +2,7 @@ import { HistoryOutlined, QuestionCircleOutlined, WechatOutlined } from '@ant-de
 import { Drawer, notification, Select, Spin } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -24,6 +25,7 @@ import { listenAnswer, listenChat, listenPresentation } from 'src/socket/listen'
 import { offAnswer, offChat, offPresentation } from 'src/socket/off';
 
 const Present = () => {
+  const { t } = useTranslation();
   const { socket } = useContext(SocketContext);
   const { groupId, presentationId } = useParams();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -77,9 +79,11 @@ const Present = () => {
     navigator.clipboard.writeText(
       `${window.location.origin}/group/${groupId}/presentation/${presentationId}/join/public`
     );
-    notification.success({
-      message: t('Link Copied')
-    });
+    setTimeout(() => {
+      notification.success({
+        message: t('Link Copied')
+      });
+    }, 300);
   };
 
   useEffect(() => {
@@ -358,13 +362,13 @@ const Present = () => {
           </div>
           <div className='flex items-center'>
             <button onClick={handleShare} className='button button-danger !py-2 !min-w-[120px]'>
-              <span className='!text-[14px]'>Share</span>
+              <span className='!text-[14px]'>{t('Share')}</span>
             </button>
             <button
               onClick={() => handleChangeSlide(currentSlide + 1)}
               className='button !py-2 !min-w-[120px]'
             >
-              <span className='!text-[14px]'>Next</span>
+              <span className='!text-[14px]'>{t('Next')}</span>
             </button>
           </div>
         </div>

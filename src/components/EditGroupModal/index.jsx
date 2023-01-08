@@ -315,7 +315,7 @@ const EditGroupModal = ({ visible, setVisible, groupDetailData, user }) => {
   }, [pararms, inviteUser, user]);
   return (
     <Modal
-      title='Edit Group'
+      title={t('Edit Group')}
       open={visible}
       onCancel={() => setVisible(false)}
       footer={null}

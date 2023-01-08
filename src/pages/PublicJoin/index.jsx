@@ -1,4 +1,4 @@
-import { WechatOutlined } from '@ant-design/icons';
+import { WechatOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Drawer, Input, notification, Spin } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -17,6 +17,7 @@ import { listenChat, listenPresentation, listenPresentStatus } from 'src/socket/
 import { offChat, offPresentation, offPresentStatus } from 'src/socket/off';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
+import Question from 'src/components/Present/Question';
 const PublicJoin = () => {
   const { t, i18n } = useTranslation();
 
@@ -32,6 +33,7 @@ const PublicJoin = () => {
   const [data, setData] = useState(null);
   const [socket, setSocket] = useState(null);
   const [chatData, setChatData] = useState([]);
+  const [openQuestionDrawer, setOpenQuestionDrawer] = useState(false);
 
   const { data: presentationData } = useDetailPresentation(presentationId);
 
@@ -234,12 +236,24 @@ const PublicJoin = () => {
           <div className='px-[15vw]' style={{ height: 'calc(100vh - 64px)' }}>
             {renderSlide}
           </div>
-          <div
-            onClick={() => setOpenDrawer(true)}
-            className='fixed bottom-10 right-5 w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80'
-          >
-            <div className='flex items-center justify-center w-full h-full'>
-              <WechatOutlined className='text-white text-[24px]' />
+          <div className='fixed bottom-10 right-5 '>
+            <div className='flex items-center gap-x-2'>
+              <div
+                onClick={() => setOpenQuestionDrawer(true)}
+                className='w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80'
+              >
+                <div className='flex items-center justify-center w-full h-full'>
+                  <QuestionCircleOutlined className='text-white text-[24px]' />
+                </div>
+              </div>
+              <div
+                onClick={() => setOpenDrawer(true)}
+                className='w-12 h-12 bg-[#495e54] rounded-full cursor-pointer hover:opacity-80'
+              >
+                <div className='flex items-center justify-center w-full h-full'>
+                  <WechatOutlined className='text-white text-[24px]' />
+                </div>
+              </div>
             </div>
           </div>
         </>
@@ -259,6 +273,18 @@ const PublicJoin = () => {
             handleScroll={handleScroll}
             handleSentMessage={handleSentMessage}
           />
+        </Spin>
+      </Drawer>
+      <Drawer
+        placement='right'
+        width={600}
+        onClose={() => setOpenQuestionDrawer(false)}
+        open={openQuestionDrawer}
+        closable={false}
+        bodyStyle={{ padding: 0 }}
+      >
+        <Spin spinning={isFetching}>
+          <Question presentationId={presentationId} />
         </Spin>
       </Drawer>
     </>

@@ -220,7 +220,7 @@ const Join = () => {
         placement='right'
         width={400}
         onClose={() => setOpenDrawer(false)}
-        visible={openDrawer}
+        open={openDrawer}
         closable={false}
         bodyStyle={{ padding: 0, overflow: 'hidden' }}
       >
@@ -237,7 +237,7 @@ const Join = () => {
         placement='right'
         width={600}
         onClose={() => setOpenQuestionDrawer(false)}
-        visible={openQuestionDrawer}
+        open={openQuestionDrawer}
         closable={false}
         bodyStyle={{ padding: 0 }}
       >

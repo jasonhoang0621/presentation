@@ -1,12 +1,14 @@
 import { Input } from 'antd';
 import React from 'react';
 import { DeleteOutlined, AppstoreAddOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const EditMultipleChoiceAnswer = ({ value, onChange }) => {
+  const { t } = useTranslation();
   const handleAdd = () => {
     const newValue = [...value];
     newValue.push({
-      value: `Answer ${newValue.length + 1}`,
+      value: `${t('Answer')} ${newValue.length + 1}`,
       amount: 0
     });
     onChange(newValue);
