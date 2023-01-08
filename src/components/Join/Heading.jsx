@@ -79,7 +79,9 @@ const Heading = ({ data, isPublic, socket = null }) => {
         })}
       </div>
       {showStatistic ? (
-        <p className='text-xl text-center mt-10'>{t('Wait for the host to change the slide')}</p>
+        <div className='bg-[#F0F2F5] mt-10'>
+          <p className='text-xl text-center'>{t('Wait for the host to change the slide')}</p>
+        </div>
       ) : (
         <div className='flex items-center justify-center mt-10'>
           <button onClick={isPublic ? onPublicSubmit : onSubmit} className='button !py-2'>

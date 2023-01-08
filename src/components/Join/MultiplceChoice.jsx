@@ -82,9 +82,8 @@ const MultipleChoice = ({ data, isPublic = false, socket = null }) => {
   return (
     <div>
       <p className='text-center text-[40px] mt-10'>{data?.question}</p>
-
       {showStatistic ? (
-        <div className='mt-5'>
+        <div className='mt-5 bg-[#F0F2F5]'>
           <Bar options={options} data={chartData} />
           <p className='text-xl text-center mt-10'>{t('Wait for the host to change the slide')}</p>
         </div>
