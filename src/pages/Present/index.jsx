@@ -142,7 +142,7 @@ const Present = () => {
   useEffect(() => {
     if (!socket) return;
     listenPresentation(socket, presentationId, (data) => {
-      console.log(data);
+      // console.log(data);
     });
     listenAnswer(socket, presentationId, currentSlide, (response) => {
       setPresentation(response);
@@ -240,7 +240,6 @@ const Present = () => {
   };
 
   const handleAnswerQuestion = (questionId, answerContent) => {
-    console.log(answerContent);
     if (!answerContent) return;
     let temp = null;
     const newQuestionData = questionData.map((item) => {
@@ -271,7 +270,7 @@ const Present = () => {
     postQuestion(socket, presentationId, question, guestId, username);
   };
 
-  const handleMarkAsAnswered = (e, questionId) => {
+  const handleMarkAsAnswered = (e, questionId, setConfirmMark) => {
     e.stopPropagation();
     setConfirmMark(null);
     let temp = null;
@@ -602,6 +601,7 @@ const Present = () => {
             handleAnswerQuestion={handleAnswerQuestion}
             handleAddQuestion={handleAddQuestion}
             handleMarkAsAnswered={handleMarkAsAnswered}
+            role={user?.role}
           />
         </Spin>
       </Drawer>

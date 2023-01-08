@@ -45,7 +45,6 @@ const Layout = ({ sider = false }) => {
   const handleChangeLanguage = (lang) => {
     i18n.changeLanguage(lang);
   };
-  console.log(i18n.languages);
 
   useEffect(() => {
     const { pathname } = location;

@@ -32,9 +32,8 @@ const Question = ({
   const [confirmMark, setConfirmMark] = useState(null);
   const [answerContent, setAnswerContent] = useState('');
   const token = localStorage.getItem('token');
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const guestId = localStorage.getItem('guestId') ?? null;
-  const username = localStorage.getItem('username') ?? null;
   return (
     <div className={`m-2 relative ${role === 'member' ? 'pt-10' : ''}`}>
       {(role === 'member' || (!role && !token && guestId)) && (
@@ -96,12 +95,16 @@ const Question = ({
               )}
               <div className='flex justify-between'>
                 <div className='flex mr-5'>
-                  {role === 'member' || (!role && !token && guestId) ? (
+                  {!item?.isLock ? (
                     <Popover
                       placement='bottomLeft'
                       trigger={['click']}
                       open={confirmMark === index}
-                      onOpenChange={(visible) => setConfirmMark(visible ? index : null)}
+                      onOpenChange={(visible) =>
+                        role === 'owner' || role === 'co-owner'
+                          ? setConfirmMark(visible ? index : null)
+                          : null
+                      }
                       overlayClassName='app-popover'
                       content={
                         <div>
@@ -117,7 +120,7 @@ const Question = ({
                               <CloseOutlined />
                             </div>
                             <div
-                              onClick={(e) => handleMarkAsAnswered(e, item?.id)}
+                              onClick={(e) => handleMarkAsAnswered(e, item?.id, setConfirmMark)}
                               className='w-6 h-6 rounded-full bg-white border border-[#495e54] flex items-center justify-center hover:text-white hover:bg-[#495e54] transition-all duration-200 cursor-pointer'
                             >
                               <CheckOutlined />

@@ -145,7 +145,7 @@ const Join = () => {
     postQuestion(socket, presentationId, question, guestId, username);
   };
 
-  const handleMarkAsAnswered = (e, questionId) => {
+  const handleMarkAsAnswered = (e, questionId, setConfirmMark) => {
     e.stopPropagation();
     setConfirmMark(null);
     let temp = null;
@@ -442,6 +442,7 @@ const Join = () => {
             handleAnswerQuestion={handleAnswerQuestion}
             handleAddQuestion={handleAddQuestion}
             handleMarkAsAnswered={handleMarkAsAnswered}
+            role={user?.role}
           />
         </Spin>
       </Drawer>
