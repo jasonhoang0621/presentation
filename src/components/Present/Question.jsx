@@ -15,147 +15,24 @@ import { postQuestion, updateQuestion } from 'src/socket/emit';
 import { listenQuestion, listenUpdateQuestion } from 'src/socket/listen';
 import { offQuestion, offUpdateQuestion } from 'src/socket/off';
 import { useTranslation } from 'react-i18next';
-const Question = ({ presentationId, role }) => {
+const Question = ({
+  questionData,
+  presentationId,
+  role,
+  socket = null,
+  handleUpVote,
+  handleAnswerQuestion
+}) => {
   const auth = useSelector((state) => state.auth);
-  const [questionLength, setQuestionLength] = useState(0);
   const [openAddQuestion, setOpenAddQuestion] = useState(false);
   const [question, setQuestion] = useState('');
   const [answeringQuestion, setAnsweringQuestion] = useState(null);
   const [confirmMark, setConfirmMark] = useState(null);
   const [answerContent, setAnswerContent] = useState('');
   const token = localStorage.getItem('token');
-  const guestId = localStorage.getItem('guestId');
-  const username = localStorage.getItem('username');
-
-  const { socket } = useContext(SocketContext);
-
-  const { data } = useGetListQuestion(presentationId, questionLength, questionLength > 20 ? 5 : 20);
-  const [questionData, setQuestionData] = useState([]);
   const { t, i18n } = useTranslation();
-
-  const handleUpVote = (e, questionId) => {
-    e.stopPropagation();
-    const question = questionData.find((item) => item.id === questionId);
-    let temp = null;
-    if (question?.upVote?.includes(auth?.user?.id)) {
-      const newQuestionData = questionData.map((item) => {
-        if (item.id === questionId) {
-          temp = item;
-          temp.upVote = item.upVote.filter((item) => item !== auth?.user?.id);
-          return {
-            ...temp
-          };
-        }
-        return item;
-      });
-      setQuestionData(newQuestionData);
-      delete temp._id;
-      updateQuestion(socket, presentationId, questionId, temp);
-      return;
-    }
-    const newQuestionData = questionData.map((item) => {
-      if (item.id === questionId) {
-        temp = item;
-        temp.upVote = [...item.upVote, auth?.user?.id];
-        return {
-          ...temp
-        };
-      }
-      return item;
-    });
-    delete temp._id;
-    updateQuestion(socket, presentationId, questionId, temp);
-    setQuestionData(newQuestionData);
-  };
-
-  const handleAddQuestion = () => {
-    if (!question) return;
-    postQuestion(socket, presentationId, question);
-    setQuestion('');
-    setOpenAddQuestion(false);
-  };
-
-  const handleAnswerQuestion = (questionId) => {
-    if (!answerContent) return;
-    let temp = null;
-    const newQuestionData = questionData.map((item) => {
-      if (item.id === questionId) {
-        temp = item;
-        temp.answer = [
-          ...item.answer,
-          {
-            id: item.answer.length + 1,
-            name: auth?.user?.name,
-            content: answerContent
-          }
-        ];
-        delete temp._id;
-        return {
-          ...temp
-        };
-      }
-      return item;
-    });
-
-    updateQuestion(socket, presentationId, questionId, temp);
-    setQuestionData(newQuestionData);
-    setAnsweringQuestion(null);
-    setAnswerContent('');
-  };
-
-  const handleMarkAsAnswered = (e, questionId) => {
-    e.stopPropagation();
-    setConfirmMark(null);
-    let temp = null;
-    const newQuestionData = questionData.map((item) => {
-      if (item.id === questionId) {
-        temp = item;
-        temp.isLock = true;
-        delete temp._id;
-        return {
-          ...temp
-        };
-      }
-      return item;
-    });
-    updateQuestion(socket, presentationId, questionId, temp);
-    setQuestionData(newQuestionData);
-  };
-
-  useEffect(() => {
-    if (!data) return;
-    setQuestionData([...questionData, ...data.data]);
-  }, [data]);
-
-  useEffect(() => {
-    if (!socket) return;
-    listenQuestion(socket, presentationId, (response) => {
-      if (!response?.errorCode) {
-        setQuestionData([response.data, ...questionData]);
-        setQuestionLength(questionLength + 1);
-      }
-    });
-    listenUpdateQuestion(socket, presentationId, (response) => {
-      if (!response?.errorCode) {
-        let newQuestionData = [];
-        questionData.forEach((item) => {
-          if (item.id === response.data.id) {
-            newQuestionData.push(response?.data);
-          } else {
-            newQuestionData.push(item);
-          }
-        });
-        setQuestionData(newQuestionData);
-      }
-    });
-
-    return () => {
-      offQuestion(socket, presentationId);
-      offUpdateQuestion(socket, presentationId);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, presentationId, questionData]);
-
+  const guestId = localStorage.getItem('guestId') ?? null;
+  const username = localStorage.getItem('username') ?? null;
   return (
     <div className={`m-2 relative ${role === 'member' ? 'pt-10' : ''}`}>
       {(role === 'member' || (!token && guestId)) && (
@@ -174,7 +51,13 @@ const Question = ({ presentationId, role }) => {
                 onChange={(e) => setQuestion(e.target.value)}
               />
               <div className='flex justify-end mt-2'>
-                <button onClick={handleAddQuestion} className='button !py-1 !min-w-[100px]'>
+                <button
+                  onClick={() => {
+                    handleAddQuestion(question);
+                    setQuestion('');
+                  }}
+                  className='button !py-1 !min-w-[100px]'
+                >
                   <span className='text-[14px]'>{t('Post')}</span>
                 </button>
               </div>
@@ -263,6 +146,7 @@ const Question = ({ presentationId, role }) => {
               <div className='flex items-center'>
                 <div
                   className={`w-7 h-7 rounded-full cursor-pointer flex items-center justify-center transition-all duration-200 ${
+                    (guestId && item?.upVote.includes(guestId)) ||
                     item?.upVote.includes(auth?.user?.id)
                       ? 'bg-[#495e54]'
                       : 'bg-white border-2 border-[#495e54] hover:opacity-75'
@@ -270,7 +154,10 @@ const Question = ({ presentationId, role }) => {
                 >
                   <ArrowUpOutlined
                     className={`text-[16px] font-bold ${
-                      item?.upVote.includes(auth?.user?.id) ? 'text-white' : 'text-[#495e54]'
+                      (guestId && item?.upVote.includes(guestId)) ||
+                      item?.upVote.includes(auth?.user?.id)
+                        ? 'text-white'
+                        : 'text-[#495e54]'
                     }`}
                     onClick={(e) => handleUpVote(e, item?.id)}
                   />

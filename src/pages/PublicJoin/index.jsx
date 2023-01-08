@@ -12,12 +12,26 @@ import MultipleChoice from 'src/components/Join/MultiplceChoice';
 import Chat from 'src/components/Present/Chat';
 import { SlideType } from 'src/helpers/slide';
 import { SOCKET_URL } from 'src/socket/context';
-import { editSendMessage } from 'src/socket/emit';
-import { listenChat, listenPresentation, listenPresentStatus } from 'src/socket/listen';
-import { offChat, offPresentation, offPresentStatus } from 'src/socket/off';
+import { editSendMessage, postQuestion, updateQuestion } from 'src/socket/emit';
+import {
+  listenChat,
+  listenPresentation,
+  listenPresentStatus,
+  listenQuestion,
+  listenUpdateQuestion
+} from 'src/socket/listen';
+import {
+  offChat,
+  offPresentation,
+  offPresentStatus,
+  offQuestion,
+  offUpdateQuestion
+} from 'src/socket/off';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
 import Question from 'src/components/Present/Question';
+import { useGetListQuestion } from 'src/api/question';
+import { useSelector } from 'react-redux';
 const PublicJoin = () => {
   const { t, i18n } = useTranslation();
 
@@ -26,14 +40,23 @@ const PublicJoin = () => {
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const [chatLength, setChatLength] = useState(0);
   const containerRef = React.useRef(null);
-  const [guestId, setGuestId] = useState(localStorage.getItem('guestId'));
-  const [username, setUsername] = useState(localStorage.getItem('username'));
+  const [guestId, setGuestId] = useState(localStorage.getItem('guestId') ?? null);
+  const [username, setUsername] = useState(localStorage.getItem('username') ?? null);
   const [slideIndex, setSlideIndex] = useState(0);
   const [noPresent, setNoPresent] = useState(false);
   const [data, setData] = useState(null);
   const [socket, setSocket] = useState(null);
   const [chatData, setChatData] = useState([]);
   const [openQuestionDrawer, setOpenQuestionDrawer] = useState(false);
+  const auth = useSelector((state) => state.auth);
+
+  const [questionLength, setQuestionLength] = useState(0);
+  const { data: questions } = useGetListQuestion(
+    presentationId,
+    questionLength,
+    questionLength > 20 ? 5 : 20
+  );
+  const [questionData, setQuestionData] = useState([]);
 
   const { data: presentationData } = useDetailPresentation(presentationId);
 
@@ -66,6 +89,78 @@ const PublicJoin = () => {
     }
   }, [guestId, username]);
 
+  const handleUpVote = (e, questionId) => {
+    e.stopPropagation();
+    const question = questionData.find(
+      (item) => item.id === questionId || (guestId && item.id === guestId)
+    );
+    let temp = null;
+    if (
+      question?.upVote?.includes(auth?.user?.id) ||
+      (guestId && question?.upVote?.includes(guestId))
+    ) {
+      const newQuestionData = questionData.map((item) => {
+        if (item.id === questionId) {
+          temp = item;
+          if (guestId) {
+            temp.upVote = item.upVote.filter((item) => item !== guestId);
+          } else {
+            temp.upVote = item.upVote.filter((item) => item !== auth?.user?.id);
+          }
+          return {
+            ...temp
+          };
+        }
+        return item;
+      });
+      setQuestionData(newQuestionData);
+      delete temp._id;
+      updateQuestion(socket, presentationId, questionId, temp);
+      return;
+    }
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId || (guestId && item.id === guestId)) {
+        temp = item;
+        temp.upVote = [...item.upVote, guestId ? guestId : auth?.user?.id];
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+    delete temp._id;
+    updateQuestion(socket, presentationId, questionId, temp, guestId, username);
+    setQuestionData(newQuestionData);
+  };
+
+  const handleAnswerQuestion = (questionId) => {
+    if (!answerContent) return;
+    let temp = null;
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        temp = item;
+        temp.answer = [
+          ...item.answer,
+          {
+            id: item.answer.length + 1,
+            name: username ? username : auth?.user?.name,
+            content: answerContent
+          }
+        ];
+        delete temp._id;
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+
+    updateQuestion(socket, presentationId, questionId, temp);
+    setQuestionData(newQuestionData);
+    setAnsweringQuestion(null);
+    setAnswerContent('');
+  };
+
   const handleSentMessage = (chatMessage) => {
     const name = localStorage.getItem('username');
     const guestId = localStorage.getItem('guestId');
@@ -88,6 +183,31 @@ const PublicJoin = () => {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
     }, 500);
+  };
+
+  const handleAddQuestion = (question) => {
+    if (!question) return;
+    postQuestion(socket, presentationId, question, guestId, username);
+    setOpenAddQuestion(false);
+  };
+
+  const handleMarkAsAnswered = (e, questionId) => {
+    e.stopPropagation();
+    setConfirmMark(null);
+    let temp = null;
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        temp = item;
+        temp.isLock = true;
+        delete temp._id;
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+    updateQuestion(socket, presentationId, questionId, temp);
+    setQuestionData(newQuestionData);
   };
 
   useEffect(() => {
@@ -152,6 +272,40 @@ const PublicJoin = () => {
       offPresentStatus(socket, presentationId);
     };
   }, [socket, presentationId, chatData, queryClient]);
+
+  useEffect(() => {
+    if (!socket) return;
+    listenQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        setQuestionData([response.data, ...questionData]);
+        setQuestionLength(questionLength + 1);
+      }
+    });
+    listenUpdateQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        let newQuestionData = [];
+        questionData.forEach((item) => {
+          if (item.id === response.data.id) {
+            newQuestionData.push(response?.data);
+          } else {
+            newQuestionData.push(item);
+          }
+        });
+        setQuestionData(newQuestionData);
+      }
+    });
+
+    return () => {
+      offQuestion(socket, presentationId);
+      offUpdateQuestion(socket, presentationId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, presentationId, questionData]);
+
+  useEffect(() => {
+    if (!questions) return;
+    setQuestionData([...questionData, ...questions.data]);
+  }, [questions]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -284,7 +438,15 @@ const PublicJoin = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
-          <Question presentationId={presentationId} />
+          <Question
+            presentationId={presentationId}
+            socket={socket}
+            questionData={questionData}
+            handleUpVote={handleUpVote}
+            handleAnswerQuestion={handleAnswerQuestion}
+            handleAddQuestion={handleAddQuestion}
+            handleMarkAsAnswered={handleMarkAsAnswered}
+          />
         </Spin>
       </Drawer>
     </>

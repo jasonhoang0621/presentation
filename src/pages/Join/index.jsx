@@ -12,12 +12,25 @@ import Chat from 'src/components/Present/Chat';
 import Question from 'src/components/Present/Question';
 import { SlideType } from 'src/helpers/slide';
 import { SocketContext } from 'src/socket/context';
-import { editSendMessage } from 'src/socket/emit';
-import { listenChat, listenPresentation, listenPresentStatus } from 'src/socket/listen';
-import { offChat, offPresentation, offPresentStatus } from 'src/socket/off';
+import { editSendMessage, updateQuestion } from 'src/socket/emit';
+import {
+  listenChat,
+  listenPresentation,
+  listenPresentStatus,
+  listenQuestion,
+  listenUpdateQuestion
+} from 'src/socket/listen';
+import {
+  offChat,
+  offPresentation,
+  offPresentStatus,
+  offQuestion,
+  offUpdateQuestion
+} from 'src/socket/off';
 import Heading from '../../components/Join/Heading';
 import MultipleChoice from '../../components/Join/MultiplceChoice';
 import { useTranslation } from 'react-i18next';
+import { useGetListQuestion } from 'src/api/question';
 const Join = () => {
   const auth = useSelector((state) => state.auth);
   const { presentationId, groupId } = useParams();
@@ -31,6 +44,8 @@ const Join = () => {
   const [user, setUser] = useState({
     role: 'member'
   });
+  const guestId = null;
+  const username = null;
   const { t, i18n } = useTranslation();
 
   const queryClient = useQueryClient();
@@ -46,7 +61,188 @@ const Join = () => {
     chatLength > 20 ? 5 : 20
   );
 
+  const [questionLength, setQuestionLength] = useState(0);
+  const { data: questions, isFetching: isFetchingQuestion } = useGetListQuestion(
+    presentationId,
+    questionLength,
+    questionLength > 20 ? 5 : 20
+  );
+  const [questionData, setQuestionData] = useState([]);
   const { socket } = useContext(SocketContext);
+
+  const handleUpVote = (e, questionId) => {
+    e.stopPropagation();
+    const question = questionData.find(
+      (item) => item.id === questionId || (guestId && item.id === guestId)
+    );
+    let temp = null;
+    if (
+      question?.upVote?.includes(auth?.user?.id) ||
+      (guestId && question?.upVote?.includes(guestId))
+    ) {
+      const newQuestionData = questionData.map((item) => {
+        if (item.id === questionId) {
+          temp = item;
+          if (guestId) {
+            temp.upVote = item.upVote.filter((item) => item !== guestId);
+          } else {
+            temp.upVote = item.upVote.filter((item) => item !== auth?.user?.id);
+          }
+          return {
+            ...temp
+          };
+        }
+        return item;
+      });
+      setQuestionData(newQuestionData);
+      delete temp._id;
+      updateQuestion(socket, presentationId, questionId, temp);
+      return;
+    }
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId || (guestId && item.id === guestId)) {
+        temp = item;
+        temp.upVote = [...item.upVote, guestId ? guestId : auth?.user?.id];
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+    delete temp._id;
+    updateQuestion(socket, presentationId, questionId, temp, guestId, username);
+    setQuestionData(newQuestionData);
+  };
+
+  const handleAnswerQuestion = (questionId) => {
+    if (!answerContent) return;
+    let temp = null;
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        temp = item;
+        temp.answer = [
+          ...item.answer,
+          {
+            id: item.answer.length + 1,
+            name: username ? username : auth?.user?.name,
+            content: answerContent
+          }
+        ];
+        delete temp._id;
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+
+    updateQuestion(socket, presentationId, questionId, temp);
+    setQuestionData(newQuestionData);
+    setAnsweringQuestion(null);
+    setAnswerContent('');
+  };
+
+  const handleAddQuestion = (question) => {
+    if (!question) return;
+    postQuestion(socket, presentationId, question, guestId, username);
+    setOpenAddQuestion(false);
+  };
+
+  const handleMarkAsAnswered = (e, questionId) => {
+    e.stopPropagation();
+    setConfirmMark(null);
+    let temp = null;
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        temp = item;
+        temp.isLock = true;
+        delete temp._id;
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+    updateQuestion(socket, presentationId, questionId, temp);
+    setQuestionData(newQuestionData);
+  };
+
+  useEffect(() => {
+    if (!chat) return;
+    setChatData((chatData) => [...chat.data, ...chatData]);
+  }, [chat]);
+
+  useEffect(() => {
+    if (!socket) return;
+    listenPresentation(socket, presentationId, (data) => {
+      setSlideIndex(data?.data?.index);
+    });
+    listenChat(socket, presentationId, (data) => {
+      toast(data?.data?.user[0]?.name + ': ' + data?.data?.message, {
+        onClick: handleClickToast
+      });
+      setChatData([...chatData, data?.data]);
+      setTimeout(() => {
+        const chatBox = document.getElementById('chat-box');
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }, 500);
+    });
+    listenPresentStatus(socket, presentationId, (data) => {
+      if (data?.status) {
+        notification.info({
+          message: t('This presentation is presenting')
+        });
+        // queryClient.invalidateQueries(['presentation', presentationId]);
+        setNoPresent(false);
+        return;
+      }
+      setNoPresent(true);
+      notification.info({
+        message: t('This presentation has been stopped')
+      });
+    });
+    return () => {
+      offChat(socket, presentationId);
+      offPresentation(socket, presentationId);
+      offPresentStatus(socket, presentationId);
+    };
+  }, [socket, presentationId, chatData, queryClient]);
+
+  useEffect(() => {
+    if (!socket) return;
+    listenQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        setQuestionData([response.data, ...questionData]);
+        setQuestionLength(questionLength + 1);
+      }
+    });
+    listenUpdateQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        let newQuestionData = [];
+        questionData.forEach((item) => {
+          if (item.id === response.data.id) {
+            newQuestionData.push(response?.data);
+          } else {
+            newQuestionData.push(item);
+          }
+        });
+        setQuestionData(newQuestionData);
+      }
+    });
+
+    return () => {
+      offQuestion(socket, presentationId);
+      offUpdateQuestion(socket, presentationId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, presentationId, questionData]);
+
+  useEffect(() => {
+    if (!questions) return;
+    setQuestionData([...questionData, ...questions.data]);
+  }, [questions]);
 
   const handleSentMessage = (chatMessage) => {
     setChatData([
@@ -182,7 +378,6 @@ const Join = () => {
         return <div className='text-center mt-5 text-2xl'>{t('Slide not found')}</div>;
     }
   }, [slideIndex, data, socket]);
-
   return (
     <>
       {noPresent ? (
@@ -241,8 +436,16 @@ const Join = () => {
         closable={false}
         bodyStyle={{ padding: 0 }}
       >
-        <Spin spinning={isFetching}>
-          <Question presentationId={presentationId} role={user?.role} />
+        <Spin spinning={isFetchingQuestion}>
+          <Question
+            presentationId={presentationId}
+            socket={socket}
+            questionData={questionData}
+            handleUpVote={handleUpVote}
+            handleAnswerQuestion={handleAnswerQuestion}
+            handleAddQuestion={handleAddQuestion}
+            handleMarkAsAnswered={handleMarkAsAnswered}
+          />
         </Spin>
       </Drawer>
     </>

@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { io } from 'socket.io-client';
-export const SOCKET_URL = 'https://presentation-server.onrender.com';
-// export const SOCKET_URL = 'http://localhost:3000';
+// export const SOCKET_URL = 'https://presentation-server.onrender.com';
+export const SOCKET_URL = 'http://localhost:3000';
 
 let socket = null;
 let socketToken = '';

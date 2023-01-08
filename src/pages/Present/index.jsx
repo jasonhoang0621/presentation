@@ -15,14 +15,32 @@ import {
   useGetHistory,
   usePresentPresentation
 } from 'src/api/presentation';
+import { useGetListQuestion } from 'src/api/question';
 import Chat from 'src/components/Present/Chat';
 import History from 'src/components/Present/History';
 import Question from 'src/components/Present/Question';
 import { Reaction, SlideType } from 'src/helpers/slide';
 import { SocketContext } from 'src/socket/context';
-import { changeSlide, editSendMessage, emitChangePresentStatus } from 'src/socket/emit';
-import { listenAnswer, listenChat, listenPresentation } from 'src/socket/listen';
-import { offAnswer, offChat, offPresentation } from 'src/socket/off';
+import {
+  changeSlide,
+  editSendMessage,
+  emitChangePresentStatus,
+  updateQuestion
+} from 'src/socket/emit';
+import {
+  listenAnswer,
+  listenChat,
+  listenPresentation,
+  listenQuestion,
+  listenUpdateQuestion
+} from 'src/socket/listen';
+import {
+  offAnswer,
+  offChat,
+  offPresentation,
+  offQuestion,
+  offUpdateQuestion
+} from 'src/socket/off';
 
 const Present = () => {
   const { t } = useTranslation();
@@ -42,6 +60,17 @@ const Present = () => {
   const [user, setUser] = useState({
     role: 'member'
   });
+
+  const [guestId, setGuestId] = useState(localStorage.getItem('guestId') ?? null);
+  const [username, setUsername] = useState(localStorage.getItem('username') ?? null);
+
+  const [questionLength, setQuestionLength] = useState(0);
+  const { data: questions } = useGetListQuestion(
+    presentationId,
+    questionLength,
+    questionLength > 20 ? 5 : 20
+  );
+  const [questionData, setQuestionData] = useState([]);
 
   const { data: groupDetailData } = useDetailGroup(groupId);
 
@@ -135,6 +164,138 @@ const Present = () => {
       offAnswer(socket, presentationId, currentSlide);
     };
   }, [socket, presentationId, chatData, currentSlide]);
+
+  useEffect(() => {
+    if (!socket) return;
+    listenQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        setQuestionData([response.data, ...questionData]);
+        setQuestionLength(questionLength + 1);
+      }
+    });
+    listenUpdateQuestion(socket, presentationId, (response) => {
+      if (!response?.errorCode) {
+        let newQuestionData = [];
+        questionData.forEach((item) => {
+          if (item.id === response.data.id) {
+            newQuestionData.push(response?.data);
+          } else {
+            newQuestionData.push(item);
+          }
+        });
+        setQuestionData(newQuestionData);
+      }
+    });
+
+    return () => {
+      offQuestion(socket, presentationId);
+      offUpdateQuestion(socket, presentationId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, presentationId, questionData]);
+
+  const handleUpVote = (e, questionId) => {
+    e.stopPropagation();
+    const question = questionData.find(
+      (item) => item.id === questionId || (guestId && item.id === guestId)
+    );
+    let temp = null;
+    if (
+      question?.upVote?.includes(auth?.user?.id) ||
+      (guestId && question?.upVote?.includes(guestId))
+    ) {
+      const newQuestionData = questionData.map((item) => {
+        if (item.id === questionId) {
+          temp = item;
+          if (guestId) {
+            temp.upVote = item.upVote.filter((item) => item !== guestId);
+          } else {
+            temp.upVote = item.upVote.filter((item) => item !== auth?.user?.id);
+          }
+          return {
+            ...temp
+          };
+        }
+        return item;
+      });
+      setQuestionData(newQuestionData);
+      delete temp._id;
+      updateQuestion(socket, presentationId, questionId, temp);
+      return;
+    }
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId || (guestId && item.id === guestId)) {
+        temp = item;
+        temp.upVote = [...item.upVote, guestId ? guestId : auth?.user?.id];
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+    delete temp._id;
+    updateQuestion(socket, presentationId, questionId, temp, guestId, username);
+    setQuestionData(newQuestionData);
+  };
+
+  const handleAnswerQuestion = (questionId) => {
+    if (!answerContent) return;
+    let temp = null;
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        temp = item;
+        temp.answer = [
+          ...item.answer,
+          {
+            id: item.answer.length + 1,
+            name: username ? username : auth?.user?.name,
+            content: answerContent
+          }
+        ];
+        delete temp._id;
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+
+    updateQuestion(socket, presentationId, questionId, temp);
+    setQuestionData(newQuestionData);
+    setAnsweringQuestion(null);
+    setAnswerContent('');
+  };
+
+  const handleAddQuestion = (question) => {
+    if (!question) return;
+    postQuestion(socket, presentationId, question, guestId, username);
+    setOpenAddQuestion(false);
+  };
+
+  const handleMarkAsAnswered = (e, questionId) => {
+    e.stopPropagation();
+    setConfirmMark(null);
+    let temp = null;
+    const newQuestionData = questionData.map((item) => {
+      if (item.id === questionId) {
+        temp = item;
+        temp.isLock = true;
+        delete temp._id;
+        return {
+          ...temp
+        };
+      }
+      return item;
+    });
+    updateQuestion(socket, presentationId, questionId, temp);
+    setQuestionData(newQuestionData);
+  };
+
+  useEffect(() => {
+    if (!questions) return;
+    setQuestionData([...questionData, ...questions.data]);
+  }, [questions]);
+
   const handleScroll = () => {
     if (containerRef.current.scrollTop === 0) {
       if (chatLength <= chatData.length) {
@@ -434,7 +595,15 @@ const Present = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Spin spinning={isFetching}>
-          <Question presentationId={presentationId} role={user.role} />
+          <Question
+            presentationId={presentationId}
+            socket={socket}
+            questionData={questionData}
+            handleUpVote={handleUpVote}
+            handleAnswerQuestion={handleAnswerQuestion}
+            handleAddQuestion={handleAddQuestion}
+            handleMarkAsAnswered={handleMarkAsAnswered}
+          />
         </Spin>
       </Drawer>
       <Drawer

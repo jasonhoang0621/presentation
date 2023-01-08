@@ -6,12 +6,27 @@ export const editSendMessage = (socket, presentationId, message, name = null, gu
   }
 };
 
-export const postQuestion = (socket, presentationId, question) => {
-  socket?.emit('question', { presentationId, question });
+export const postQuestion = (socket, presentationId, question, guestId = null, name = null) => {
+  if (!guestId) {
+    socket?.emit('question', { presentationId, question });
+  } else {
+    socket?.emit('question', { presentationId, question, guestId, name });
+  }
 };
 
-export const updateQuestion = (socket, presentationId, questionId, question) => {
-  socket?.emit('update-question', { presentationId, questionId, question });
+export const updateQuestion = (
+  socket,
+  presentationId,
+  questionId,
+  question,
+  guestId = null,
+  name = null
+) => {
+  if (!guestId) {
+    socket?.emit('update-question', { presentationId, questionId, question });
+  } else {
+    socket?.emit('update-question', { presentationId, questionId, question, guestId, name });
+  }
 };
 
 export const emitPickAnswer = (socket, presentationId, index) => {
