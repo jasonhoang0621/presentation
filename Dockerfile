@@ -1,12 +1,12 @@
-FROM node:16 AS source-image
+FROM node
+
 WORKDIR /app
 
-COPY . .
+COPY ["package.json", "yarn.lock", "./"]
 RUN yarn install
 
-RUN yarn build
-FROM socialengine/nginx-spa:latest
+COPY . .
 
-COPY --from=source-image /app/build /app
-RUN chmod -R 777 /app
-EXPOSE 80
+EXPOSE 4000
+
+CMD [ "yarn", "start" ]
