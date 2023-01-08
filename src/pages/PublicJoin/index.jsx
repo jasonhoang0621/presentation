@@ -133,7 +133,7 @@ const PublicJoin = () => {
     setQuestionData(newQuestionData);
   };
 
-  const handleAnswerQuestion = (questionId) => {
+  const handleAnswerQuestion = (questionId, answerContent) => {
     if (!answerContent) return;
     let temp = null;
     const newQuestionData = questionData.map((item) => {
@@ -157,8 +157,6 @@ const PublicJoin = () => {
 
     updateQuestion(socket, presentationId, questionId, temp);
     setQuestionData(newQuestionData);
-    setAnsweringQuestion(null);
-    setAnswerContent('');
   };
 
   const handleSentMessage = (chatMessage) => {
@@ -188,7 +186,6 @@ const PublicJoin = () => {
   const handleAddQuestion = (question) => {
     if (!question) return;
     postQuestion(socket, presentationId, question, guestId, username);
-    setOpenAddQuestion(false);
   };
 
   const handleMarkAsAnswered = (e, questionId) => {

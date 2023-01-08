@@ -12,7 +12,7 @@ import Chat from 'src/components/Present/Chat';
 import Question from 'src/components/Present/Question';
 import { SlideType } from 'src/helpers/slide';
 import { SocketContext } from 'src/socket/context';
-import { editSendMessage, updateQuestion } from 'src/socket/emit';
+import { editSendMessage, postQuestion, updateQuestion } from 'src/socket/emit';
 import {
   listenChat,
   listenPresentation,
@@ -114,7 +114,7 @@ const Join = () => {
     setQuestionData(newQuestionData);
   };
 
-  const handleAnswerQuestion = (questionId) => {
+  const handleAnswerQuestion = (questionId, answerContent) => {
     if (!answerContent) return;
     let temp = null;
     const newQuestionData = questionData.map((item) => {
@@ -138,14 +138,11 @@ const Join = () => {
 
     updateQuestion(socket, presentationId, questionId, temp);
     setQuestionData(newQuestionData);
-    setAnsweringQuestion(null);
-    setAnswerContent('');
   };
 
   const handleAddQuestion = (question) => {
     if (!question) return;
     postQuestion(socket, presentationId, question, guestId, username);
-    setOpenAddQuestion(false);
   };
 
   const handleMarkAsAnswered = (e, questionId) => {

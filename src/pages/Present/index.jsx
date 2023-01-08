@@ -25,6 +25,7 @@ import {
   changeSlide,
   editSendMessage,
   emitChangePresentStatus,
+  postQuestion,
   updateQuestion
 } from 'src/socket/emit';
 import {
@@ -238,7 +239,8 @@ const Present = () => {
     setQuestionData(newQuestionData);
   };
 
-  const handleAnswerQuestion = (questionId) => {
+  const handleAnswerQuestion = (questionId, answerContent) => {
+    console.log(answerContent);
     if (!answerContent) return;
     let temp = null;
     const newQuestionData = questionData.map((item) => {
@@ -262,14 +264,11 @@ const Present = () => {
 
     updateQuestion(socket, presentationId, questionId, temp);
     setQuestionData(newQuestionData);
-    setAnsweringQuestion(null);
-    setAnswerContent('');
   };
 
   const handleAddQuestion = (question) => {
     if (!question) return;
     postQuestion(socket, presentationId, question, guestId, username);
-    setOpenAddQuestion(false);
   };
 
   const handleMarkAsAnswered = (e, questionId) => {

@@ -21,7 +21,9 @@ const Question = ({
   role,
   socket = null,
   handleUpVote,
-  handleAnswerQuestion
+  handleAnswerQuestion,
+  handleAddQuestion,
+  handleMarkAsAnswered
 }) => {
   const auth = useSelector((state) => state.auth);
   const [openAddQuestion, setOpenAddQuestion] = useState(false);
@@ -54,6 +56,7 @@ const Question = ({
                 <button
                   onClick={() => {
                     handleAddQuestion(question);
+                    setOpenAddQuestion(false);
                     setQuestion('');
                   }}
                   className='button !py-1 !min-w-[100px]'
@@ -194,7 +197,9 @@ const Question = ({
                   onChange={(e) => setAnswerContent(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      handleAnswerQuestion(item?.id);
+                      handleAnswerQuestion(item?.id, answerContent);
+                      setAnsweringQuestion(null);
+                      setAnswerContent('');
                     }
                   }}
                 />
@@ -202,7 +207,9 @@ const Question = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleAnswerQuestion(item?.id);
+                      handleAnswerQuestion(item?.id, answerContent);
+                      setAnswerContent('');
+                      setAnsweringQuestion(null);
                     }}
                     className='button !py-1 !min-w-[100px]'
                   >
